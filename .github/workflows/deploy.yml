@@ -49,3 +49,5 @@ jobs:
           service: my-alley
           cluster: my-alley
           wait-for-service-stability: true
+          wait-for-minutes: 5m
+          force-new-deployment: true

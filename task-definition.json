@@ -4,7 +4,6 @@
       "name": "my-alley",
       "image": "386514092109.dkr.ecr.ap-northeast-2.amazonaws.com/my-alley:deploy",
       "cpu": 0,
-      "links": [],
       "portMappings": [
         {
           "containerPort": 8080,
@@ -13,19 +12,9 @@
         }
       ],
       "essential": true,
-      "entryPoint": [],
-      "command": [],
       "environment": [],
-      "environmentFiles": [],
       "mountPoints": [],
       "volumesFrom": [],
-      "secrets": [],
-      "dnsServers": [],
-      "dnsSearchDomains": [],
-      "extraHosts": [],
-      "dockerSecurityOptions": [],
-      "dockerLabels": {},
-      "ulimits": [],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -33,20 +22,39 @@
           "awslogs-group": "/ecs/my-alley",
           "awslogs-region": "ap-northeast-2",
           "awslogs-stream-prefix": "ecs"
-        },
-        "secretOptions": []
-      },
-      "systemControls": []
+        }
+      }
     }
   ],
   "family": "my-alley",
   "taskRoleArn": "arn:aws:iam::386514092109:role/ecsTaskExecutionRole",
   "executionRoleArn": "arn:aws:iam::386514092109:role/ecsTaskExecutionRole",
   "networkMode": "bridge",
-  "revision": 1,
   "volumes": [],
+  "requiresAttributes": [
+    {
+      "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+    },
+    {
+      "name": "ecs.capability.execution-role-awslogs"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.ecr-auth"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.task-iam-role"
+    },
+    {
+      "name": "ecs.capability.execution-role-ecr-pull"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+    }
+  ],
   "placementConstraints": [],
-  "compatibilities": ["EC2"],
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
