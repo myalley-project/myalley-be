@@ -9,3 +9,4 @@ Dockerfile
 *.sh
 *.yml
 scripts
+task-definition.json
