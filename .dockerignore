@@ -1,0 +1,12 @@
+.idea
+.vscode
+.git
+.github
+.gitignore
+.dockerignore
+Dockerfile
+*.md
+*.sh
+*.yml
+scripts
+task-definition.json
