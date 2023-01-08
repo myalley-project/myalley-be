@@ -1,12 +1,17 @@
 package com.myalley.member.dto;
 
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
-
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MemberRegisterDto {
 
     @NotBlank
@@ -24,10 +29,10 @@ public class MemberRegisterDto {
     private LocalDate birth;
 
     @NotEmpty
-    @Length(max=10)
+    @Length(min=2,max=10)
     private String nickname;
 
-    private int adminNo;
+    private Integer adminNo;
 
 
 

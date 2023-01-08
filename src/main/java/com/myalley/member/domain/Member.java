@@ -1,8 +1,6 @@
 package com.myalley.member.domain;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -15,9 +13,11 @@ import java.util.Collections;
 @Table(name="member")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 public class Member implements UserDetails {
 
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="member_id")
     @Id
     private Long memberId;
@@ -55,9 +55,9 @@ public class Member implements UserDetails {
     private String userImage;
 
 
-    private LocalDate createdAt;
-
-    private LocalDate modifiedAt;
+//    private LocalDate createdAt;
+//
+//    private LocalDate modifiedAt;
 
 
 
