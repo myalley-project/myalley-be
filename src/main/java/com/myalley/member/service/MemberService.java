@@ -63,7 +63,7 @@ public class MemberService {
         if (memberRepository.findByEmail(memberRegisterDto.getEmail()) != null) {
             throw new MemberException(MemberExceptionType.ALREADY_EXIST_USERNAME);
         }else if(memberRepository.findByNickname(memberRegisterDto.getNickname())!=null){
-            throw new MemberException(MemberExceptionType.ALREADY_EXIST_NICKNAME);
+            throw new MemberException(MemberExceptionType.ALREADY_EXIST_NAME);
         }
         memberRepository.save(Member.builder()
                 .email(memberRegisterDto.getEmail())

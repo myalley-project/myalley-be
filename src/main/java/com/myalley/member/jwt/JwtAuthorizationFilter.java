@@ -38,7 +38,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     ) throws IOException, ServletException {
 
         // header 에서 JWT token을 가져옵니다.
-        String authorizationHeader = request.getHeader("access_token");
+        String authorizationHeader = request.getHeader("AUTHORIZATION");
 
 //            token = Arrays.stream(request.getCookies())
 //                    .filter(cookie -> cookie.getName().equals(JwtProperties.COOKIE_NAME)).findFirst()
@@ -92,8 +92,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 response.setStatus(SC_BAD_REQUEST);
                 response.setContentType(APPLICATION_JSON_VALUE);
                 response.setCharacterEncoding("utf-8");
-                ErrorResponse errorResponse = new ErrorResponse(400, "잘못된 JWT Token 입니다.");
-                new ObjectMapper().writeValue(response.getWriter(), errorResponse);
+                    //ErrorResponse errorResponse = new ErrorResponse(400, "잘못된 JWT Token 입니다.");
+                new ObjectMapper().writeValue(response.getWriter(),"good");
             }
 
         }
