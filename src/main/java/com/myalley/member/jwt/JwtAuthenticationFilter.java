@@ -3,6 +3,7 @@ package com.myalley.member.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myalley.member.domain.Member;
 import com.myalley.member.dto.LoginDto;
+import com.myalley.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,7 +43,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         ServletInputStream inputStream = null;
         LoginDto loginDto;
         try {
+
             inputStream = request.getInputStream();
+
             String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
             loginDto = objectMapper.readValue(messageBody, LoginDto.class);
         } catch (IOException e) {
@@ -87,6 +90,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             HttpServletResponse response,
             AuthenticationException failed
     ) throws IOException {
+//임시 예외처리
 
         response.sendRedirect("/login");
     }

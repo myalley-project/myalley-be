@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
 @RequiredArgsConstructor
@@ -79,25 +80,25 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 //                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
 //                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-                chain.doFilter(request, response);
+               // chain.doFilter(request, response);//여기서 문제발생한듯??
 //            } catch (TokenExpiredException e) {
 //                log.info("CustomAuthorizationFilter : Access Token이 만료되었습니다.");
 //                response.setStatus(SC_UNAUTHORIZED);
 //                response.setContentType(APPLICATION_JSON_VALUE);
 //                response.setCharacterEncoding("utf-8");
-//                ErrorResponse errorResponse = new ErrorResponse(401, "Access Token이 만료되었습니다.");
-//                new ObjectMapper().writeValue(response.getWriter(), errorResponse);
+//               // ErrorResponse errorResponse = new ErrorResponse(401, "Access Token이 만료되었습니다.");
+//                new ObjectMapper().writeValue(response.getWriter(),"token expired");
             } catch (Exception e) {
                 log.info("CustomAuthorizationFilter : JWT 토큰이 잘못되었습니다. message : {}", e.getMessage());
                 response.setStatus(SC_BAD_REQUEST);
                 response.setContentType(APPLICATION_JSON_VALUE);
                 response.setCharacterEncoding("utf-8");
                     //ErrorResponse errorResponse = new ErrorResponse(400, "잘못된 JWT Token 입니다.");
-                new ObjectMapper().writeValue(response.getWriter(),"good");
+                new ObjectMapper().writeValue(response.getWriter(),"wrong token");
             }
 
         }
-        chain.doFilter(request, response);
+       chain.doFilter(request, response);
     }
 
     /**
