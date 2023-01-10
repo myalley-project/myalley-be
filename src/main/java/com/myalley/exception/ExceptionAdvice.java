@@ -23,6 +23,12 @@ public class ExceptionAdvice {//예외처리 responseEntity로 return
 
     }
 
+    @ExceptionHandler(CustomException.class)
+    public ExceptionResponse handleCustomException(CustomException e) {
+        return ExceptionResponse.of(e.getExhibitionExceptionType().getCode(), e.getMessage());
+    }
+
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity handleMemberEx(Exception exception){
         exception.printStackTrace();
