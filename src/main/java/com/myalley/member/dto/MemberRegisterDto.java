@@ -6,6 +6,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 @Getter
 @Setter
@@ -14,12 +15,12 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class MemberRegisterDto {
 
-    @NotBlank
-    @Email
+    @NotBlank(message="email")
+    @Email(message="email")
     private String email;
 
-    @NotEmpty
-    @Length(min=8,max=16)
+    @NotEmpty(message="password")
+    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message ="password" )
     private String password;
 
 
@@ -28,8 +29,8 @@ public class MemberRegisterDto {
 
     private LocalDate birth;
 
-    @NotEmpty
-    @Length(min=2,max=10)
+    @NotEmpty(message="nickname")
+    @Length(min=2,max=10,message="nickname")
     private String nickname;
 
     private Integer adminNo;

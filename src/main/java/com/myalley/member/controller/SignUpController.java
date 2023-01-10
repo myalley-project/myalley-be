@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/signup")
@@ -26,7 +28,7 @@ public class SignUpController {
 
     @PostMapping
     public ResponseEntity signup(
-           @RequestBody MemberRegisterDto memberRegisterDto
+           @Valid @RequestBody MemberRegisterDto memberRegisterDto
     ) {
         System.out.println("Asdad");
         if(memberRegisterDto.getAdminNo()!=null)

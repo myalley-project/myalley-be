@@ -44,11 +44,10 @@ public class MemberService {
                 .authority("ROLE_USER")
                 .status("활동중")
                 .build());
+
         HashMap<String,Integer> map=new HashMap<>();
         map.put("resultCode",200);
         return new ResponseEntity(map,HttpStatus.OK);
-
-
     }
 
     /**
@@ -65,6 +64,7 @@ public class MemberService {
         }else if(memberRepository.findByNickname(memberRegisterDto.getNickname())!=null){
             throw new MemberException(MemberExceptionType.ALREADY_EXIST_NAME);
         }
+
         memberRepository.save(Member.builder()
                 .email(memberRegisterDto.getEmail())
                 .password(passwordEncoder.encode(memberRegisterDto.getPassword()))

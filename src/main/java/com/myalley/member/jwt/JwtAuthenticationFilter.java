@@ -39,15 +39,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             HttpServletRequest request,
             HttpServletResponse response
     ) throws AuthenticationException {
+
         ObjectMapper objectMapper = new ObjectMapper();
         ServletInputStream inputStream = null;
         LoginDto loginDto;
         try {
-
             inputStream = request.getInputStream();
-
             String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
             loginDto = objectMapper.readValue(messageBody, LoginDto.class);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -74,13 +74,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         Member member = (Member) authResult.getPrincipal();
         //String token= JwtUtils.createToken(user);
         Map<String,String> token = JwtUtils.createTokenSet(member);
-        // 쿠키 생성
+
         response.setContentType("application/json");
-        response.setCharacterEncoding("utf-8");
+        //response.setCharacterEncoding("utf-8");
 //        response.setHeader("access_token", token.get("accessToken"));
 //        response.setHeader("refresh_token", token.get("refreshToken"));
 
-        new ObjectMapper().writeValue(response.getWriter(),token);
+       // new ObjectMapper().writeValue(response.getWriter(),token);
 
     }
 
