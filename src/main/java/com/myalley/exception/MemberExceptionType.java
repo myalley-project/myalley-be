@@ -1,4 +1,4 @@
-package com.myalley.member.exception;
+package com.myalley.exception;
 
 public enum MemberExceptionType implements BaseExceptionType{
 

@@ -2,8 +2,8 @@ package com.myalley.member.service;
 
 import com.myalley.member.domain.Member;
 import com.myalley.member.dto.MemberRegisterDto;
-import com.myalley.member.exception.MemberException;
-import com.myalley.member.exception.MemberExceptionType;
+import com.myalley.exception.MemberException;
+import com.myalley.exception.MemberExceptionType;
 import com.myalley.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

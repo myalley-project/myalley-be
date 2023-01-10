@@ -1,6 +1,4 @@
-package com.myalley.member.exception;
-
-import lombok.RequiredArgsConstructor;
+package com.myalley.exception;
 
 
 public class MemberException extends BaseException{

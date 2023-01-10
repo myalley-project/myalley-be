@@ -1,11 +1,10 @@
 package com.myalley.member.service;
 
 import com.myalley.member.domain.Member;
-import com.myalley.member.exception.MemberException;
-import com.myalley.member.exception.MemberExceptionType;
+import com.myalley.exception.MemberException;
+import com.myalley.exception.MemberExceptionType;
 import com.myalley.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 

@@ -1,4 +1,4 @@
-package com.myalley.member.exception;
+package com.myalley.exception;
 
 public interface BaseExceptionType {
     int getResultCode();
