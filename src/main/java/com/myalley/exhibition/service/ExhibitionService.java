@@ -95,5 +95,4 @@ public class ExhibitionService {
     }
 
     //전시글 전체목록 조회
-
 }
