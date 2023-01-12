@@ -1,8 +1,10 @@
 package com.myalley.blogReview.domain;
 
+import com.myalley.blogReview.dto.BlogRequestDto;
 import com.myalley.blogReview.option.TransportationType;
 import com.myalley.blogReview.option.RevisitType;
 import com.myalley.blogReview.option.CongestionType;
+import com.myalley.common.domain.BaseTime;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,7 +13,7 @@ import java.time.LocalDate;
 @Entity
 @NoArgsConstructor
 @Getter
-public class Blog {
+public class BlogReview extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "blog_id")
@@ -26,9 +28,6 @@ public class Blog {
     private Integer viewCount;
 
     private Boolean isDeleted;  //삭제여부
-    @Column(nullable = false)
-    private LocalDate createdAt;
-    private LocalDate modifiedAt;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -46,17 +45,15 @@ public class Blog {
     private Long exhibition;
 
     @Builder
-    public Blog(String title, String content, LocalDate viewDate, TransportationType transportation,
-                RevisitType revisit, CongestionType congestion, LocalDate createdAt,LocalDate modifiedAt,
-                Integer viewCount, Integer likeCount, Boolean isDeleted, Long member, Long exhibition){
+    public BlogReview(String title, String content, LocalDate viewDate, TransportationType transportation,
+                      RevisitType revisit, CongestionType congestion, Integer viewCount, Integer likeCount,
+                      Boolean isDeleted, Long member, Long exhibition){
         this.title = title;
         this.content = content;
         this.viewDate = viewDate;
         this.transportation = transportation;
         this.revisit = revisit;
         this.congestion = congestion;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
         this.viewCount = viewCount;
         this.likeCount = likeCount;
         this.isDeleted = isDeleted;
@@ -64,5 +61,12 @@ public class Blog {
         this.exhibition = exhibition;
     }
 
-
+    public void updateReview(BlogRequestDto newBlogReview){
+        this.title= newBlogReview.getTitle();
+        this.content = newBlogReview.getContent();
+        this.viewDate = LocalDate.parse(newBlogReview.getViewDate());
+        this.congestion = newBlogReview.getCongestion();
+        this.revisit = newBlogReview.getRevisit();
+        this.transportation = newBlogReview.getTransportation();
+    }
 }
