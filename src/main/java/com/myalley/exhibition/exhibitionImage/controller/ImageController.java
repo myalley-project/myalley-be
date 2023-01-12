@@ -27,10 +27,4 @@ public class ImageController {
         return new ResponseEntity(imageService.upload(multipartFile), HttpStatus.OK);
     }
 
-    //포스터 이미지 삭제
-    @DeleteMapping("/api/exhibitions/images")
-    public ResponseEntity removeFile(@RequestBody FileRequestDto requestDto) {
-        imageService.removeFile(requestDto.getFileName());
-        return ResponseEntity.ok("이미지 삭제가 완료되었습니다.");
-    }
 }

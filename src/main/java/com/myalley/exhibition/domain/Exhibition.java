@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -24,31 +23,17 @@ public class Exhibition extends BaseTime {
 
     @Column(nullable = false)
     private String title;
-
     private String adultPrice;
-
-    private String youthPrice;
-
-    private String kidPrice;
-
     @Column(nullable = false)
     private String space;
-
     private String fileName;
-
     @Lob
     @Column(nullable = false)
     private String posterUrl;
 
     @Column(nullable = false)
-    private LocalDate startDate;
-
-    @Column(nullable = false)
-    private LocalDate endDate;
-
+    private String date;
     private String webLink;
-
-    private String purpose;
 
     @Column(nullable = false)
     private String content;
@@ -70,21 +55,16 @@ public class Exhibition extends BaseTime {
     private DeletionStatus isDeleted;
 
     @Builder
-    public Exhibition(String title, String adultPrice, String youthPrice, String kidPrice,
-                      String space, String fileName, String posterUrl, LocalDate startDate, LocalDate endDate,
-                      String webLink, String purpose, String content, String author, Integer viewCount,
-                      ExhibitionStatus status, ExhibitionType type, DeletionStatus isDeleted) {
+    public Exhibition(String title, String adultPrice, String space, String fileName, String posterUrl,
+                      String date, String webLink, String content, String author,
+                      Integer viewCount, ExhibitionStatus status, ExhibitionType type, DeletionStatus isDeleted) {
         this.title = title;
         this.adultPrice = adultPrice;
-        this.youthPrice = youthPrice;
-        this.kidPrice = kidPrice;
         this.space = space;
         this.fileName = fileName;
         this.posterUrl = posterUrl;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.date = date;
         this.webLink = webLink;
-        this.purpose = purpose;
         this.content = content;
         this.author = author;
         this.viewCount = viewCount;
@@ -96,6 +76,23 @@ public class Exhibition extends BaseTime {
     public void updateInfo(Long id, ExhibitionUpdateRequest request) {
         this.id = id;
         this.title = request.getTitle();
+        this.status = request.getStatus();
+        this.type = request.getType();
+        this.space = request.getSpace();
+        this.adultPrice = request.getAdultPrice();
+        this.fileName = request.getFileName();
+        this.posterUrl = request.getPosterUrl();
+        this.date = request.getDate();
+        this.webLink = request.getWebLink();
+        this.content = request.getContent();
+        this.author = request.getAuthor();
     }
+
+    //삭제 여부 변경
+    public void changeDeletion() {
+        this.isDeleted = DeletionStatus.DELETED;
+    }
+
+
 }
 
