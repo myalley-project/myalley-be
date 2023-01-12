@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionAdvice {//예외처리 responseEntity로 return
 
     @ExceptionHandler(BaseException.class)
-    public ResponseEntity handleBaseEx(BaseException exception){
-//        log.error("BaseException errorType(): {}",exception.getExceptionType().getErrType());
-       log.error("BaseException errorCode(): {}",exception.getExceptionType().getResultCode());
-//        log.error("BaseException errorData(): {}",exception.getExceptionType().getErrData());
-        log.error("BaseException errorMsg(): {}",exception.getExceptionType().getMsg());
+    public ResponseEntity handleBaseEx(BaseException exception){//
 
-        return new ResponseEntity(new ExceptionDto(exception.getExceptionType().getResultCode(),exception.getExceptionType().getErrType(),exception.getExceptionType().getErrData()), HttpStatus.valueOf(400));
+        //log.error("BaseException errorCode(): {}",exception.getExceptionType().getErrorCode());
+
+        log.error("BaseException errorMsg(): {}",exception.getExceptionType().getErrorMsg());
+
+        return new ResponseEntity(new ExceptionDto(exception.getExceptionType().getErrorCode(),exception.getExceptionType().getErrorMsg()), HttpStatus.valueOf(400));
 
     }
 
@@ -33,8 +33,8 @@ public class ExceptionAdvice {//예외처리 responseEntity로 return
     @Data
     @AllArgsConstructor
     static class ExceptionDto {
-        private int resultCode;
-        private String errType;
-        private String errData;
+        private int errorCode;
+        private String errMsg;
+
     }
 }
