@@ -1,14 +1,16 @@
 package com.myalley.exception;
 
-import lombok.Getter;
 
-public class CustomException extends RuntimeException {
+public class CustomException extends BaseException{
 
-    @Getter
-    private ExhibitionExceptionType exhibitionExceptionType;
+    private BaseExceptionType exceptionType;
 
-    public CustomException(ExhibitionExceptionType exhibitionExceptionType) {
-        super(exhibitionExceptionType.getMessage());
-        this.exhibitionExceptionType = exhibitionExceptionType;
+    public CustomException(BaseExceptionType exceptionType){
+        this.exceptionType=exceptionType;
+    }
+
+    @Override
+    public BaseExceptionType getExceptionType() {
+        return exceptionType;
     }
 }
