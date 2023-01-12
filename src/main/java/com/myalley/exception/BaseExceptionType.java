@@ -1,9 +1,8 @@
 package com.myalley.exception;
 
 public interface BaseExceptionType {
-    int getResultCode();
-    String getErrType();
-    String getErrData();
+    int getErrorCode();
 
-    String getMsg();
+
+    String getErrorMsg();
 }

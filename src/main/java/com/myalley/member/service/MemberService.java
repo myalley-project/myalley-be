@@ -2,7 +2,7 @@ package com.myalley.member.service;
 
 import com.myalley.member.domain.Member;
 import com.myalley.member.dto.MemberRegisterDto;
-import com.myalley.exception.MemberException;
+import com.myalley.exception.CustomException;
 import com.myalley.exception.MemberExceptionType;
 import com.myalley.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +30,9 @@ public class MemberService {
      */
     public ResponseEntity signup(MemberRegisterDto memberRegisterDto) {
         if (memberRepository.findByEmail(memberRegisterDto.getEmail()) != null) {
-            throw new MemberException(MemberExceptionType.ALREADY_EXIST_USERNAME);
+            throw new CustomException(MemberExceptionType.ALREADY_EXIST_USERNAME);
         }else if(memberRepository.findByNickname(memberRegisterDto.getNickname())!=null){
-            throw new MemberException(MemberExceptionType.ALREADY_EXIST_NICKNAME);
+            throw new CustomException(MemberExceptionType.ALREADY_EXIST_NICKNAME);
         }
 
         memberRepository.save(Member.builder()
@@ -60,9 +60,9 @@ public class MemberService {
     public ResponseEntity signupAdmin(MemberRegisterDto memberRegisterDto)
     {
         if (memberRepository.findByEmail(memberRegisterDto.getEmail()) != null) {
-            throw new MemberException(MemberExceptionType.ALREADY_EXIST_USERNAME);
+            throw new CustomException(MemberExceptionType.ALREADY_EXIST_USERNAME);
         }else if(memberRepository.findByNickname(memberRegisterDto.getNickname())!=null){
-            throw new MemberException(MemberExceptionType.ALREADY_EXIST_NAME);
+            throw new CustomException(MemberExceptionType.ALREADY_EXIST_NAME);
         }
 
         memberRepository.save(Member.builder()
