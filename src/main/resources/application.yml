@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: {$MYSQL_URL}
-    username: {$MYSQL_USERNAME}
-    password: {$MYSQL_PASSWORD}
+    url: jdbc:mysql://${MYSQL_URL}:3306/my_alley?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
 
   jpa:
     #open-in-view: true
@@ -15,8 +15,8 @@ spring:
         format_sql: true
       #show-sql: true
   redis:
-    port: {$REDIS_PORT}
-    host: {$REDIS_HOST}
+    port: ${REDIS_PORT}
+    host: ${REDIS_HOST}
 
 logging:
   level:
@@ -40,10 +40,10 @@ server:
 cloud:
   aws:
     s3:
-      bucket: {$S3_BUCKET}
+      bucket: ${S3_BUCKET}
     credentials:
-      access-key: {$S3_ACCESS_KEY}
-      secret-key: {$S3_SECRET_KEY}
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
     region:
       static: ap-northeast-2
     stack:
