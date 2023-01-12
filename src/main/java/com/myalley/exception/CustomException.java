@@ -1,11 +1,11 @@
 package com.myalley.exception;
 
 
-public class MemberException extends BaseException{
+public class CustomException extends BaseException{
 
     private BaseExceptionType exceptionType;
 
-    public MemberException(BaseExceptionType exceptionType){
+    public CustomException(BaseExceptionType exceptionType){
         this.exceptionType=exceptionType;
     }
 
