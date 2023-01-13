@@ -68,4 +68,13 @@ public class ExhibitionController {
         return ResponseEntity.ok(exhibitionService.findInfo(id));
     }
 
+    /**
+     * 전시글 목록 조회 요청
+     * @author Hwadam
+     * */
+    @GetMapping("/exhibitions")
+    public ResponseEntity readAllExhibitions() {
+
+        return ResponseEntity.ok("로직 구현 후 수정 예정");
+    }
 }

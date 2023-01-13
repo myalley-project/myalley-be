@@ -7,13 +7,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Entity
-public class ExhibitionDeleted extends BaseTime {
+@Entity(name = "Exhibition_deleted")
+public class ExhibitionDeleted {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,10 +52,18 @@ public class ExhibitionDeleted extends BaseTime {
     @Enumerated(value = EnumType.STRING)
     private ExhibitionType type;
 
+    @CreatedDate
+    @Column
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column
+    private LocalDateTime deletedAt;
+
     @Builder
     public ExhibitionDeleted(String title, String adultPrice, String space, String fileName, String posterUrl,
                              String date, String webLink, String content, String author,
-                             Integer viewCount, ExhibitionStatus status, ExhibitionType type) {
+                             Integer viewCount, ExhibitionStatus status, ExhibitionType type, LocalDateTime createdAt, LocalDateTime deletedAt) {
         this.title = title;
         this.adultPrice = adultPrice;
         this.space = space;
@@ -65,5 +76,7 @@ public class ExhibitionDeleted extends BaseTime {
         this.viewCount = viewCount;
         this.status = status;
         this.type = type;
+        this.createdAt = createdAt;
+        this.deletedAt = deletedAt;
     }
 }

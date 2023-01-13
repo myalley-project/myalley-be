@@ -86,6 +86,8 @@ public class ExhibitionService {
                 .content(exhibition.getContent())
                 .author(exhibition.getAuthor())
                 .viewCount(exhibition.getViewCount())
+                .createdAt(exhibition.getCreatedAt())
+                .deletedAt(exhibition.getModifiedAt())
                 .build();
         deletedRepository.save(deleted);
         exhibitionRepository.deleteById(id);
@@ -104,4 +106,5 @@ public class ExhibitionService {
         exhibitionRepository.updateViewCount(id);
     }
 
+    //전시글 목록 조회
 }
