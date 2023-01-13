@@ -23,13 +23,12 @@ public class ExhibitionDetailResponse {
     private Integer viewCount;
     private String status;
     private String type;
-    private String isDeleted;
 
     public static ExhibitionDetailResponse of (Exhibition exhibition) {
         return new ExhibitionDetailResponse(exhibition.getId(), exhibition.getTitle(), exhibition.getAdultPrice(),
                 exhibition.getSpace(), exhibition.getPosterUrl(), exhibition.getDate().substring(0,10),
                 exhibition.getDate().substring(11,21), exhibition.getWebLink(), exhibition.getContent(),
                 exhibition.getAuthor(), exhibition.getViewCount(), exhibition.getStatus().getValue(),
-                exhibition.getType().getValue(), exhibition.getIsDeleted().getValue());
+                exhibition.getType().getValue());
     }
 }

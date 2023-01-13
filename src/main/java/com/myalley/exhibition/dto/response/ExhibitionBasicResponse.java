@@ -7,20 +7,22 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-//@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExhibitionBasicResponse {
 
     private Long exhibitionId;
+    private String title;
     private String space;
     private String posterUrl;
     private String startDate;
     private String endDate;
     private Integer viewCount;
+    private String status;
 
     public static ExhibitionBasicResponse of(Exhibition exhibition) {
-        return new ExhibitionBasicResponse(exhibition.getId(), exhibition.getSpace(),
-                exhibition.getPosterUrl(), exhibition.getDate().substring(0,10), exhibition.getDate().substring(11,21), exhibition.getViewCount());
+        return new ExhibitionBasicResponse(exhibition.getId(), exhibition.getTitle(), exhibition.getSpace(),
+                exhibition.getPosterUrl(), exhibition.getDate().substring(0,10),
+                exhibition.getDate().substring(11,21), exhibition.getViewCount(), exhibition.getStatus().getValue());
     }
 }

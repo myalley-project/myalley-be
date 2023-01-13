@@ -1,7 +1,6 @@
-package com.myalley.exhibition.domain;
+package com.myalley.exhibition_deleted.domain;
 
 import com.myalley.common.domain.BaseTime;
-import com.myalley.exhibition.dto.request.ExhibitionUpdateRequest;
 import com.myalley.exhibition.options.ExhibitionStatus;
 import com.myalley.exhibition.options.ExhibitionType;
 import lombok.AccessLevel;
@@ -14,9 +13,10 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Exhibition extends BaseTime {
+public class ExhibitionDeleted extends BaseTime {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "exhibition_id")
     private Long id;
 
@@ -50,9 +50,9 @@ public class Exhibition extends BaseTime {
     private ExhibitionType type;
 
     @Builder
-    public Exhibition(String title, String adultPrice, String space, String fileName, String posterUrl,
-                      String date, String webLink, String content, String author,
-                      Integer viewCount, ExhibitionStatus status, ExhibitionType type) {
+    public ExhibitionDeleted(String title, String adultPrice, String space, String fileName, String posterUrl,
+                             String date, String webLink, String content, String author,
+                             Integer viewCount, ExhibitionStatus status, ExhibitionType type) {
         this.title = title;
         this.adultPrice = adultPrice;
         this.space = space;
@@ -66,21 +66,4 @@ public class Exhibition extends BaseTime {
         this.status = status;
         this.type = type;
     }
-
-    public void updateInfo(Long id, ExhibitionUpdateRequest request) {
-        this.id = id;
-        this.title = request.getTitle();
-        this.status = request.getStatus();
-        this.type = request.getType();
-        this.space = request.getSpace();
-        this.adultPrice = request.getAdultPrice();
-        this.fileName = request.getFileName();
-        this.posterUrl = request.getPosterUrl();
-        this.date = request.getDate();
-        this.webLink = request.getWebLink();
-        this.content = request.getContent();
-        this.author = request.getAuthor();
-    }
-
 }
-

@@ -8,8 +8,9 @@ import com.myalley.exhibition.dto.request.ExhibitionUpdateRequest;
 import com.myalley.exhibition.dto.response.ExhibitionBasicResponse;
 import com.myalley.exhibition.dto.response.ExhibitionDetailResponse;
 import com.myalley.exhibition.exhibitionImage.service.ImageService;
-import com.myalley.exhibition.options.DeletionStatus;
 import com.myalley.exhibition.repository.ExhibitionRepository;
+import com.myalley.exhibition_deleted.domain.ExhibitionDeleted;
+import com.myalley.exhibition_deleted.repository.ExhibitionDeletedRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,13 +21,7 @@ public class ExhibitionService {
 
     private final ExhibitionRepository exhibitionRepository;
     private final ImageService imageService;
-
-    /**
-     * 전시글 삭제 요청
-     * @param request 전시회 정보를 담은 json body - title,status,type,space,fileName,poesterUrl,date,webLink,content,author 정보를 보내준다.
-     * @return 방금 등록한 전시회 정보의 id,title,startDate,endDate,viewCount,posterUrl 를 전달한다.
-     * @author Hwadam
-     * */
+    private final ExhibitionDeletedRepository deletedRepository;
 
     public ExhibitionBasicResponse save(ExhibitionRequest request) {
 
@@ -42,7 +37,6 @@ public class ExhibitionService {
                 .webLink(request.getWebLink())
                 .content(request.getContent())
                 .author(request.getAuthor())
-                .isDeleted(DeletionStatus.NOT_DELETED)
                 .viewCount(0)
                 .build();
 
@@ -63,6 +57,7 @@ public class ExhibitionService {
        return ExhibitionBasicResponse.of(exhibition);
     }
 
+    //포스터 이미지 수정
     public void updatePoster(Long id) {
         Exhibition exhibition = exhibitionRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
@@ -70,21 +65,30 @@ public class ExhibitionService {
         imageService.removeFile(target);
     }
 
-    //전시글 삭제 - 상태변화 시키기
-    public ExhibitionBasicResponse delete(Long id) {
-       return exhibitionRepository.findById(id)
-               .map(exhibition -> {
-                   exhibition.changeDeletion();
-                   return exhibitionRepository.save(exhibition);
-               })
-               .map(ExhibitionBasicResponse::of)
+    //전시글 삭제 - 삭제 테이블로 이동시키고 기존 테이블에서 삭제
+    public void delete(Long id) {
+       Exhibition exhibition = exhibitionRepository.findById(id)
                .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
-    }
 
-    //조회수 증가
-    @Transactional
-    public void updateViewCount(Long id) {
-        exhibitionRepository.updateViewCount(id);
+        String target = exhibition.getFileName();
+        imageService.removeFile(target);
+
+        ExhibitionDeleted deleted = ExhibitionDeleted.builder()
+                .title(exhibition.getTitle())
+                .status(exhibition.getStatus())
+                .type(exhibition.getType())
+                .space(exhibition.getSpace())
+                .adultPrice(exhibition.getAdultPrice())
+                .fileName("")
+                .posterUrl("")
+                .date(exhibition.getDate())
+                .webLink(exhibition.getWebLink())
+                .content(exhibition.getContent())
+                .author(exhibition.getAuthor())
+                .viewCount(exhibition.getViewCount())
+                .build();
+        deletedRepository.save(deleted);
+        exhibitionRepository.deleteById(id);
     }
 
     //특정 전시글 상세페이지 조회
@@ -94,5 +98,10 @@ public class ExhibitionService {
                 .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
     }
 
-    //전시글 전체목록 조회
+    //조회수 증가
+    @Transactional
+    public void updateViewCount(Long id) {
+        exhibitionRepository.updateViewCount(id);
+    }
+
 }
