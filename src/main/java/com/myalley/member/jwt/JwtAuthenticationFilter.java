@@ -9,6 +9,7 @@ import com.myalley.member.dto.LoginDto;
 import com.myalley.member.repository.MemberRepository;
 import com.myalley.member.repository.TokenRedisRepository;
 import com.myalley.member.service.MemberService;
+import com.myalley.member.service.RedisService;
 import com.myalley.member.service.RefreshService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,9 @@ import java.util.Optional;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
-    private final TokenRedisRepository tokenRedisRepository;
+
+    private final RedisService redisService;
+
 
 //    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
 //        super(authenticationManager);
@@ -81,12 +84,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             Authentication authResult
     ) throws IOException {
 
-
         Member member = (Member) authResult.getPrincipal();
-        //String token= JwtUtils.createToken(user);
         Map<String,String> token = JwtUtils.createTokenSet(member);
-        //refresh토큰redis 저장
-        tokenRedisRepository.save(new RefreshToken(member.getEmail(),token.get("refreshToken")));
+        redisService.save(member.getEmail(),token.get("refreshToken"));
+        //tokenRedisRepository.save(new RefreshToken(member.getEmail(),token.get("refreshToken")));
         response.setContentType("application/json");
 
 
@@ -104,8 +105,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setContentType("application/json");
 
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("code", HttpStatus.UNAUTHORIZED.value());
-        body.put("error", failed.getMessage());
+        body.put("errorCode", 404);
+        body.put("errorMsg", "회원 정보 없음");
 
         new ObjectMapper().writeValue(response.getOutputStream(), body);
     }

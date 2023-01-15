@@ -34,12 +34,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final MemberRepository memberRepository;
 
-//    public JwtAuthorizationFilter(
-//            MemberRepository memberRepository
-//    ) {
-//        this.memberRepository = userRepository;
-//    }
-
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -50,57 +44,40 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         // header 에서 JWT token을 가져옵니다.
         String authorizationHeader = request.getHeader("AUTHORIZATION");
 
-            try {
-                // Access Token만 꺼내옴
-                String accessToken=null;
-                if(authorizationHeader!=null)
+        try {
+            // Access Token만 꺼내옴
+            String accessToken = null;
+            if (authorizationHeader != null)
                 accessToken = authorizationHeader.substring("Bearer ".length());
 
-                // === Access Token 검증 === //
-                JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JwtSecret.JWT_SECRET_KEY)).build();
-                DecodedJWT decodedJWT = verifier.verify(accessToken);
+            // === Access Token 검증 === //
+            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JwtSecret.JWT_SECRET_KEY)).build();
+            DecodedJWT decodedJWT = verifier.verify(accessToken);
 
-                String username = decodedJWT.getSubject();
-                //여기서 memberrepository에섶 권한찾기?
-                Member mem=memberRepository.findByEmail(username);
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, mem.getAuthorities());//authority
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            String username = decodedJWT.getSubject();
+            //여기서 memberrepository에섶 권한찾기?
+            Member mem = memberRepository.findByEmail(username);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, mem.getAuthorities());//authority
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-                chain.doFilter(request, response);
-            } catch (TokenExpiredException e) {
-                log.info("CustomAuthorizationFilter : Access Token이 만료되었습니다.");
-                response.setStatus(SC_UNAUTHORIZED);
-                response.setContentType(APPLICATION_JSON_VALUE);
-                response.setCharacterEncoding("utf-8");
-                CustomException customException = new CustomException(MemberExceptionType.ACESSTOKEN_EXPIRED);
-                new ObjectMapper().writeValue(response.getWriter(), customException);
+            chain.doFilter(request, response);
+        } catch (TokenExpiredException e) {
+            log.info("Access Token이 만료되었습니다.");
+            response.setStatus(SC_UNAUTHORIZED);
+            response.setContentType(APPLICATION_JSON_VALUE);
+            response.setCharacterEncoding("utf-8");
+            CustomException customException = new CustomException(MemberExceptionType.ACESSTOKEN_EXPIRED);
+            new ObjectMapper().writeValue(response.getWriter(), customException);
 
-            } catch (Exception e) {
-                log.info("CustomAuthorizationFilter : JWT 토큰이 잘못되었습니다. message : {}", e.getMessage());
-                response.setStatus(SC_BAD_REQUEST);
-                response.setContentType(APPLICATION_JSON_VALUE);
-                response.setCharacterEncoding("utf-8");
+        } catch (Exception e) {
+            log.info("JWT 토큰이 잘못되었습니다.");
+            response.setStatus(SC_BAD_REQUEST);
+            response.setContentType(APPLICATION_JSON_VALUE);
+            response.setCharacterEncoding("utf-8");
 
-                CustomException customException = new CustomException(MemberExceptionType.TOKEN_FORBIDDEN);
-                new ObjectMapper().writeValue(response.getWriter(), customException);
-            }
-
+            CustomException customException = new CustomException(MemberExceptionType.TOKEN_FORBIDDEN);
+            new ObjectMapper().writeValue(response.getWriter(), customException);
         }
 
-        /**
-         * JWT 토큰으로 User를 찾아서 UsernamePasswordAuthenticationToken를 만들어서 반환한다.
-         * User가 없다면 null
-         */
-//    private Authentication getEmailPasswordAuthenticationToken(String token) {
-//        String email = JwtUtils.getEmail(token);
-//        if (email != null) {
-//            Member member = memberRepository.findByEmail(email); // 유저를 유저명으로 찾습니다.
-//            return new UsernamePasswordAuthenticationToken(
-//                    member, // principal
-//                    null,
-//                    member.getAuthorities()
-//            );
-//        }
-//        return null; // 유저가 없으면 NULL
-//    }
-    }//}
+    }
+}

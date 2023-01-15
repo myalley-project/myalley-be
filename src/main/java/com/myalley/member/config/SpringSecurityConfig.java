@@ -6,6 +6,7 @@ import com.myalley.member.jwt.JwtAuthorizationFilter;
 import com.myalley.member.repository.MemberRepository;
 import com.myalley.member.repository.TokenRedisRepository;
 import com.myalley.member.service.MemberService;
+import com.myalley.member.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -27,8 +28,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final RedisService redisService;
 
-    private final TokenRedisRepository tokenRedisRepository;
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // basic authentication
@@ -52,7 +53,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         // jwt filter
         http.addFilterBefore(
-                new JwtAuthenticationFilter(authenticationManager(),tokenRedisRepository),
+                new JwtAuthenticationFilter(authenticationManager(),redisService),
                 UsernamePasswordAuthenticationFilter.class
         ).addFilterBefore(
                 new JwtAuthorizationFilter(memberRepository),

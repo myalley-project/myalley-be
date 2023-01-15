@@ -7,7 +7,7 @@ spring:
     database: mysql
     show-sql: 'true'
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: 'true'
@@ -15,10 +15,11 @@ spring:
     host: 127.0.0.1
     port: '6379'
   datasource:
+    url: jdbc:mysql://localhost:3306/my_alley?useSSL=false
     password: '0104'
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    url: jdbc:mysql://localhost:3306/my_alley?useSSL=false
+
 server:
   servlet:
     session:
@@ -27,3 +28,5 @@ logging:
   level:
     sql: ERROR
     root: INFO
+
+

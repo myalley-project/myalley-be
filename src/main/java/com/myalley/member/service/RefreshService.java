@@ -73,15 +73,17 @@ public class RefreshService {
             Map<String, String> accessTokenResponseMap = new HashMap<>();
 
             // === 현재시간과 Refresh Token 만료날짜를 통해 남은 만료기간 계산 === //
-            // === Refresh Token 만료시간 계산해 1개월 미만일 시 refresh token도 발급 === //
+            // === Refresh Token 만료시간 계산해 7일 미만일 시 refresh token도 발급 === //
             ///만료시간에 따라 refresh토큰 갱신해서 보내줌 만료 아니라면 그냥 원래refresh보내줌
             //JwtUtile.createToken or createTokenSet
             long refreshExpireTime = decodedJWT.getClaim("exp").asLong() * 1000;
+
             long diffDays = (refreshExpireTime - now) / 1000 / (24 * 3600);
             long diffMin = (refreshExpireTime - now) / 1000 / 60;
             Member member = memberRepository.findByEmail(email);
             Map<String, String> token = new HashMap<>();
-            if (diffMin < 5) {
+
+            if (diffDays < 7) {
                 log.info("refresh 토큰이 재발급 되었습니다");
                 token = JwtUtils.createTokenSet(member);
                 tokenRedisRepository.save(new RefreshToken(email, token.get("refreshToken")));

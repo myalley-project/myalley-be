@@ -4,12 +4,9 @@ import com.myalley.member.domain.Member;
 import com.myalley.member.domain.RefreshToken;
 import com.myalley.member.repository.TokenRedisRepository;
 import com.myalley.member.service.RefreshService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwsHeader;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 
 
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +34,15 @@ public class JwtUtils {
     public static String getEmail(String token) {
         // jwtToken에서 email을 찾습니다.
         return Jwts.parserBuilder()
-                .setSigningKeyResolver(SigningKeyResolver.instance)
+                .setSigningKey(JwtSecret.JWT_SECRET_KEY.getBytes())
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject(); // username
+
     }
+
+
 
     /**
      * user로 토큰 생성
@@ -62,7 +62,7 @@ public class JwtUtils {
         return Jwts.builder()
                 .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 토큰 발행 시간 정보
-                .setExpiration(new Date(now.getTime()+ JwtProperties.EXPIRATION_TIME )) // 토큰 만료 시간 설정
+                .setExpiration(new Date(now.getTime()+ JwtProperties.EXPIRATION_TIME)) // 토큰 만료 시간 설정
                 .setHeaderParam(JwsHeader.KEY_ID, "JWT") // kid
                 .signWith(Keys.hmacShaKeyFor(JwtSecret.JWT_SECRET_KEY.getBytes()),SignatureAlgorithm.HS256) // signature
                 .compact();
@@ -78,17 +78,18 @@ public class JwtUtils {
         tokens.put("accessToken",Jwts.builder()
                 .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 토큰 발행 시간 정보
-                .setExpiration(new Date(now.getTime()+ JwtProperties.EXPIRATION_TIME )) // 토큰 만료 시간 설정
+                .setExpiration(new Date(now.getTime()+ JwtProperties.EXPIRATION_TIME)) // 토큰 만료 시간 설정
                 .setHeaderParam(JwsHeader.KEY_ID, "JWT") // kid
                 .signWith(Keys.hmacShaKeyFor(JwtSecret.JWT_SECRET_KEY.getBytes()),SignatureAlgorithm.HS256) // signature
                 .compact());
         tokens.put("refreshToken",Jwts.builder()
                 .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 토큰 발행 시간 정보
-                .setExpiration(new Date(now.getTime()+ JwtProperties.REFRESH_EXPIRATION_TIME )) // 토큰 만료 시간 설정
+                .setExpiration(new Date(now.getTime()+ JwtProperties.REFRESH_EXPIRATION_TIME)) // 토큰 만료 시간 설정
                 .setHeaderParam(JwsHeader.KEY_ID, "JWT") // kid
                 .signWith(Keys.hmacShaKeyFor(JwtSecret.JWT_SECRET_KEY.getBytes()),SignatureAlgorithm.HS256) // signature
                 .compact());
+        System.out.println(getEmail(tokens.get("refreshToken")));
       //  tokenRedisRepository.save(new RefreshToken(member.getEmail(),token.get("refreshToken")));
 
         return tokens;
