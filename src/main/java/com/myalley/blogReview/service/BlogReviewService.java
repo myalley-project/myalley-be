@@ -3,12 +3,12 @@ package com.myalley.blogReview.service;
 import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview.dto.BlogRequestDto;
 import com.myalley.blogReview.repository.BlogReviewRepository;
+import com.myalley.exception.BlogReviewExceptionType;
+import com.myalley.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +16,8 @@ public class BlogReviewService {
 
     private final BlogReviewRepository repository;
 
-    public Long uploadBlog(BlogRequestDto blogRequestDto,Long memberId){
+    public Long uploadBlog(BlogRequestDto blogRequestDto, Long memberId){
+        duplicateCheckBlogReview(memberId,blogRequestDto.getExhibitionId());
         BlogReview newReview = BlogReview.builder()
                 .title(blogRequestDto.getTitle())
                 .content(blogRequestDto.getContent())
@@ -26,9 +27,8 @@ public class BlogReviewService {
                 .congestion(blogRequestDto.getCongestion())
                 .viewCount(0)
                 .likeCount(0)
-                .isDeleted(false)
                 .member(memberId)
-                .exhibition(3L)
+                .exhibition(blogRequestDto.getExhibitionId())
                 .build();
         return repository.save(newReview).getId();
     }
@@ -39,19 +39,29 @@ public class BlogReviewService {
         preBlogReview.updateReview(blogRequestDto);
         repository.save(preBlogReview);
     }
+    public BlogReview deleteBlogReview(Long blogId,Long memberId){
+        BlogReview target = verifyRequester(blogId, memberId);
+        repository.delete(target);
+        return target;
+    }
 
     private BlogReview findBlogReview(Long blogId){
-        return repository.findById(blogId).orElseThrow(() -> { //존재 하지 않는 글 -> 404 Not Found
-            throw new NoSuchElementException();
+        return repository.findById(blogId).orElseThrow(() -> { //404 : 존재 하지 않는 글
+            throw new CustomException(BlogReviewExceptionType.BLOG_NOT_FOUND);
         });
     }
     private BlogReview verifyRequester(Long blogId,Long memberId){
-        BlogReview review = repository.findById(blogId).orElseThrow(() -> { //블로그 글이 조회 되지 않는 경우 -> 404 Not Found 로 변경할 예정
-           throw new NoSuchElementException();
+        BlogReview review = repository.findById(blogId).orElseThrow(() -> { //404 : 블로그 글이 조회 되지 않는 경우
+           throw new CustomException(BlogReviewExceptionType.BLOG_NOT_FOUND);
         });
-        if(!review.getMember().equals(memberId)){ //권한이 없는 글에 접근하는 경우 -> 403 Forbidden 로 변경할 예정
-            throw new NoSuchElementException();
+        if(!review.getMember().equals(memberId)){ //403 : 권한이 없는 글에 접근하는 경우
+            throw new CustomException(BlogReviewExceptionType.BLOG_FORBIDDEN);
         }
         return review;
+    }
+    private void duplicateCheckBlogReview(Long member, Long exhibition){ //409 : 이미 작성한 경우
+        repository.findByMemberAndExhibition(member, exhibition).ifPresent( e -> {
+            throw new CustomException(BlogReviewExceptionType.BLOG_CONFLICT);
+        });
     }
 }

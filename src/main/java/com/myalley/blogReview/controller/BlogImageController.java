@@ -23,17 +23,17 @@ public class BlogImageController {
     public ResponseEntity deleteBlogReviewImage(@PathVariable("blog-id") Long blogId, @PathVariable("image-id") Long imageId){
         BlogImage foundImage = blogImageService.retrieveBlogImage(blogId,imageId);
         s3Service.deleteBlogImage(foundImage.getFileName());
-        blogImageService.deleteBlogImage(foundImage.getId());
+        blogImageService.deleteBlogImage(foundImage);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    //put으로 하는 게 맞을까?
-    //throws Exception 수정하기
     //블로그 수정할 때는 이미지를 하나씩 등록 할 수 있도록 해줍니다 - 첫번째 생각한 방법
     @PostMapping("/{blog-id}")
-    public ResponseEntity changeBlogReviewImage(@PathVariable("blog-id") Long blogId, MultipartFile[] files) throws Exception {
-        HashMap<String,String> imageInformationMap = s3Service.uploadBlogImages(files);
-        blogImageService.addBlogImages(imageInformationMap,blogId);
+    public ResponseEntity changeBlogReviewImage(@PathVariable("blog-id") Long blogId, MultipartFile file) throws Exception {
+        //HashMap<String,String> imageInformationMap = s3Service.uploadBlogImages(files);
+        //blogImageService.addBlogImages(imageInformationMap,blogId);
+        String[] information = s3Service.uploadBlogImage(file);
+        blogImageService.addBlogImage(information[0],information[1],blogId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
