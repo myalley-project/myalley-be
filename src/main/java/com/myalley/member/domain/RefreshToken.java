@@ -1,19 +1,19 @@
 package com.myalley.member.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 @Builder
 @Getter
 @AllArgsConstructor
-@RedisHash(value="refreshToken",timeToLive=60)
+@RedisHash(value="refreshToken",timeToLive=600)
 public class RefreshToken {
 
     @Id
-    private Long userId;
+    private String email;
 
     private String token;
+
+
 }

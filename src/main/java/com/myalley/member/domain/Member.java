@@ -1,5 +1,7 @@
 package com.myalley.member.domain;
 
+import com.myalley.common.domain.BaseTime;
+import com.myalley.member.options.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +17,8 @@ import java.util.Collections;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @AllArgsConstructor
-public class Member implements UserDetails {
+@Setter
+public class Member extends BaseTime implements UserDetails {
 
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="member_id")
@@ -30,8 +33,9 @@ public class Member implements UserDetails {
     @Column(name="nickname",unique=true)
     private String nickname;
 
+    @Enumerated(value= EnumType.STRING)
     @Column(name="gender")
-    private String gender;
+    private Gender gender;
 
     @Column(name="birth")
     private LocalDate birth;
@@ -39,37 +43,37 @@ public class Member implements UserDetails {
     @Column(name="admin_no",unique=true)
     private int adminNo;
 
+    @Enumerated(value= EnumType.STRING)
     @Column(name="authority")
-    private String authority;
+    private Authority authority;
 
+    @Enumerated(value= EnumType.STRING)
     @Column(name="status")
-    private String status;
+    private Status status;
 
+    @Enumerated(value= EnumType.STRING)
     @Column(name="black_status")
-    private String blackStatus;
+    private BlackStatus blackStatus;
 
+    @Enumerated(value= EnumType.STRING)
     @Column(name="level")
-    private String level;
+    private Level level;
 
     @Column(name="user_image")
-    private String userImage;
+    private String UserImage;
 
-
-//    private LocalDate createdAt;
-//
-//    private LocalDate modifiedAt;
 
 
 
 
     public Boolean isAdmin() {
 
-        return authority.equals("ROLE_ADMIN");
+        return authority.name().equals("ROLE_ADMIN");
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton((GrantedAuthority) () -> authority);
+        return Collections.singleton((GrantedAuthority) () -> authority.name());
     }
 
     @Override

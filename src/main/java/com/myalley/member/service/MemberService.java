@@ -1,11 +1,14 @@
 package com.myalley.member.service;
 
+import com.myalley.member.options.Authority;
+import com.myalley.member.options.Status;
 import com.myalley.member.domain.Member;
 import com.myalley.member.dto.MemberRegisterDto;
 import com.myalley.exception.CustomException;
 import com.myalley.exception.MemberExceptionType;
 import com.myalley.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +19,7 @@ import java.util.HashMap;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
+
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -41,8 +45,8 @@ public class MemberService {
                 .nickname(memberRegisterDto.getNickname())
                 .gender(memberRegisterDto.getGender())
                 .birth(memberRegisterDto.getBirth())
-                .authority("ROLE_USER")
-                .status("활동중")
+                .authority(Authority.ROLE_USER)//Authority.ROLE_USER
+                .status(Status.활동중)
                 .build());
 
         HashMap<String,Integer> map=new HashMap<>();
@@ -69,8 +73,8 @@ public class MemberService {
                 .email(memberRegisterDto.getEmail())
                 .password(passwordEncoder.encode(memberRegisterDto.getPassword()))
                 .nickname(memberRegisterDto.getNickname())
-                .authority("ROLE_ADMIN")
-                .status("활동중")
+                .authority(Authority.ROLE_ADMIN)//Authority.ROLE_ADMIN
+                .status(Status.활동중)
                 .adminNo(memberRegisterDto.getAdminNo())
                 .build());
 

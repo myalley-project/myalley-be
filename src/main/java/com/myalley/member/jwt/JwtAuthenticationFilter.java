@@ -1,10 +1,18 @@
 package com.myalley.member.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.myalley.exception.CustomException;
+import com.myalley.exception.MemberExceptionType;
 import com.myalley.member.domain.Member;
+import com.myalley.member.domain.RefreshToken;
 import com.myalley.member.dto.LoginDto;
 import com.myalley.member.repository.MemberRepository;
+import com.myalley.member.repository.TokenRedisRepository;
+import com.myalley.member.service.MemberService;
+import com.myalley.member.service.RefreshService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,12 +27,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
+
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
-
+    private final TokenRedisRepository tokenRedisRepository;
 
 //    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
 //        super(authenticationManager);
@@ -74,13 +85,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         Member member = (Member) authResult.getPrincipal();
         //String token= JwtUtils.createToken(user);
         Map<String,String> token = JwtUtils.createTokenSet(member);
-
+        //refresh토큰redis 저장
+        tokenRedisRepository.save(new RefreshToken(member.getEmail(),token.get("refreshToken")));
         response.setContentType("application/json");
-        //response.setCharacterEncoding("utf-8");
-//        response.setHeader("access_token", token.get("accessToken"));
-//        response.setHeader("refresh_token", token.get("refreshToken"));
 
-       // new ObjectMapper().writeValue(response.getWriter(),token);
+
+       new ObjectMapper().writeValue(response.getWriter(),token);
 
     }
 
@@ -90,8 +100,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             HttpServletResponse response,
             AuthenticationException failed
     ) throws IOException {
-//임시 예외처리
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType("application/json");
 
-        response.sendRedirect("/login");
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("code", HttpStatus.UNAUTHORIZED.value());
+        body.put("error", failed.getMessage());
+
+        new ObjectMapper().writeValue(response.getOutputStream(), body);
     }
 }

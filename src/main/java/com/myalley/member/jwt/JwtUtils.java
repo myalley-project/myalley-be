@@ -1,17 +1,27 @@
 package com.myalley.member.jwt;
 
 import com.myalley.member.domain.Member;
+import com.myalley.member.domain.RefreshToken;
+import com.myalley.member.repository.TokenRedisRepository;
+import com.myalley.member.service.RefreshService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.Jwts;
 
 
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class JwtUtils {
     /**
@@ -20,6 +30,10 @@ public class JwtUtils {
      * @param token 토큰
      * @return email
      */
+//    @Autowired
+   TokenRedisRepository tokenRedisRepository;
+
+
     public static String getEmail(String token) {
         // jwtToken에서 email을 찾습니다.
         return Jwts.parserBuilder()
@@ -42,14 +56,15 @@ public class JwtUtils {
     public static String createToken(Member member) {
         Claims claims = Jwts.claims().setSubject(member.getUsername()); // subject
         Date now = new Date(); // 현재 시간
-        Pair<String, Key> key = JwtKey.getRandomKey();
+       // Pair<String, Key> key = JwtKey.getRandomKey();
         // JWT Token 생성
+
         return Jwts.builder()
                 .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 토큰 발행 시간 정보
                 .setExpiration(new Date(now.getTime()+ JwtProperties.EXPIRATION_TIME )) // 토큰 만료 시간 설정
-                .setHeaderParam(JwsHeader.KEY_ID, key.getFirst()) // kid
-                .signWith(key.getSecond()) // signature
+                .setHeaderParam(JwsHeader.KEY_ID, "JWT") // kid
+                .signWith(Keys.hmacShaKeyFor(JwtSecret.JWT_SECRET_KEY.getBytes()),SignatureAlgorithm.HS256) // signature
                 .compact();
     }
     //refresh,acess모두 생성
@@ -58,22 +73,24 @@ public class JwtUtils {
 
         Claims claims = Jwts.claims().setSubject(member.getUsername()); // subject
         Date now = new Date(); // 현재 시간
-        Pair<String, Key> key = JwtKey.getRandomKey();
+       // Pair<String, Key> key = JwtKey.getRandomKey();
         // JWT Token 생성
         tokens.put("accessToken",Jwts.builder()
                 .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 토큰 발행 시간 정보
                 .setExpiration(new Date(now.getTime()+ JwtProperties.EXPIRATION_TIME )) // 토큰 만료 시간 설정
-                .setHeaderParam(JwsHeader.KEY_ID, key.getFirst()) // kid
-                .signWith(key.getSecond()) // signature
+                .setHeaderParam(JwsHeader.KEY_ID, "JWT") // kid
+                .signWith(Keys.hmacShaKeyFor(JwtSecret.JWT_SECRET_KEY.getBytes()),SignatureAlgorithm.HS256) // signature
                 .compact());
         tokens.put("refreshToken",Jwts.builder()
                 .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 토큰 발행 시간 정보
                 .setExpiration(new Date(now.getTime()+ JwtProperties.REFRESH_EXPIRATION_TIME )) // 토큰 만료 시간 설정
-                .setHeaderParam(JwsHeader.KEY_ID, key.getFirst()) // kid
-                .signWith(key.getSecond()) // signature
+                .setHeaderParam(JwsHeader.KEY_ID, "JWT") // kid
+                .signWith(Keys.hmacShaKeyFor(JwtSecret.JWT_SECRET_KEY.getBytes()),SignatureAlgorithm.HS256) // signature
                 .compact());
+      //  tokenRedisRepository.save(new RefreshToken(member.getEmail(),token.get("refreshToken")));
+
         return tokens;
     }
     //acess 토큰 만료시 refresh access 모두 새로 생성성

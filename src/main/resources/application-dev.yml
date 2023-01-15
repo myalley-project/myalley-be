@@ -1,0 +1,29 @@
+spring:
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: 'true'
+  jpa:
+    database: mysql
+    show-sql: 'true'
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: 'true'
+  redis:
+    host: 127.0.0.1
+    port: '6379'
+  datasource:
+    password: '0104'
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    url: jdbc:mysql://localhost:3306/my_alley?useSSL=false
+server:
+  servlet:
+    session:
+      timeout: 10m
+logging:
+  level:
+    sql: ERROR
+    root: INFO

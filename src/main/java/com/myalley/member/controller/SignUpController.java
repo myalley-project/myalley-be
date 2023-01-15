@@ -3,6 +3,7 @@ package com.myalley.member.controller;
 import com.myalley.member.dto.MemberRegisterDto;
 import com.myalley.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,6 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @RequestMapping("/signup")
 public class SignUpController {
-
     private final MemberService memberService;
 
 
@@ -30,7 +30,6 @@ public class SignUpController {
     public ResponseEntity signup(
            @Valid @RequestBody MemberRegisterDto memberRegisterDto
     ) {
-        System.out.println("Asdad");
         if(memberRegisterDto.getAdminNo()!=null)
              return memberService.signupAdmin(memberRegisterDto);
         else

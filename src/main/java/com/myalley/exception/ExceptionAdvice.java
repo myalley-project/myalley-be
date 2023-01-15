@@ -1,10 +1,12 @@
 package com.myalley.exception;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -62,4 +64,19 @@ public class ExceptionAdvice {//예외처리 responseEntity로 return
         private int errorCode;
         private String errMsg;
     }
+
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Object> handleEnumEx(Exception exception){
+        exception.printStackTrace();
+        ExceptionDto apiException = new ExceptionDto(
+                400,"유효하지 않는 값입니다."
+        );
+        return new ResponseEntity<>(
+                apiException,
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+
 }

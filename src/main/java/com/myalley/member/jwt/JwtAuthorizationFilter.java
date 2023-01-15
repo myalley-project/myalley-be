@@ -1,12 +1,20 @@
 package com.myalley.member.jwt;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.myalley.exception.CustomException;
+import com.myalley.exception.MemberExceptionType;
 import com.myalley.member.domain.Member;
 import com.myalley.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -15,6 +23,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
@@ -37,84 +46,61 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain chain
     ) throws IOException, ServletException {
-
+        String servletPath = request.getServletPath();
         // header 에서 JWT token을 가져옵니다.
         String authorizationHeader = request.getHeader("AUTHORIZATION");
 
-//            token = Arrays.stream(request.getCookies())
-//                    .filter(cookie -> cookie.getName().equals(JwtProperties.COOKIE_NAME)).findFirst()
-//                    .map(Cookie::getValue)
-//                    .orElse(null);
-
-//        if (authorizationHeader == null) {//&& token.startsWith("Bearer ")
-//            //token=token.substring(7);
-//
-//                log.info("JwtAuthorizationFilter : JWT Token이 존재하지 않습니다.");
-//                response.setStatus(SC_BAD_REQUEST);
-//                response.setContentType(APPLICATION_JSON_VALUE);
-//                response.setCharacterEncoding("utf-8");
-//                ErrorResponse errorResponse = new ErrorResponse(400, "JWT Token이 존재하지 않습니다.");
-//                new ObjectMapper().writeValue(response.getWriter(), errorResponse);
-//
-////                Authentication authentication = getUsernamePasswordAuthenticationToken(token);
-////                SecurityContextHolder.getContext().setAuthentication(authentication);
-//
-//            }else{
-        if(authorizationHeader!=null){
             try {
                 // Access Token만 꺼내옴
-                String accessToken = authorizationHeader;
-//                        .substring(TOKEN_HEADER_PREFIX.length());
-
-                Authentication authentication = getEmailPasswordAuthenticationToken(accessToken);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                String accessToken=null;
+                if(authorizationHeader!=null)
+                accessToken = authorizationHeader.substring("Bearer ".length());
 
                 // === Access Token 검증 === //
-//                JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JWT_SECRET)).build();
-//                DecodedJWT decodedJWT = verifier.verify(accessToken);
-//
-//                // === Access Token 내 Claim에서 Authorities 꺼내 Authentication 객체 생성 & SecurityContext에 저장 === //
-//                List<String> strAuthorities = decodedJWT.getClaim("roles").asList(String.class);
-//                List<SimpleGrantedAuthority> authorities = strAuthorities.stream().map(SimpleGrantedAuthority::new).toList();
-//                String username = decodedJWT.getSubject();
-//                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
-//                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JwtSecret.JWT_SECRET_KEY)).build();
+                DecodedJWT decodedJWT = verifier.verify(accessToken);
 
-               // chain.doFilter(request, response);//여기서 문제발생한듯??
-//            } catch (TokenExpiredException e) {
-//                log.info("CustomAuthorizationFilter : Access Token이 만료되었습니다.");
-//                response.setStatus(SC_UNAUTHORIZED);
-//                response.setContentType(APPLICATION_JSON_VALUE);
-//                response.setCharacterEncoding("utf-8");
-//               // ErrorResponse errorResponse = new ErrorResponse(401, "Access Token이 만료되었습니다.");
-//                new ObjectMapper().writeValue(response.getWriter(),"token expired");
+                String username = decodedJWT.getSubject();
+                //여기서 memberrepository에섶 권한찾기?
+                Member mem=memberRepository.findByEmail(username);
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, mem.getAuthorities());//authority
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+                chain.doFilter(request, response);
+            } catch (TokenExpiredException e) {
+                log.info("CustomAuthorizationFilter : Access Token이 만료되었습니다.");
+                response.setStatus(SC_UNAUTHORIZED);
+                response.setContentType(APPLICATION_JSON_VALUE);
+                response.setCharacterEncoding("utf-8");
+                CustomException customException = new CustomException(MemberExceptionType.ACESSTOKEN_EXPIRED);
+                new ObjectMapper().writeValue(response.getWriter(), customException);
+
             } catch (Exception e) {
                 log.info("CustomAuthorizationFilter : JWT 토큰이 잘못되었습니다. message : {}", e.getMessage());
                 response.setStatus(SC_BAD_REQUEST);
                 response.setContentType(APPLICATION_JSON_VALUE);
                 response.setCharacterEncoding("utf-8");
-                    //ErrorResponse errorResponse = new ErrorResponse(400, "잘못된 JWT Token 입니다.");
-                new ObjectMapper().writeValue(response.getWriter(),"wrong token");
+
+                CustomException customException = new CustomException(MemberExceptionType.TOKEN_FORBIDDEN);
+                new ObjectMapper().writeValue(response.getWriter(), customException);
             }
 
         }
-       chain.doFilter(request, response);
-    }
 
-    /**
-     * JWT 토큰으로 User를 찾아서 UsernamePasswordAuthenticationToken를 만들어서 반환한다.
-     * User가 없다면 null
-     */
-    private Authentication getEmailPasswordAuthenticationToken(String token) {
-        String email = JwtUtils.getEmail(token);
-        if (email != null) {
-            Member member = memberRepository.findByEmail(email); // 유저를 유저명으로 찾습니다.
-            return new UsernamePasswordAuthenticationToken(
-                    member, // principal
-                    null,
-                    member.getAuthorities()
-            );
-        }
-        return null; // 유저가 없으면 NULL
-    }
-}
+        /**
+         * JWT 토큰으로 User를 찾아서 UsernamePasswordAuthenticationToken를 만들어서 반환한다.
+         * User가 없다면 null
+         */
+//    private Authentication getEmailPasswordAuthenticationToken(String token) {
+//        String email = JwtUtils.getEmail(token);
+//        if (email != null) {
+//            Member member = memberRepository.findByEmail(email); // 유저를 유저명으로 찾습니다.
+//            return new UsernamePasswordAuthenticationToken(
+//                    member, // principal
+//                    null,
+//                    member.getAuthorities()
+//            );
+//        }
+//        return null; // 유저가 없으면 NULL
+//    }
+    }//}
