@@ -1,6 +1,8 @@
 package com.myalley.member.service;
 
+import com.myalley.member.dto.MemberInfoDto;
 import com.myalley.member.options.Authority;
+import com.myalley.member.options.Level;
 import com.myalley.member.options.Status;
 import com.myalley.member.domain.Member;
 import com.myalley.member.dto.MemberRegisterDto;
@@ -45,6 +47,7 @@ public class MemberService {
                 .nickname(memberRegisterDto.getNickname())
                 .gender(memberRegisterDto.getGender())
                 .birth(memberRegisterDto.getBirth())
+                .level(Level.LEVEL1)
                 .authority(Authority.ROLE_USER)//Authority.ROLE_USER
                 .status(Status.활동중)
                 .build());
@@ -81,6 +84,21 @@ public class MemberService {
         HashMap<String,Integer> map=new HashMap<>();
         map.put("resultCode",200);
         return new ResponseEntity(map,HttpStatus.OK);
+    }
+
+    public MemberInfoDto memberInfo(String email){
+        Member member=memberRepository.findByEmail(email);
+
+        return MemberInfoDto.builder()
+                .userId(member.getMemberId())
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .gender(member.getGender().name())
+                .birth(member.getBirth())
+                .level(member.getLevel().name())
+                .userImage(member.getUserImage())
+                .authority(member.getAuthority().name())
+                .build();
     }
 
     public Member findByEmail(String email) {
