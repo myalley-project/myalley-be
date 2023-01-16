@@ -19,4 +19,12 @@ public class RedisService {
         tokenRedisRepository.save(new RefreshToken(email,refreshToken));
     }
 
+    public void delete(String email){
+
+            tokenRedisRepository.deleteById(email);
+
+
+
+    }
+
 }

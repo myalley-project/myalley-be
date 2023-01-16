@@ -34,9 +34,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // basic authentication
         http.httpBasic().disable(); // basic authentication filter 비활성화
-        // csrf
-        //http.csrf().disable();//csrf(위조된 페이지로 사기치느것) 공격 방어 토큰
-        // remember-me
         http.rememberMe().disable();
 
         http.cors();//.configurationSource(request -> {
@@ -65,7 +62,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 // /와 /home은 모두에게 허용
-                .antMatchers( "/home", "/signup","/refresh","/blogs/**","/exhibitions/**").permitAll()//"/login"
+                .antMatchers( "/home", "/signup","/refresh","/blogs/**","/exhibitions/**","/logout").permitAll()//"/login"
                 // hello 페이지는 USER 롤을 가진 유저에게만 허용
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/api/**").hasAnyRole("USER","ADMIN")
@@ -73,20 +70,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers(HttpMethod.POST, "/notice").hasRole("ADMIN")
 //                .antMatchers(HttpMethod.DELETE, "/notice").hasRole("ADMIN")
                 .anyRequest().authenticated();
-        // login 후 url이동
 
-
-//        http.exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint);
-
-//               .loginPage("/login")
-//               .defaultSuccessUrl("/")//일로이동
-//               .permitAll(); // 모두 허용
         // logout
-        http.logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/")
-                .invalidateHttpSession(true);
-               // .deleteCookies(JwtProperties.COOKIE_NAME);
+//        http.csrf().disable().logout()
+//                .logoutUrl("/logout")
+//                .invalidateHttpSession(true);
+//               // .deleteCookies(JwtProperties.COOKIE_NAME);
     }
 
     @Override
