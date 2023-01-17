@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MateUpdateRequest {
-    private Long mateId;
     private String title;
     private String status;
     private String mateGender;
@@ -27,9 +26,5 @@ public class MateUpdateRequest {
         this.availableDate = availableDate;
         this.content = content;
         this.contact = contact;
-    }
-
-    public void setId(Long id) {
-        this.mateId = id;
     }
 }

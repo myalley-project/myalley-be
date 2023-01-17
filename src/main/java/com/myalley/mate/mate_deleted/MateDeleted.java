@@ -1,9 +1,9 @@
-package com.myalley.mate.domain;
+package com.myalley.mate.mate_deleted;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.myalley.common.domain.BaseTime;
 import com.myalley.exhibition.domain.Exhibition;
-import com.myalley.mate.dto.MateUpdateRequest;
+import com.myalley.exhibition_deleted.domain.ExhibitionDeleted;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Mate extends BaseTime {
+public class MateDeleted extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mate_id")
@@ -46,11 +46,11 @@ public class Mate extends BaseTime {
     @ManyToOne
     @JoinColumn(name = "exhibitionId")
     @JsonBackReference
-    private Exhibition exhibition;
+    private ExhibitionDeleted exhibition;
 
     @Builder
-    public Mate(String title, String status, String mateGender, String mateAge,
-                String availableDate, String content, String contact, Integer viewCount, Exhibition exhibition) {
+    public MateDeleted(String title, String status, String mateGender, String mateAge,
+                String availableDate, String content, String contact, Integer viewCount, ExhibitionDeleted exhibition) {
         this.title = title;
         this.status = status;
         this.mateGender = mateGender;
@@ -61,20 +61,4 @@ public class Mate extends BaseTime {
         this.viewCount = viewCount;
         this.exhibition = exhibition;
     }
-
-    public void updateInfo(Long id, MateUpdateRequest request) {
-        this.id = id;
-        this.title = request.getTitle();
-        this.status = request.getStatus();
-        this.mateGender = request.getMateGender();
-        this.mateAge = request.getMateAge();
-        this.availableDate = request.getAvailableDate();
-        this.content = request.getContent();
-        this.contact = request.getContact();
-    }
-
-    public void updateExhibition(Exhibition exhibition) {
-        this.exhibition = exhibition;
-    }
-
 }
