@@ -26,11 +26,11 @@ public class BlogReviewController {
     //우선 테스트 용으로 pathVariable을 통해 member-id 받아옴
     @PostMapping("{member-id}")
     public ResponseEntity createBlogReview( @PathVariable("member-id") Long memberId,BlogRequestDto blogRequestDto) throws Exception { //@RequestPart("images") MultipartFile[] files,
-        Long createdBlogId = blogReviewService.uploadBlog(blogRequestDto, memberId);
+        BlogReview newBlog = blogReviewService.createBlog(blogRequestDto, memberId);
         HashMap<String,String> map = s3Service.uploadBlogImages(blogRequestDto.getImages());
         if(map.isEmpty())
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        blogImageService.addBlogImages(map, createdBlogId);
+        blogImageService.addBlogImageList(map, newBlog);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -44,10 +44,12 @@ public class BlogReviewController {
     //우선 테스트 용으로 pathVariable을 통해 member-id 받아옴
     @DeleteMapping("/{blog-id}/{member-id}")
     public ResponseEntity deleteBlogReview(@PathVariable("blog-id") Long blogId,@PathVariable("member-id") Long memberId){
-        BlogReview target = blogReviewService.deleteBlogReview(blogId,memberId);
+        //BlogReview target = blogReviewService.deleteBlogReview(blogId,memberId);
+        BlogReview target = blogReviewService.preVerifyBlogReview(blogId,memberId);
         blogReviewDeletedService.addDeletedBlogReview(target);
         List<String> fileNameList = blogImageService.deleteBlogAllImages(blogId);
         s3Service.deleteBlogAllImages(fileNameList);
+        blogReviewService.deleteBlogReview(target);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); //요청을 성공적으로 수행하였지만 Body에 들어가는 내용은 존재하지 않음
     }
 }

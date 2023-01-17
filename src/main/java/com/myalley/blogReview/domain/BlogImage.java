@@ -2,6 +2,7 @@ package com.myalley.blogReview.domain;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,13 +16,20 @@ public class BlogImage {
     @Column(name = "blog_image_id")
     private Long id;
     private String fileName;
-    private Long blogId;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "blog_id")
+    private BlogReview blog;
     private String url;
 
     @Builder
-    public BlogImage(String fileName, Long blogId, String url){
+    public BlogImage(String fileName, String url){
         this.fileName = fileName;
-        this.blogId = blogId;
         this.url = url;
+    }
+
+    public void setBlog(BlogReview blog){
+        //blog.updateImages(this);
+        this.blog=blog;
     }
 }

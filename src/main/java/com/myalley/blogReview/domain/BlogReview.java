@@ -9,6 +9,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -42,6 +44,9 @@ public class BlogReview extends BaseTime {
     @Column(name = "exhibition_id")
     private Long exhibition;
 
+    @OneToMany(mappedBy = "blog")
+    private List<BlogImage> images = new ArrayList<>();
+
     @Builder
     public BlogReview(String title, String content, LocalDate viewDate, TransportationType transportation,
                       RevisitType revisit, CongestionType congestion, Integer viewCount, Integer likeCount,
@@ -71,5 +76,20 @@ public class BlogReview extends BaseTime {
     }
     public void updateLikeCount(){
         this.likeCount++;
+    }
+
+    public void updateImages(BlogImage image){
+        this.images.add(image);
+    }
+
+    public void setImages(List<BlogImage> images){
+        for(BlogImage image : images){
+            image.setBlog(this);
+            this.images.add(image);
+        }
+    }
+    public void setImage(BlogImage image){
+            image.setBlog(this);
+            this.images.add(image);
     }
 }

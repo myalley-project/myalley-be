@@ -1,7 +1,9 @@
 package com.myalley.blogReview.controller;
 
 import com.myalley.blogReview.domain.BlogImage;
+import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview.service.BlogImageService;
+import com.myalley.blogReview.service.BlogReviewService;
 import com.myalley.blogReview.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class BlogImageController {
     private final BlogImageService blogImageService;
+    private final BlogReviewService blogReviewService;
     private final S3Service s3Service;
 
     //블로그 리뷰 내에 이미지 수정이 필요하여 삭제 요청을 보내는 경우 입니다
@@ -32,8 +35,9 @@ public class BlogImageController {
     public ResponseEntity changeBlogReviewImage(@PathVariable("blog-id") Long blogId, MultipartFile file) throws Exception {
         //HashMap<String,String> imageInformationMap = s3Service.uploadBlogImages(files);
         //blogImageService.addBlogImages(imageInformationMap,blogId);
+        BlogReview blogReview = blogReviewService.retrieveBlogReview(blogId);
         String[] information = s3Service.uploadBlogImage(file);
-        blogImageService.addBlogImage(information[0],information[1],blogId);
+        blogImageService.addBlogImage(information[0],information[1],blogReview);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

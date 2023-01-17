@@ -3,6 +3,7 @@ package com.myalley.blogReview.service;
 import com.myalley.blogReview.domain.BlogImage;
 import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview.repository.BlogImageRepository;
+import com.myalley.blogReview.repository.BlogReviewRepository;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -11,25 +12,24 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
 public class BlogImageService {
     private final BlogImageRepository blogImageRepository;
 
-    public void addBlogImages(HashMap<String,String> map,Long blogId){
+    public void addBlogImageList(HashMap<String,String> map, BlogReview blogReview){ //List<BlogImage>
         map.forEach((fileName,S3url)->{
-            addBlogImage(fileName,S3url,blogId);
+            addBlogImage(fileName,S3url,blogReview);
         });
     }
-    public void addBlogImage(String fileName, String S3url, Long blogId){
+    public BlogImage addBlogImage(String fileName, String S3url, BlogReview blogReview){ //원래 void
         BlogImage newImage=BlogImage.builder()
-                .blogId(blogId)
                 .fileName(fileName)
                 .url(S3url)
                 .build();
-        blogImageRepository.save(newImage);
+        blogReview.setImage(newImage);
+        return blogImageRepository.save(newImage);
     }
 
     public void deleteBlogImage(BlogImage image){
@@ -52,6 +52,7 @@ public class BlogImageService {
         });
         return image;
     }
+
     public List<BlogImage> retrieveBlogImages(Long blogId){
         List<BlogImage> images = blogImageRepository.findAllByBlogId(blogId);
         if(images.isEmpty())
