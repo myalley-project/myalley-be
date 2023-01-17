@@ -8,6 +8,7 @@ import com.myalley.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,10 +47,12 @@ public class MemberController {
 
     @GetMapping("api/me")
     ResponseEntity<MemberInfoDto> memberInfo(HttpServletRequest request, HttpServletResponse response) {
-        String authorizationHeader = request.getHeader("AUTHORIZATION");
-        String email = JwtUtils.getEmail(authorizationHeader.substring("Bearer ".length()));
 
-        return new ResponseEntity<MemberInfoDto>(memberService.memberInfo(email), HttpStatus.ACCEPTED);
+
+        Member member = (Member)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+
+        return new ResponseEntity<MemberInfoDto>(memberService.memberInfo(member.getEmail()), HttpStatus.ACCEPTED);
 
     }
 
