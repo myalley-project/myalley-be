@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class MemberInfoDto {
 
-    private Long userId;
+    private Long memberId;
 
     private String email;
 
@@ -25,7 +25,7 @@ public class MemberInfoDto {
 
     private String level;
 
-    private String userImage;
+    private String memberImage;
 
     private String authority;
 

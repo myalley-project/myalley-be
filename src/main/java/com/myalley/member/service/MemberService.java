@@ -90,13 +90,13 @@ public class MemberService {
         Member member=memberRepository.findByEmail(email);
 
         return MemberInfoDto.builder()
-                .userId(member.getMemberId())
+                .memberId(member.getMemberId())
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .gender(member.getGender().name())
                 .birth(member.getBirth())
                 .level(member.getLevel().name())
-                .userImage(member.getUserImage())
+                .memberImage(member.getUserImage())
                 .authority(member.getAuthority().name())
                 .build();
     }
