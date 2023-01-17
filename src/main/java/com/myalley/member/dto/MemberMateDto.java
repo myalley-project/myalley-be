@@ -18,6 +18,6 @@ public class MemberMateDto {
 
     private static MemberMateDto of(Member member){
         return new MemberMateDto(member.getMemberId(),member.getNickname(),
-                member.getUserImage(),member.getGender().getKey(),(member.getBirth().toString()).substring(4));
+                member.getUserImage(),member.getGender().getKey(),(member.getBirth().toString()).substring(0,4));
     }
 }
