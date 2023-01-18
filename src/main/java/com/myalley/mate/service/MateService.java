@@ -2,7 +2,6 @@ package com.myalley.mate.service;
 
 import com.myalley.exception.CustomException;
 import com.myalley.exception.MateExceptionType;
-import com.myalley.exception.MemberExceptionType;
 import com.myalley.exhibition.service.ExhibitionService;
 import com.myalley.mate.domain.Mate;
 import com.myalley.mate.dto.MateDetailResponse;
@@ -14,6 +13,9 @@ import com.myalley.mate.mate_deleted.MateDeletedRepository;
 import com.myalley.mate.repository.MateRepository;
 import com.myalley.member.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,6 +100,9 @@ public class MateService {
         mateRepository.deleteById(id);
     }
 
-    //메이트글 목록조회
-
+    //메이트글 목록조회 (모집여부로 판단)
+     public Page<Mate> readPageAll(String status, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("id").descending());
+        return mateRepository.findAllByStatus(status, pageRequest);
+    }
 }
