@@ -101,6 +101,19 @@ public class MemberService {
                 .build();
     }
 
+    /**
+    *
+    * 사용자 삭제
+    *
+     **/
+    public ResponseEntity delete(Long id) {
+
+        memberRepository.deleteById(id);
+
+        HashMap<String,Integer> map=new HashMap<>();
+        map.put("resultCode",200);
+        return new ResponseEntity(map,HttpStatus.OK);
+    }
     public Member findByEmail(String email) {
         return memberRepository.findByEmail(email);
     }

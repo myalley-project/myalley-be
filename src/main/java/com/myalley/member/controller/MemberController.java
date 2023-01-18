@@ -56,4 +56,11 @@ public class MemberController {
 
     }
 
+    @DeleteMapping("api/me/withdrawals")
+    public ResponseEntity withdrawal(){
+        Member member = (Member)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return memberService.delete(member.getMemberId());
+
+    }
+
 }
