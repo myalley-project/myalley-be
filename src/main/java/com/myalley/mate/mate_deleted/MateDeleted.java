@@ -46,11 +46,11 @@ public class MateDeleted extends BaseTime {
     @ManyToOne
     @JoinColumn(name = "exhibitionId")
     @JsonBackReference
-    private ExhibitionDeleted exhibition;
+    private Exhibition exhibition;
 
     @Builder
     public MateDeleted(String title, String status, String mateGender, String mateAge,
-                String availableDate, String content, String contact, Integer viewCount, ExhibitionDeleted exhibition) {
+                String availableDate, String content, String contact, Integer viewCount, Exhibition exhibition) {
         this.title = title;
         this.status = status;
         this.mateGender = mateGender;

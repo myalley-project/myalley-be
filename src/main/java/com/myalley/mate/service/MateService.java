@@ -8,6 +8,8 @@ import com.myalley.mate.dto.MateDetailResponse;
 import com.myalley.mate.dto.MateRequest;
 import com.myalley.mate.dto.MateSimpleResponse;
 import com.myalley.mate.dto.MateUpdateRequest;
+import com.myalley.mate.mate_deleted.MateDeleted;
+import com.myalley.mate.mate_deleted.MateDeletedRepository;
 import com.myalley.mate.repository.MateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class MateService {
 
     private final MateRepository mateRepository;
     private final ExhibitionService exhibitionService;
+    private final MateDeletedRepository deletedRepository;
 
     //메이트글 등록
     public MateSimpleResponse save(MateRequest request) {
@@ -62,4 +65,25 @@ public class MateService {
                 .map(MateDetailResponse::of)
                 .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
     }
+
+    //메이트글 삭제
+    public void delete(Long id) {
+        Mate mate = mateRepository.findById(id)
+                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+
+        MateDeleted deleted = MateDeleted.builder()
+                .title(mate.getTitle())
+                .status(mate.getStatus())
+                .mateGender(mate.getMateGender())
+                .mateAge(mate.getMateAge())
+                .availableDate(mate.getAvailableDate())
+                .content(mate.getContent())
+                .contact(mate.getContact())
+                .viewCount(mate.getViewCount())
+                .exhibition(exhibitionService.verifyExhibition(mate.getExhibition().getId()))
+                .build();
+        deletedRepository.save(deleted);
+        mateRepository.deleteById(id);
+    }
+
 }

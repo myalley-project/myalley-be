@@ -34,4 +34,10 @@ public class MateController {
         mateService.updateViewCount(id);
         return ResponseEntity.ok(mateService.findDetail(id));
     }
+
+    @DeleteMapping("/api/mates/{id}")
+    public ResponseEntity delete(@PathVariable Long id) {
+        mateService.delete(id);
+        return ResponseEntity.ok("전시회 정보가 삭제되었습니다.");
+    }
 }
