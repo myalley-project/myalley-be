@@ -5,8 +5,6 @@ import com.myalley.exhibition.dto.request.ExhibitionRequest;
 import com.myalley.exhibition.dto.request.ExhibitionUpdateRequest;
 import com.myalley.exhibition.dto.response.ExhibitionBasicResponse;
 import com.myalley.exhibition.dto.response.ExhibitionPageResponse;
-//import com.myalley.exhibition.options.ExhibitionStatus;
-//import com.myalley.exhibition.service.ExhibitionSearchService;
 import com.myalley.exhibition.service.ExhibitionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,7 +22,6 @@ import java.util.List;
 public class ExhibitionController {
 
     private final ExhibitionService exhibitionService;
-//    private final ExhibitionSearchService searchService;
     /**
      * 전시글 등록 요청
      * @param request 전시회 정보를 담은 request json body
@@ -77,32 +74,7 @@ public class ExhibitionController {
         exhibitionService.updateViewCount(id);
         return ResponseEntity.ok(exhibitionService.findInfo(id));
     }
-//
-//    /**
-//     * 전시글 목록 조회 요청
-//     * @author Hwadam
-//     * */
-//    @GetMapping("/exhibitions")
-//    public Page<ExhibitionBasicResponse> getExhibitions(
-//            @RequestParam(name = "status") final ExhibitionStatus status,
-//            final PageInfoDto pageRequest) {
-//        return searchService.search(status, pageRequest.of())
-//                        .map(ExhibitionBasicResponse::new);
-//    }
-//
-//    @GetMapping("/exhibitions")
-//    public ResponseEntity getLists(
-//            @Positive @RequestParam int page,
-//            @Positive @RequestParam int size,
-//            @RequestParam(name = "status") final ExhibitionStatus status) {
-//        Page<Exhibition> paged = searchService.search(status, PageRequest.of(page, size,
-//                Sort.by("id").descending()));
-//        List<Exhibition> exhibitions = paged.getContent();
-//        return new ResponseEntity<>(
-//                new ExhibitionPageResponse<>(mapper.exhibitionsToExhibitionBasicResponses(exhibitions), paged),
-//                HttpStatus.OK);
-//    }
-//
+
 
     //전시회 상태와 유형 같이 검색
     @GetMapping("/exhibitions")
@@ -123,7 +95,6 @@ public class ExhibitionController {
                     new ExhibitionPageResponse<>(exhibitions, pageExhibitions),
                     HttpStatus.OK);
         }
-
 
 
     //전시회 관람여부만 조회

@@ -4,27 +4,19 @@ import com.myalley.exception.CustomException;
 import com.myalley.exception.ExhibitionExceptionType;
 import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.exhibition.dto.request.ExhibitionRequest;
-import com.myalley.exhibition.dto.request.ExhibitionSearchRequest;
 import com.myalley.exhibition.dto.request.ExhibitionUpdateRequest;
 import com.myalley.exhibition.dto.response.ExhibitionBasicResponse;
 import com.myalley.exhibition.dto.response.ExhibitionDetailResponse;
-import com.myalley.exhibition.dto.response.ExhibitionPageResponse;
 import com.myalley.exhibition.exhibitionImage.service.ImageService;
-import com.myalley.exhibition.mapper.ExhibitionMapper;
-import com.myalley.exhibition.options.ExhibitionStatus;
 import com.myalley.exhibition.repository.ExhibitionRepository;
 import com.myalley.exhibition_deleted.domain.ExhibitionDeleted;
 import com.myalley.exhibition_deleted.repository.ExhibitionDeletedRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +25,6 @@ public class ExhibitionService {
     private final ExhibitionRepository exhibitionRepository;
     private final ImageService imageService;
     private final ExhibitionDeletedRepository deletedRepository;
-    private final ExhibitionMapper mapper;
 
     public ExhibitionBasicResponse save(ExhibitionRequest request) {
 
@@ -117,31 +108,6 @@ public class ExhibitionService {
     public void updateViewCount(Long id) {
         exhibitionRepository.updateViewCount(id);
     }
-//    Page<Postscript> findAllByPostscriptStatus(Pageable pageable, Postscript.PostscriptStatus postscriptStatus);
-//
-//    List<Postscript> findAllByMemberAndPostscriptStatus(Member member, Postscript.PostscriptStatus postscriptStatus);
-    //전시글 목록 조회
-//    @Transactional(readOnly = true)
-//    public List<ExhibitionBasicResponse> findAll(Page<Exhibition> ) {
-//        return exhibitionRepository.findAllByStatus(status, pageable)
-//                .stream()
-//                .map(ExhibitionBasicResponse::of)
-//                .collect(Collectors.toList());
-//    }
-
-//    public ExhibitionPageResponse<ExhibitionBasicResponse> findBySearchCondition(final ExhibitionSearchRequest searchRequest,
-//                                                        final Pageable pageable) {
-//        final Page<Exhibition> page = findBySearchConditions(searchRequest, pageable);
-//        final ExhibitionStatus status =
-//
-//        }
-//    }
-//
-//
-//    public Page<Exhibition> findBySearchConditions(final ExhibitionSearchRequest searchRequest,
-//                                                   final Pageable pageable) {
-//
-//    }
 
     //전시회 상태와 유형 같이 검색
     public Page<Exhibition> readPageAllSearch(String status, String type, int page, int size) {
