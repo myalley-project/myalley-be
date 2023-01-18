@@ -2,6 +2,7 @@ package com.myalley.mate.service;
 
 import com.myalley.exception.CustomException;
 import com.myalley.exception.MateExceptionType;
+import com.myalley.exception.MemberExceptionType;
 import com.myalley.exhibition.service.ExhibitionService;
 import com.myalley.mate.domain.Mate;
 import com.myalley.mate.dto.MateDetailResponse;
@@ -11,6 +12,7 @@ import com.myalley.mate.dto.MateUpdateRequest;
 import com.myalley.mate.mate_deleted.MateDeleted;
 import com.myalley.mate.mate_deleted.MateDeletedRepository;
 import com.myalley.mate.repository.MateRepository;
+import com.myalley.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +26,10 @@ public class MateService {
     private final MateRepository mateRepository;
     private final ExhibitionService exhibitionService;
     private final MateDeletedRepository deletedRepository;
+    private final MemberService memberService;
 
     //메이트글 등록
-    public MateSimpleResponse save(MateRequest request) {
+    public MateSimpleResponse save(MateRequest request, Long memberId) {
         Mate newMate = Mate.builder()
                 .title(request.getTitle())
                 .status(request.getStatus())
@@ -37,19 +40,23 @@ public class MateService {
                 .contact(request.getContact())
                 .viewCount(0)
                 .exhibition(exhibitionService.verifyExhibition(request.getExhibitionId()))
+                .member(memberService.verifyMember(memberId))
                 .build();
         return MateSimpleResponse.of(mateRepository.save(newMate));
     }
 
     //메이트글 수정
     @Transactional
-    public MateSimpleResponse update( Long id, MateUpdateRequest request) {
+    public MateSimpleResponse update(Long id, MateUpdateRequest request, Long memberId) {
         Mate findMate = mateRepository.findById(id)
                 .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
 
+        if (!memberId.equals(findMate.getMember().getMemberId())) {
+                throw new CustomException(MateExceptionType.UNAUTHORIZED_ACCESS);
+        }
+
         findMate.updateInfo(id, request);
         findMate.updateExhibition(exhibitionService.verifyExhibition(request.getExhibitionId()));
-
         return MateSimpleResponse.of(findMate);
     }
 
@@ -67,9 +74,13 @@ public class MateService {
     }
 
     //메이트글 삭제
-    public void delete(Long id) {
+    public void delete(Long id, Long memberId) {
         Mate mate = mateRepository.findById(id)
                 .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+
+        if (!memberId.equals(mate.getMember().getMemberId())) {
+            throw new CustomException(MateExceptionType.UNAUTHORIZED_ACCESS);
+        }
 
         MateDeleted deleted = MateDeleted.builder()
                 .title(mate.getTitle())
@@ -81,9 +92,12 @@ public class MateService {
                 .contact(mate.getContact())
                 .viewCount(mate.getViewCount())
                 .exhibition(exhibitionService.verifyExhibition(mate.getExhibition().getId()))
+                .member(memberService.verifyMember(mate.getMember().getMemberId()))
                 .build();
         deletedRepository.save(deleted);
         mateRepository.deleteById(id);
     }
+
+    //메이트글 목록조회
 
 }

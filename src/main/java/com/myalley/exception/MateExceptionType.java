@@ -2,7 +2,8 @@ package com.myalley.exception;
 
 public enum MateExceptionType implements BaseExceptionType{
 
-    MATE_NOT_FOUND(404, "등록된 메이트 모집글 정보가 없습니다.");
+    MATE_NOT_FOUND(404, "등록된 메이트 모집글 정보가 없습니다."),
+    UNAUTHORIZED_ACCESS(403, "해당 게시글의 수정 권한이 없습니다.");
 
     private int errorCode;
     private String errorMsg;

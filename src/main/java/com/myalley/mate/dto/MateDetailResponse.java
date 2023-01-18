@@ -3,6 +3,7 @@ package com.myalley.mate.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.myalley.exhibition.dto.response.ExhibitionResponse;
 import com.myalley.mate.domain.Mate;
+import com.myalley.member.MemberMateDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,13 +29,7 @@ public class MateDetailResponse {
 
     private ExhibitionResponse exhibition;
 
-//private MemberResponse member; //추가 예정
-//아래 항목 담길 예정
-//    private Long memberId;
-//    private String memberNickname;
-//    private String memberProfileImg;
-//    private String memberGender;
-//    private String memberAge;
+    private MemberMateDto member;
 
     public static MateDetailResponse of (Mate mate) {
         return new MateDetailResponse(mate.getId(), mate.getTitle(), mate.getStatus(), mate.getMateGender(),
@@ -42,6 +37,9 @@ public class MateDetailResponse {
                 mate.getViewCount(), mate.getCreatedAt(), new ExhibitionResponse(mate.getExhibition().getId(),
                 mate.getExhibition().getTitle(), mate.getExhibition().getSpace(),
                 mate.getExhibition().getPosterUrl(), mate.getExhibition().getDate().substring(0,10),
-                mate.getExhibition().getDate().substring(11,21), mate.getExhibition().getStatus().getValue()));
+                mate.getExhibition().getDate().substring(11,21), mate.getExhibition().getStatus().getValue()),
+                new MemberMateDto(mate.getMember().getMemberId(), mate.getMember().getNickname(),
+                        mate.getMember().getUserImage(), mate.getMember().getGender().getKey(),
+                        mate.getMember().getBirth().toString().substring(0,4)));
     }
 }

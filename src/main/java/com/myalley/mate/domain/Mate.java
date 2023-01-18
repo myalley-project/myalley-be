@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.myalley.common.domain.BaseTime;
 import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.mate.dto.MateUpdateRequest;
+import com.myalley.member.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -48,9 +49,14 @@ public class Mate extends BaseTime {
     @JsonBackReference
     private Exhibition exhibition;
 
+    @ManyToOne
+    @JoinColumn(name = "memberId")
+    @JsonBackReference
+    private Member member;
+
     @Builder
     public Mate(String title, String status, String mateGender, String mateAge,
-                String availableDate, String content, String contact, Integer viewCount, Exhibition exhibition) {
+                String availableDate, String content, String contact, Integer viewCount, Exhibition exhibition, Member member) {
         this.title = title;
         this.status = status;
         this.mateGender = mateGender;
@@ -60,6 +66,7 @@ public class Mate extends BaseTime {
         this.contact = contact;
         this.viewCount = viewCount;
         this.exhibition = exhibition;
+        this.member = member;
     }
 
     public void updateInfo(Long id, MateUpdateRequest request) {
@@ -76,5 +83,4 @@ public class Mate extends BaseTime {
     public void updateExhibition(Exhibition exhibition) {
         this.exhibition = exhibition;
     }
-
 }

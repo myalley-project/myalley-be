@@ -18,14 +18,17 @@ public class MateController {
 
     @PostMapping("/api/mates")
     public ResponseEntity save(@Valid @RequestBody MateRequest mateRequest) {
-        mateService.save(mateRequest);
+        Long memberId = 1L;
+        mateService.save(mateRequest, memberId);
+
         return ResponseEntity.ok("메이트 모집글 등록이 완료되었습니다.");
     }
 
     @PutMapping("/api/mates/{id}")
     public ResponseEntity update(@PathVariable Long id,
                                  @Valid @RequestBody MateUpdateRequest request) {
-        mateService.update(id, request);
+        Long memberId = 1L;
+        mateService.update(id, request, memberId);
         return ResponseEntity.ok("메이트 모집글 수정이 완료되었습니다.");
     }
 
@@ -37,7 +40,8 @@ public class MateController {
 
     @DeleteMapping("/api/mates/{id}")
     public ResponseEntity delete(@PathVariable Long id) {
-        mateService.delete(id);
+        Long memberId = 1L;
+        mateService.delete(id, memberId);
         return ResponseEntity.ok("전시회 정보가 삭제되었습니다.");
     }
 }
