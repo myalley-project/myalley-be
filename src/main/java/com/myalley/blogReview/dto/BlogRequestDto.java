@@ -15,7 +15,7 @@ public class BlogRequestDto {
     private String title;
     private String content;
     private MultipartFile[] images; //확실하지 않음. 아직 Json으로 받아오는 거 하지 않음. 적용안함
-    private TransportationType transportation;
-    private RevisitType revisit;
-    private CongestionType congestion;
+    private String transportation;
+    private String revisit;
+    private String congestion;
 }

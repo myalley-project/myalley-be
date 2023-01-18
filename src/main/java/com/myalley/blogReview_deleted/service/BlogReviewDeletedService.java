@@ -28,7 +28,7 @@ public class BlogReviewDeletedService {
                 .deletedAt(LocalDateTime.now())
                 .likeCount(target.getLikeCount())
                 .viewCount(target.getViewCount())
-                .member(target.getMember())
+                .member(target.getMember().getId())
                 .exhibition(target.getExhibition())
                 .build();
         repository.save(deletedBlog);

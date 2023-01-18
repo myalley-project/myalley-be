@@ -1,9 +1,9 @@
 package com.myalley.blogReview.domain;
 
 import com.myalley.blogReview.dto.BlogRequestDto;
-import com.myalley.blogReview.option.TransportationType;
-import com.myalley.blogReview.option.RevisitType;
-import com.myalley.blogReview.option.CongestionType;
+import com.myalley.exception.BlogReviewExceptionType;
+import com.myalley.exception.CustomException;
+import com.myalley.member.Member;
 import com.myalley.common.domain.BaseTime;
 import lombok.*;
 
@@ -28,19 +28,14 @@ public class BlogReview extends BaseTime {
     private String content;
     private Integer likeCount;
     private Integer viewCount;
+    private Integer bookmarkCount;
 
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private TransportationType transportation;  //주차공간
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private RevisitType revisit;  //재방문의향
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private CongestionType congestion; //혼잡도
-
-    @Column(name = "member_id")
-    private Long member;
+    private String transportation;
+    private String revisit;
+    private String congestion;
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
     @Column(name = "exhibition_id")
     private Long exhibition;
 
@@ -48,9 +43,9 @@ public class BlogReview extends BaseTime {
     private List<BlogImage> images = new ArrayList<>();
 
     @Builder
-    public BlogReview(String title, String content, LocalDate viewDate, TransportationType transportation,
-                      RevisitType revisit, CongestionType congestion, Integer viewCount, Integer likeCount,
-                      Long member, Long exhibition){
+    public BlogReview(String title, String content, LocalDate viewDate, String transportation,
+                      String revisit, String congestion, Integer viewCount, Integer likeCount,
+                      Integer bookmarkCount, Member member, Long exhibition){ //TransportationType transportation, RevisitType revisit, CongestionType congestion,
         this.title = title;
         this.content = content;
         this.viewDate = viewDate;
@@ -59,6 +54,7 @@ public class BlogReview extends BaseTime {
         this.congestion = congestion;
         this.viewCount = viewCount;
         this.likeCount = likeCount;
+        this.bookmarkCount = bookmarkCount;
         this.member = member;
         this.exhibition = exhibition;
     }
@@ -71,23 +67,24 @@ public class BlogReview extends BaseTime {
         this.revisit = newBlogReview.getRevisit();
         this.transportation = newBlogReview.getTransportation();
     }
+
     public void updateViewCount(){
         this.viewCount++;
     }
-    public void updateLikeCount(){
-        this.likeCount++;
+    public void updateLikeCount(Boolean status){
+        if(status.equals(Boolean.FALSE)) 
+            this.likeCount++;
+        else if(status.equals(Boolean.TRUE))
+            this.likeCount--;
+        else //음.. 나중에 바꾸기
+            throw new CustomException(BlogReviewExceptionType.LIKES_BAD_REQUEST);
     }
+    //public void updateBookmarkCount(){ this.bookmarkCount++; }
 
     public void updateImages(BlogImage image){
         this.images.add(image);
     }
 
-    public void setImages(List<BlogImage> images){
-        for(BlogImage image : images){
-            image.setBlog(this);
-            this.images.add(image);
-        }
-    }
     public void setImage(BlogImage image){
             image.setBlog(this);
             this.images.add(image);

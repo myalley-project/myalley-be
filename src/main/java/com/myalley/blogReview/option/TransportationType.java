@@ -2,6 +2,7 @@ package com.myalley.blogReview.option;
 
 public enum TransportationType {
     Bus("대중교통"),
+    Subway("지하철"),
     Walk("도보"),
     Car("자차");
 

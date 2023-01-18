@@ -25,7 +25,7 @@ public class BlogReviewController {
 
     //우선 테스트 용으로 pathVariable을 통해 member-id 받아옴
     @PostMapping("{member-id}")
-    public ResponseEntity createBlogReview( @PathVariable("member-id") Long memberId,BlogRequestDto blogRequestDto) throws Exception { //@RequestPart("images") MultipartFile[] files,
+    public ResponseEntity createBlogReview(@PathVariable("member-id") Long memberId,BlogRequestDto blogRequestDto) throws Exception { //@RequestPart("images") MultipartFile[] files,
         BlogReview newBlog = blogReviewService.createBlog(blogRequestDto, memberId);
         HashMap<String,String> map = s3Service.uploadBlogImages(blogRequestDto.getImages());
         if(map.isEmpty())

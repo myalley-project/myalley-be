@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/blogs")
 @RequiredArgsConstructor
-public class BlogReadController {
+public class BlogReviewReadController {
     private final BlogReviewService reviewService;
     //1. 상세
     @GetMapping("/{blog-id}")
@@ -22,4 +22,9 @@ public class BlogReadController {
         return new ResponseEntity<>(review,HttpStatus.OK);
     }
     //2. 목록
+    @GetMapping
+    public ResponseEntity readBlogReviews(){
+        //BlogReview review = reviewService.retrieveBlogReview(blogId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

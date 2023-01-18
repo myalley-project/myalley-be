@@ -2,6 +2,8 @@ package com.myalley.blogReview.service;
 
 import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview.dto.BlogRequestDto;
+import com.myalley.member.Member;
+import com.myalley.member.MemberRepository;
 import com.myalley.blogReview.repository.BlogReviewRepository;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
@@ -15,9 +17,15 @@ import java.time.LocalDate;
 public class BlogReviewService {
 
     private final BlogReviewRepository repository;
+    private final MemberRepository mRepository;
 
     public BlogReview createBlog(BlogRequestDto blogRequestDto, Long memberId){
-        duplicateCheckBlogReview(memberId,blogRequestDto.getExhibitionId());
+        //멤버를 id로 받아오는 경우만 해당 됨. 전시회는 id로 받아올 것이기 때문에 전시회 부분도 추가로 해주기!
+        Member writer = mRepository.findById(memberId).orElseThrow(() ->{
+            throw new CustomException(BlogReviewExceptionType.BLOG_BAD_REQUEST);
+        });
+        //중복 허용하기로함 1.18
+        //duplicateCheckBlogReview(memberId,blogRequestDto.getExhibitionId());
         BlogReview newReview = BlogReview.builder()
                 .title(blogRequestDto.getTitle())
                 .content(blogRequestDto.getContent())
@@ -27,8 +35,8 @@ public class BlogReviewService {
                 .congestion(blogRequestDto.getCongestion())
                 .viewCount(0)
                 .likeCount(0)
-                .member(memberId)
-                .exhibition(blogRequestDto.getExhibitionId())
+                .member(writer)
+                .exhibition(blogRequestDto.getExhibitionId()) //여기도 나중엔 객체로 넣어 주어야 합니둥
                 .build();
         return repository.save(newReview);
     }
@@ -55,14 +63,7 @@ public class BlogReviewService {
     public void deleteBlogReview(BlogReview target){
         repository.delete(target);
     }
-/*
-    public BlogReview deleteBlogReview(Long blogId,Long memberId){
-        BlogReview target = verifyRequester(blogId, memberId);
-        repository.delete(target);
-        return target;
-    }
 
- */
     
     //1. 존재하는 글인지 확인
     private BlogReview findBlogReview(Long blogId){
@@ -82,13 +83,4 @@ public class BlogReviewService {
         }
         return review;
     }
-    
-    //3. 리뷰 중복 작성을 막기 위해 memberId와 exhibitionId를 받아 존재하는지 확인
-    private void duplicateCheckBlogReview(Long member, Long exhibition){ //409 : 이미 작성한 경우
-        repository.findByMemberAndExhibition(member, exhibition).ifPresent( e -> {
-            throw new CustomException(BlogReviewExceptionType.BLOG_CONFLICT);
-        });
-    }
-
-
 }
