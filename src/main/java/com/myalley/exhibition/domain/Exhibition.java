@@ -1,6 +1,7 @@
 package com.myalley.exhibition.domain;
 
 import com.myalley.common.domain.BaseTime;
+import com.myalley.exhibition.bookmark.ExhibitionBookmark;
 import com.myalley.exhibition.dto.request.ExhibitionUpdateRequest;
 import com.myalley.exhibition.options.ExhibitionStatus;
 import com.myalley.exhibition.options.ExhibitionType;
@@ -10,6 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -49,6 +52,9 @@ public class Exhibition extends BaseTime {
 //    @Enumerated(value = EnumType.STRING)
     private String type;
 
+    @OneToMany(mappedBy = "exhibition", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<ExhibitionBookmark> bookmarkList = new ArrayList<>();
+
     @Builder
     public Exhibition(String title, Integer adultPrice, String space, String fileName, String posterUrl,
                       String date, String webLink, String content, String author,
@@ -82,5 +88,13 @@ public class Exhibition extends BaseTime {
         this.author = request.getAuthor();
     }
 
+    public void addExhibition(ExhibitionBookmark bookmark) {
+        bookmarkList.add(bookmark);
+    }
+
+    public void deleteFav(ExhibitionBookmark bookmark) {
+        bookmarkList.remove(bookmark);
+        bookmark.delete();
+    }
 }
 
