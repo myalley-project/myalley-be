@@ -62,7 +62,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 // /와 /home은 모두에게 허용
-                .antMatchers( "/home", "/signup","/refresh","/blogs/**","/exhibitions/**","/logout").permitAll()//"/login"
+                .antMatchers( "/home", "/signup","/refresh","/blogs/**","/exhibitions/**","mates/**","/logout").permitAll()//"/login"
                 // hello 페이지는 USER 롤을 가진 유저에게만 허용
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/api/**").hasAnyRole("USER","ADMIN")
@@ -83,7 +83,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         // 정적 리소스 spring security 대상에서 제외 static 폴더아래
 //        web.ignoring().antMatchers("/images/**", "/css/**"); // 아래 코드와 같은 코드입니다.
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-        web.ignoring().antMatchers( "/home", "/signup","/refresh","/blogs/**","/exhibitions/**");
+        web.ignoring().antMatchers(  "/signup","/refresh","/blogs/**","/exhibitions/**","mates/**");
     }
 
     /**

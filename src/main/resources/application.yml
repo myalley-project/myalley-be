@@ -29,4 +29,15 @@ logging:
     sql: ERROR
     root: INFO
 
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET}
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
 
