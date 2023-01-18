@@ -160,4 +160,9 @@ public class ExhibitionService {
 
     }
 
+    //전시글 존재여부 확인
+    public Exhibition verifyExhibition(Long id) {
+        return exhibitionRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
+    }
 }
