@@ -1,9 +1,56 @@
 spring:
-  profiles:
-    active: local
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_URL}:3306/my_alley?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
 
----
+  jpa:
+    #open-in-view: true
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+      #show-sql: true
+  redis:
+    port: ${REDIS_PORT}
+    host: ${REDIS_HOST}
 
-spring:
-  profiles:
-    active: prod
+logging:
+  level:
+    org:
+      springframework:
+        orm:
+          jpa: DEBUG
+
+server:
+  port: 8080
+  servlet:
+    cookie:
+      same-site: None
+      secure: true
+    context-path: /
+    encoding:
+      charset: UTF-8
+      #enabled: true
+      force-response: true
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET}
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+exhibition-path: "poster"
+blog-path: "blog"
+profile-path: "profile"
+
+
