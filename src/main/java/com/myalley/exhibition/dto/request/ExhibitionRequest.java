@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 public class ExhibitionRequest {
 
     private String title;
-    private ExhibitionStatus status;
-    private ExhibitionType type;
+    private String status;
+    private String type;
     private String space;
-    private String adultPrice;
+    private Integer adultPrice;
     private String fileName;
     private String posterUrl;
     private String date;

@@ -1,8 +1,6 @@
 package com.myalley.exhibition_deleted.domain;
 
-import com.myalley.common.domain.BaseTime;
 import com.myalley.exhibition.options.ExhibitionStatus;
-import com.myalley.exhibition.options.ExhibitionType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,7 +23,7 @@ public class ExhibitionDeleted {
 
     @Column(nullable = false)
     private String title;
-    private String adultPrice;
+    private Integer adultPrice;
     @Column(nullable = false)
     private String space;
     private String fileName;
@@ -45,12 +43,11 @@ public class ExhibitionDeleted {
     private Integer viewCount;
 
     @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private ExhibitionStatus status;
+//    @Enumerated(value = EnumType.STRING)
+    private String status;
 
     @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private ExhibitionType type;
+    private String type;
 
     @CreatedDate
     @Column
@@ -61,9 +58,9 @@ public class ExhibitionDeleted {
     private LocalDateTime deletedAt;
 
     @Builder
-    public ExhibitionDeleted(String title, String adultPrice, String space, String fileName, String posterUrl,
+    public ExhibitionDeleted(String title, Integer adultPrice, String space, String fileName, String posterUrl,
                              String date, String webLink, String content, String author,
-                             Integer viewCount, ExhibitionStatus status, ExhibitionType type, LocalDateTime createdAt, LocalDateTime deletedAt) {
+                             Integer viewCount, String status, String type, LocalDateTime createdAt, LocalDateTime deletedAt) {
         this.title = title;
         this.adultPrice = adultPrice;
         this.space = space;

@@ -1,9 +1,12 @@
 package com.myalley.exhibition.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.myalley.exhibition.domain.Exhibition;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -12,8 +15,10 @@ public class ExhibitionDetailResponse {
 
     private Long id;
     private String title;
-    private String adultPrice;
+    private String status;
+    private String type;
     private String space;
+    private Integer adultPrice;
     private String posterUrl;
     private String startDate;
     private String endDate;
@@ -21,14 +26,16 @@ public class ExhibitionDetailResponse {
     private String content;
     private String author;
     private Integer viewCount;
-    private String status;
-    private String type;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDateTime createdAt;
 
     public static ExhibitionDetailResponse of (Exhibition exhibition) {
-        return new ExhibitionDetailResponse(exhibition.getId(), exhibition.getTitle(), exhibition.getAdultPrice(),
-                exhibition.getSpace(), exhibition.getPosterUrl(), exhibition.getDate().substring(0,10),
+        return new ExhibitionDetailResponse(exhibition.getId(), exhibition.getTitle(), exhibition.getStatus(),
+                exhibition.getType(), exhibition.getSpace(), exhibition.getAdultPrice(),
+                 exhibition.getPosterUrl(), exhibition.getDate().substring(0,10),
                 exhibition.getDate().substring(11,21), exhibition.getWebLink(), exhibition.getContent(),
-                exhibition.getAuthor(), exhibition.getViewCount(), exhibition.getStatus().getValue(),
-                exhibition.getType().getValue());
+                exhibition.getAuthor(), exhibition.getViewCount(), exhibition.getCreatedAt());
     }
 }
+

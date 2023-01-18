@@ -1,13 +1,22 @@
 package com.myalley.exhibition.controller;
 
+import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.exhibition.dto.request.ExhibitionRequest;
 import com.myalley.exhibition.dto.request.ExhibitionUpdateRequest;
+import com.myalley.exhibition.dto.response.ExhibitionBasicResponse;
+import com.myalley.exhibition.dto.response.ExhibitionPageResponse;
+//import com.myalley.exhibition.options.ExhibitionStatus;
+//import com.myalley.exhibition.service.ExhibitionSearchService;
 import com.myalley.exhibition.service.ExhibitionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
 @RequestMapping
@@ -15,16 +24,17 @@ import javax.validation.Valid;
 public class ExhibitionController {
 
     private final ExhibitionService exhibitionService;
-
+//    private final ExhibitionSearchService searchService;
     /**
      * 전시글 등록 요청
      * @param request 전시회 정보를 담은 request json body
-     * @return 방금 등록한 전시회 정보의 id,title,시작일,종료일,조회수,이미지url을 전달한다.
+     * @return "전시회 게시글 등록이 완료되었습니다." 메시지를 전달한다.
      * @author Hwadam
      * */
     @PostMapping("/api/exhibitions")
     public ResponseEntity save(@Valid @RequestBody ExhibitionRequest request) {
-        return ResponseEntity.ok(exhibitionService.save(request));
+        exhibitionService.save(request);
+        return ResponseEntity.ok("전시회 게시글 등록이 완료되었습니다.");
     }
 
     /**
@@ -39,7 +49,7 @@ public class ExhibitionController {
     public ResponseEntity update(@PathVariable Long id,
                                  @Valid @RequestBody ExhibitionUpdateRequest updateRequest) {
             exhibitionService.update(updateRequest, id);
-        return ResponseEntity.ok("수정이 완료되었습니다.");
+        return ResponseEntity.ok("전시회 게시글 수정이 완료되었습니다.");
     }
 
     /**
@@ -52,7 +62,7 @@ public class ExhibitionController {
     @DeleteMapping("/api/exhibitions/{id}")
     public ResponseEntity delete(@PathVariable Long id) {
         exhibitionService.delete(id);
-        return ResponseEntity.ok("전시회 정보가 삭제되었습니다.");
+        return ResponseEntity.ok("해당 전시회 게시글이 삭제되었습니다.");
     }
 
     /**
@@ -67,14 +77,73 @@ public class ExhibitionController {
         exhibitionService.updateViewCount(id);
         return ResponseEntity.ok(exhibitionService.findInfo(id));
     }
+//
+//    /**
+//     * 전시글 목록 조회 요청
+//     * @author Hwadam
+//     * */
+//    @GetMapping("/exhibitions")
+//    public Page<ExhibitionBasicResponse> getExhibitions(
+//            @RequestParam(name = "status") final ExhibitionStatus status,
+//            final PageInfoDto pageRequest) {
+//        return searchService.search(status, pageRequest.of())
+//                        .map(ExhibitionBasicResponse::new);
+//    }
+//
+//    @GetMapping("/exhibitions")
+//    public ResponseEntity getLists(
+//            @Positive @RequestParam int page,
+//            @Positive @RequestParam int size,
+//            @RequestParam(name = "status") final ExhibitionStatus status) {
+//        Page<Exhibition> paged = searchService.search(status, PageRequest.of(page, size,
+//                Sort.by("id").descending()));
+//        List<Exhibition> exhibitions = paged.getContent();
+//        return new ResponseEntity<>(
+//                new ExhibitionPageResponse<>(mapper.exhibitionsToExhibitionBasicResponses(exhibitions), paged),
+//                HttpStatus.OK);
+//    }
+//
 
-    /**
-     * 전시글 목록 조회 요청
-     * @author Hwadam
-     * */
+    //전시회 상태와 유형 같이 검색
     @GetMapping("/exhibitions")
-    public ResponseEntity readAllExhibitions() {
+    public ResponseEntity getExhibitions(
+            @Positive @RequestParam int page,
+            @RequestParam(value = "status", required = true) String status,
+            @RequestParam(value = "type", required = true) String type) {
+        int size = 8;
+            Page<Exhibition> pageExhibitions = exhibitionService.readPageAllSearch(status, type, page, size);
+            Page<ExhibitionBasicResponse> responsePage = pageExhibitions
+                    .map(exhibition -> new ExhibitionBasicResponse(
+                            exhibition.getId(), exhibition.getTitle(), exhibition.getSpace(),
+                            exhibition.getPosterUrl(), exhibition.getDate().substring(0,10),
+                            exhibition.getDate().substring(11,21), exhibition.getType(),
+                            exhibition.getStatus(), exhibition.getViewCount()));
+            List<ExhibitionBasicResponse> exhibitions = responsePage.getContent();
+            return new ResponseEntity<>(
+                    new ExhibitionPageResponse<>(exhibitions, pageExhibitions),
+                    HttpStatus.OK);
+        }
 
-        return ResponseEntity.ok("로직 구현 후 수정 예정");
+
+
+    //전시회 관람여부만 조회
+    @GetMapping("/main/exhibitions")
+    public ResponseEntity getExhibitionsAll(
+            @Positive @RequestParam int page,
+            @RequestParam(value = "status", required = true) String status) {
+        int size = 8;
+        Page<Exhibition> pageExhibitions = exhibitionService.readPageAll(status, page, size);
+        Page<ExhibitionBasicResponse> responsePage = pageExhibitions
+                .map(exhibition -> new ExhibitionBasicResponse(
+                        exhibition.getId(), exhibition.getTitle(), exhibition.getSpace(),
+                        exhibition.getPosterUrl(), exhibition.getDate().substring(0,10),
+                        exhibition.getDate().substring(11,21), exhibition.getType(),
+                        exhibition.getStatus(), exhibition.getViewCount()));
+        List<ExhibitionBasicResponse> exhibitions = responsePage.getContent();
+
+        return new ResponseEntity<>(
+                new ExhibitionPageResponse<>(exhibitions, pageExhibitions),
+                HttpStatus.OK);
     }
+
 }

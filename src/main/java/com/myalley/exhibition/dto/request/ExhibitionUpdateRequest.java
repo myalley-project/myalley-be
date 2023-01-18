@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.StringTokenizer;
+
 
 @Getter
 @AllArgsConstructor
@@ -13,10 +15,10 @@ import lombok.NoArgsConstructor;
 public class ExhibitionUpdateRequest {
     private Long exhibitionId;
     private String title;
-    private ExhibitionStatus status;
-    private ExhibitionType type;
+    private String status;
+    private String type;
     private String space;
-    private String adultPrice;
+    private Integer adultPrice;
     private String fileName;
     private String posterUrl;
     private String date;
@@ -24,8 +26,8 @@ public class ExhibitionUpdateRequest {
     private String content;
     private String author;
 
-    public ExhibitionUpdateRequest( String title, ExhibitionStatus status, ExhibitionType type,
-                                    String space, String adultPrice,
+    public ExhibitionUpdateRequest( String title, String status, String type,
+                                    String space, Integer adultPrice,
                                     String fileName, String posterUrl, String date,
                                     String webLink, String content, String author) {
         this.title = title;
