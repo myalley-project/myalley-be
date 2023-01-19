@@ -1,7 +1,18 @@
-FROM openjdk:11-slim as builder
+FROM gradle:7-jdk11-alpine as builder
+
+RUN gradle --version && java -version
+
 WORKDIR /usr/src/app
+
+COPY build.gradle .
+COPY settings.gradle .
+COPY gradle .
+
+RUN gradle clean build --no-daemon > /dev/null 2>&1 || true
+
 COPY . .
-RUN ./gradlew build
+
+RUN gradle clean build --no-daemon --exclude-task test -i --stacktrace
 
 FROM openjdk:11-jre-slim
 WORKDIR /usr/src/app

@@ -1,11 +1,13 @@
-package com.myalley.common.dto;
+package com.myalley.exhibition.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @Getter
-public class pagingDto {
+@AllArgsConstructor
+@NoArgsConstructor
+public class PagingDto {
     private int page;
     private int size;
     private long totalElement;
