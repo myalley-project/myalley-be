@@ -3,6 +3,7 @@ package com.myalley.member.controller;
 import com.myalley.member.domain.Member;
 import com.myalley.member.dto.MemberInfoDto;
 import com.myalley.member.dto.MemberRegisterDto;
+import com.myalley.member.dto.MemberUpdateDto;
 import com.myalley.member.jwt.JwtUtils;
 import com.myalley.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -36,12 +37,12 @@ public class MemberController {
 
     @PutMapping("/api/me")
     public ResponseEntity updateMember(
-            @Valid @RequestBody MemberRegisterDto memberRegisterDto
+            @Valid @RequestBody MemberUpdateDto memberUpdateDto
     ) {
-        if(memberRegisterDto.getAdminNo()!=null)
-            return memberService.signupAdmin(memberRegisterDto);
-        else
-            return memberService.signup(memberRegisterDto);
+        Member member = (Member)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return memberService.update(memberUpdateDto,member);
+
 
     }
 

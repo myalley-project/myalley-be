@@ -9,6 +9,7 @@ import javax.validation.constraints.Pattern;
 
 @Data
 public class LoginDto {
+
     @NotBlank(message="이메일 형식 오류")
     @Email(message="이메일 형식 오류")
     private String email;

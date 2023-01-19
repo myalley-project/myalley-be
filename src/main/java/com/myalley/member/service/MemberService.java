@@ -1,6 +1,7 @@
 package com.myalley.member.service;
 
 import com.myalley.member.dto.MemberInfoDto;
+import com.myalley.member.dto.MemberUpdateDto;
 import com.myalley.member.options.Authority;
 import com.myalley.member.options.Level;
 import com.myalley.member.options.Status;
@@ -27,13 +28,6 @@ public class MemberService {
 
 
 
-    /**
-     * 유저 등록
-     *
-     * @param email email
-     * @param password password
-     * @return 유저 권한을 가지고 있는 유저
-     */
     public ResponseEntity signup(MemberRegisterDto memberRegisterDto) {
         if (memberRepository.findByEmail(memberRegisterDto.getEmail()) != null) {
             throw new CustomException(MemberExceptionType.ALREADY_EXIST_USERNAME);
@@ -57,13 +51,7 @@ public class MemberService {
         return new ResponseEntity(map,HttpStatus.OK);
     }
 
-    /**
-     * 관리자 등록
-     *
-     * @param username username
-     * @param password password
-     * @return 관리자 권한을 가지고 있는 유저
-     */
+
     public ResponseEntity signupAdmin(MemberRegisterDto memberRegisterDto)
     {
         if (memberRepository.findByEmail(memberRegisterDto.getEmail()) != null) {
@@ -101,11 +89,15 @@ public class MemberService {
                 .build();
     }
 
-    /**
-    *
-    * 사용자 삭제
-    *
-     **/
+    public ResponseEntity update(MemberUpdateDto memberUpdateDto,Member member){
+
+
+        HashMap<String,Integer> map=new HashMap<>();
+        map.put("resultCode",200);
+        return new ResponseEntity(map,HttpStatus.OK);
+    }
+
+
     public ResponseEntity delete(Long id) {
 
         memberRepository.deleteById(id);

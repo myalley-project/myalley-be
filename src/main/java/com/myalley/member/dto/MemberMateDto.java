@@ -10,9 +10,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MemberMateDto {
     private Long memberId;
+
     private String memberNickName;
+
     private String memberProfileImg;
+
     private String memberGender;
+
     private String memberAge;
 
 

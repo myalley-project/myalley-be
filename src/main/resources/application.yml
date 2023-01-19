@@ -1,33 +1,41 @@
 spring:
-  mvc:
-    hiddenmethod:
-      filter:
-        enabled: 'true'
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_URL}:3306/my_alley?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+
   jpa:
-    database: mysql
-    show-sql: 'true'
+    #open-in-view: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
+    show-sql: true
     properties:
       hibernate:
-        format_sql: 'true'
+        format_sql: true
+      #show-sql: true
   redis:
-    host: 127.0.0.1
-    port: '6379'
-  datasource:
-    url: jdbc:mysql://localhost:3306/my_alley?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    password: '0104'
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
+    port: ${REDIS_PORT}
+    host: ${REDIS_HOST}
 
-server:
-  servlet:
-    session:
-      timeout: 10m
 logging:
   level:
-    sql: ERROR
-    root: INFO
+    org:
+      springframework:
+        orm:
+          jpa: DEBUG
+
+server:
+  port: 8080
+  servlet:
+    cookie:
+      same-site: None
+      secure: true
+    context-path: /
+    encoding:
+      charset: UTF-8
+      #enabled: true
+      force-response: true
 
 cloud:
   aws:
@@ -40,4 +48,8 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false
+
+exhibition-path: "poster"
+blog-path: "blog"
+profile-path: "profile"
 
