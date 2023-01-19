@@ -6,8 +6,8 @@ import com.myalley.blogReview.repository.BlogReviewRepository;
 import com.myalley.blogReview.repository.LikesRepository;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
-import com.myalley.user.Member;
-import com.myalley.user.MemberRepository;
+import com.myalley.member.domain.Member;
+import com.myalley.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +21,7 @@ public class LikesService {
     public void findLikes(Long memberId, Long blogId){
         Member member = memberRepository.findById(memberId).get();
         BlogReview blog = blogReviewRepository.findById(blogId).get();
-        if(blog.getMember().getId()==memberId)
+        if(blog.getMember().getMemberId()==memberId)
             throw new CustomException(BlogReviewExceptionType.LIKES_BAD_REQUEST);
         Likes like = likesRepository.findByMemberAndBlog(member,blog).orElseGet(() -> new Likes(member,blog));
         changeLike(like);

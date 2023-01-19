@@ -2,8 +2,8 @@ package com.myalley.blogReview.service;
 
 import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview.dto.BlogRequestDto;
-import com.myalley.user.Member;
-import com.myalley.user.MemberRepository;
+import com.myalley.member.domain.Member;
+import com.myalley.member.repository.MemberRepository;
 import com.myalley.blogReview.repository.BlogReviewRepository;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;

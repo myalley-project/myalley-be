@@ -3,7 +3,7 @@ package com.myalley.blogReview.domain;
 import com.myalley.blogReview.dto.BlogRequestDto;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
-import com.myalley.user.Member;
+import com.myalley.member.domain.Member;
 import com.myalley.common.domain.BaseTime;
 import lombok.*;
 

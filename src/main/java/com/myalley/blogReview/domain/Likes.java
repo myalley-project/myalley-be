@@ -2,7 +2,7 @@ package com.myalley.blogReview.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myalley.common.domain.BaseTime;
-import com.myalley.user.Member;
+import com.myalley.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
