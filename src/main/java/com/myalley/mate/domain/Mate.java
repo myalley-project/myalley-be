@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.myalley.common.domain.BaseTime;
 import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.mate.dto.MateUpdateRequest;
-import com.myalley.member.Member;
+import com.myalley.user.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

@@ -6,8 +6,8 @@ import com.myalley.blogReview.repository.BlogReviewRepository;
 import com.myalley.blogReview.repository.LikesRepository;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
-import com.myalley.member.Member;
-import com.myalley.member.MemberRepository;
+import com.myalley.user.Member;
+import com.myalley.user.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
