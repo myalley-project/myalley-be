@@ -14,13 +14,11 @@ public class ExhibitionResponse {
     private String exhibitionTitle;
     private String exhibitionSpace;
     private String posterUrl;
-    private String exhibitionStartDate;
-    private String exhibitionEndDate;
+    private String duration;
     private String status;
 
     public static ExhibitionResponse of(Exhibition exhibition) {
         return new ExhibitionResponse(exhibition.getId(), exhibition.getTitle(), exhibition.getSpace(),
-                exhibition.getPosterUrl(), exhibition.getDate().substring(0,10),
-                exhibition.getDate().substring(11,21), exhibition.getStatus());
+                exhibition.getPosterUrl(), exhibition.getDuration(), exhibition.getStatus());
     }
 }

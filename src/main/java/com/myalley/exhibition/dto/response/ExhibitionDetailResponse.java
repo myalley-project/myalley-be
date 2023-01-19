@@ -20,8 +20,7 @@ public class ExhibitionDetailResponse {
     private String space;
     private Integer adultPrice;
     private String posterUrl;
-    private String startDate;
-    private String endDate;
+    private String duration;
     private String webLink;
     private String content;
     private String author;
@@ -33,9 +32,8 @@ public class ExhibitionDetailResponse {
     public static ExhibitionDetailResponse of (Exhibition exhibition) {
         return new ExhibitionDetailResponse(exhibition.getId(), exhibition.getTitle(), exhibition.getStatus(),
                 exhibition.getType(), exhibition.getSpace(), exhibition.getAdultPrice(),
-                 exhibition.getPosterUrl(), exhibition.getDate().substring(0,10),
-                exhibition.getDate().substring(11,21), exhibition.getWebLink(), exhibition.getContent(),
-                exhibition.getAuthor(), exhibition.getViewCount(), exhibition.getCreatedAt());
+                 exhibition.getPosterUrl(), exhibition.getDuration(), exhibition.getWebLink(),
+                exhibition.getContent(), exhibition.getAuthor(), exhibition.getViewCount(), exhibition.getCreatedAt());
     }
 }
 

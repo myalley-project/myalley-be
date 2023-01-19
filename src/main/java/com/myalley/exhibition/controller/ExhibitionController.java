@@ -69,7 +69,7 @@ public class ExhibitionController {
      *         만약 파라미터로 보낸 id에 해당하는 게시글이 존재하지 않는다면 게시글이 존재하지 않는다는 Exception 메시지와 코드를 리턴한다.
      * @author Hwadam
      * */
-    @GetMapping("/api/exhibitions/{id}")
+    @GetMapping("/exhibitions/{id}")
     public ResponseEntity read(@PathVariable Long id) {
         exhibitionService.updateViewCount(id);
         return ResponseEntity.ok(exhibitionService.findInfo(id));
@@ -81,15 +81,14 @@ public class ExhibitionController {
     public ResponseEntity getExhibitions(
             @Positive @RequestParam int page,
             @RequestParam(value = "status", required = true) String status,
-            @RequestParam(value = "type", required = true) String type) {
+            @RequestParam(value = "type", required = false) String type) {
         int size = 8;
             Page<Exhibition> pageExhibitions = exhibitionService.readPageAllSearch(status, type, page, size);
             Page<ExhibitionBasicResponse> responsePage = pageExhibitions
                     .map(exhibition -> new ExhibitionBasicResponse(
                             exhibition.getId(), exhibition.getTitle(), exhibition.getSpace(),
-                            exhibition.getPosterUrl(), exhibition.getDate().substring(0,10),
-                            exhibition.getDate().substring(11,21), exhibition.getType(),
-                            exhibition.getStatus(), exhibition.getViewCount()));
+                            exhibition.getPosterUrl(), exhibition.getDuration(),
+                            exhibition.getType(), exhibition.getStatus(), exhibition.getViewCount()));
             List<ExhibitionBasicResponse> exhibitions = responsePage.getContent();
             return new ResponseEntity<>(
                     new ExhibitionPageResponse<>(exhibitions, pageExhibitions),
@@ -107,8 +106,7 @@ public class ExhibitionController {
         Page<ExhibitionBasicResponse> responsePage = pageExhibitions
                 .map(exhibition -> new ExhibitionBasicResponse(
                         exhibition.getId(), exhibition.getTitle(), exhibition.getSpace(),
-                        exhibition.getPosterUrl(), exhibition.getDate().substring(0,10),
-                        exhibition.getDate().substring(11,21), exhibition.getType(),
+                        exhibition.getPosterUrl(), exhibition.getDuration(), exhibition.getType(),
                         exhibition.getStatus(), exhibition.getViewCount()));
         List<ExhibitionBasicResponse> exhibitions = responsePage.getContent();
 

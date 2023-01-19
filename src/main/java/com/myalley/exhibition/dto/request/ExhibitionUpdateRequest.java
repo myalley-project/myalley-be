@@ -1,12 +1,8 @@
 package com.myalley.exhibition.dto.request;
 
-import com.myalley.exhibition.options.ExhibitionStatus;
-import com.myalley.exhibition.options.ExhibitionType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.StringTokenizer;
 
 
 @Getter
@@ -21,14 +17,14 @@ public class ExhibitionUpdateRequest {
     private Integer adultPrice;
     private String fileName;
     private String posterUrl;
-    private String date;
+    private String duration;
     private String webLink;
     private String content;
     private String author;
 
     public ExhibitionUpdateRequest( String title, String status, String type,
                                     String space, Integer adultPrice,
-                                    String fileName, String posterUrl, String date,
+                                    String fileName, String posterUrl, String duration,
                                     String webLink, String content, String author) {
         this.title = title;
         this.status = status;
@@ -37,7 +33,7 @@ public class ExhibitionUpdateRequest {
         this.adultPrice = adultPrice;
         this.fileName = fileName;
         this.posterUrl = posterUrl;
-        this.date = date;
+        this.duration = duration;
         this.webLink = webLink;
         this.content = content;
         this.author = author;

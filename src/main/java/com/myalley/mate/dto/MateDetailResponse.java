@@ -36,8 +36,7 @@ public class MateDetailResponse {
                 mate.getMateAge(), mate.getAvailableDate(), mate.getContent(), mate.getContact(),
                 mate.getViewCount(), mate.getCreatedAt(), new ExhibitionResponse(mate.getExhibition().getId(),
                 mate.getExhibition().getTitle(), mate.getExhibition().getSpace(),
-                mate.getExhibition().getPosterUrl(), mate.getExhibition().getDate().substring(0,10),
-                mate.getExhibition().getDate().substring(11,21), mate.getExhibition().getStatus()),
+                mate.getExhibition().getPosterUrl(), mate.getExhibition().getDuration(), mate.getExhibition().getStatus()),
                 new MemberMateDto(mate.getMember().getMemberId(), mate.getMember().getNickname(),
                         mate.getMember().getUserImage(), mate.getMember().getGender().getKey(),
                         mate.getMember().getBirth().toString().substring(0,4)));
