@@ -32,9 +32,10 @@ public class ExhibitionDeleted {
     private String posterUrl;
 
     @Column(nullable = false)
-    private String date;
+    private String duration;
     private String webLink;
 
+    @Lob
     @Column(nullable = false)
     private String content;
 
@@ -43,7 +44,6 @@ public class ExhibitionDeleted {
     private Integer viewCount;
 
     @Column(nullable = false)
-//    @Enumerated(value = EnumType.STRING)
     private String status;
 
     @Column(nullable = false)
@@ -59,14 +59,14 @@ public class ExhibitionDeleted {
 
     @Builder
     public ExhibitionDeleted(String title, Integer adultPrice, String space, String fileName, String posterUrl,
-                             String date, String webLink, String content, String author,
+                             String duration, String webLink, String content, String author,
                              Integer viewCount, String status, String type, LocalDateTime createdAt, LocalDateTime deletedAt) {
         this.title = title;
         this.adultPrice = adultPrice;
         this.space = space;
         this.fileName = fileName;
         this.posterUrl = posterUrl;
-        this.date = date;
+        this.duration = duration;
         this.webLink = webLink;
         this.content = content;
         this.author = author;
