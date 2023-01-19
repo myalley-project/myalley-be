@@ -1,7 +1,5 @@
 package com.myalley.member.options;
 
-import com.myalley.EnumMapperType;
-
 public enum Authority implements EnumMapperType {
 
     ROLE_USER("ROLE_USER"),
