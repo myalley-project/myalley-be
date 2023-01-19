@@ -9,4 +9,9 @@ Dockerfile
 *.sh
 *.yml
 scripts
-task-definition.json
+.gradle/
+bin/
+build/
+docker-compose.yml
+ecr-lifecycle-policy.json
+.env*
