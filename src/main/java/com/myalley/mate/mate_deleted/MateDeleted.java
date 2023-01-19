@@ -37,6 +37,7 @@ public class MateDeleted extends BaseTime {
     private String availableDate;
 
     @Column(nullable = false)
+    @Lob
     private String content;
 
     private String contact;
