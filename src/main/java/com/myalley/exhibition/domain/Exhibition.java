@@ -46,7 +46,7 @@ public class Exhibition extends BaseTime {
     @Column(nullable = false)
     private String type;
 
-
+    private String test;
     @Builder
     public Exhibition(String title, Integer adultPrice, String space, String fileName, String posterUrl,
                       String duration, String webLink, String content, String author,
