@@ -10,4 +10,5 @@ public class pagingDto {
     private int size;
     private long totalElement;
     private int totalPage;
+
 }
