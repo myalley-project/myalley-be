@@ -1,8 +1,6 @@
 package com.myalley.exhibition.dto.response;
 
 import com.myalley.exhibition.domain.Exhibition;
-import com.myalley.exhibition.options.ExhibitionStatus;
-import com.myalley.exhibition.options.ExhibitionType;
 import lombok.*;
 
 @Getter
@@ -15,8 +13,7 @@ public class ExhibitionBasicResponse {
     private String title;
     private String space;
     private String posterUrl;
-    private String startDate;
-    private String endDate;
+    private String duration;
     private String type;
     private String status;
     private Integer viewCount;
@@ -27,8 +24,7 @@ public class ExhibitionBasicResponse {
         this.title = exhibition.getTitle();
         this.space = exhibition.getSpace();
         this.posterUrl = exhibition.getPosterUrl();
-        this.startDate = exhibition.getDate().substring(0,10);
-        this.endDate = exhibition.getDate().substring(11,21);
+        this.duration = exhibition.getDuration();
         this.type = exhibition.getType();
         this.status = exhibition.getStatus();
         this.viewCount = exhibition.getViewCount();
@@ -37,8 +33,7 @@ public class ExhibitionBasicResponse {
 
     public static ExhibitionBasicResponse of(final Exhibition exhibition) {
         return new ExhibitionBasicResponse(exhibition.getId(), exhibition.getTitle(), exhibition.getSpace(),
-                exhibition.getPosterUrl(), exhibition.getDate().substring(0,10),
-                exhibition.getDate().substring(11,21), exhibition.getType(),
+                exhibition.getPosterUrl(), exhibition.getDuration(), exhibition.getType(),
                 exhibition.getStatus(), exhibition.getViewCount());
     }
 }

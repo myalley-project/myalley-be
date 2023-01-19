@@ -1,7 +1,5 @@
 package com.myalley.exhibition.dto.request;
 
-import com.myalley.exhibition.options.ExhibitionStatus;
-import com.myalley.exhibition.options.ExhibitionType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +17,7 @@ public class ExhibitionRequest {
     private Integer adultPrice;
     private String fileName;
     private String posterUrl;
-    private String date;
+    private String duration;
     private String webLink;
     private String content;
     private String author;
