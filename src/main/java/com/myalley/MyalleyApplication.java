@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableJpaAuditing
-@SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
+@SpringBootApplication//(exclude={DataSourceAutoConfiguration.class})
 public class MyalleyApplication {
 
 	static {System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true"); }
