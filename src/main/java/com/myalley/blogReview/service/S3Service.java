@@ -22,7 +22,7 @@ public class S3Service {
     //1. 이미지 업로드
     @Value("${cloud.aws.s3.bucket}")
     private String S3Bucket; // Bucket 이름
-    @Value("${cloud.aws.s3.dir}")
+    @Value("${blog-path}")
     private String imageDir; // 저장할 폴더 이름
 
     private final AmazonS3Client amazonS3Client;

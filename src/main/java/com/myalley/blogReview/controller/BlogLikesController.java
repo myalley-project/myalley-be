@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/likes")
 @RequiredArgsConstructor
-public class LikesController {
+public class BlogLikesController {
     private final LikesService likesService;
 
     //클릭 했을 때

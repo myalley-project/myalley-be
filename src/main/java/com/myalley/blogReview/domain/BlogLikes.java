@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Likes extends BaseTime {
+public class BlogLikes extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "like_id")
@@ -29,7 +29,7 @@ public class Likes extends BaseTime {
     private Boolean isDeleted=Boolean.TRUE;
 
     @Builder
-    public Likes(TestMember testMember, BlogReview blog){
+    public BlogLikes(TestMember testMember, BlogReview blog){
         this.testMember = testMember;
         this.blog=blog;
     }
