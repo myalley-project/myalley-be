@@ -1,5 +1,7 @@
 package com.myalley.member.options;
 
+import com.myalley.common.option.EnumMapperType;
+
 public enum Level implements EnumMapperType {
     LEVEL1("level1"),
     LEVEL2("level2"),

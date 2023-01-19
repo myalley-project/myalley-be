@@ -1,5 +1,7 @@
 package com.myalley.member.options;
 
+import com.myalley.common.option.EnumMapperType;
+
 public enum BlackStatus implements EnumMapperType {
     BLACK("black"),
     NORMAL("normal");
