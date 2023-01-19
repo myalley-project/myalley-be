@@ -84,7 +84,7 @@ public class ExhibitionService {
                 .adultPrice(exhibition.getAdultPrice())
                 .fileName("")
                 .posterUrl("")
-                .date(exhibition.getDuration())
+                .duration(exhibition.getDuration())
                 .webLink(exhibition.getWebLink())
                 .content(exhibition.getContent())
                 .author(exhibition.getAuthor())
