@@ -1,5 +1,6 @@
 package com.myalley.member.service;
 
+import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.member.dto.MemberInfoDto;
 import com.myalley.member.dto.MemberUpdateDto;
 import com.myalley.member.options.Authority;
@@ -108,5 +109,11 @@ public class MemberService {
     }
     public Member findByEmail(String email) {
         return memberRepository.findByEmail(email);
+    }
+
+    public Member verifyMember(Long memberId) {
+        return  memberRepository.findById(memberId).orElseThrow(() ->{
+            throw new CustomException(MemberExceptionType.NOT_FOUND_MEMBER);
+        });
     }
 }
