@@ -3,7 +3,7 @@ package com.myalley.blogReview.domain;
 import com.myalley.blogReview.dto.BlogRequestDto;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
-import com.myalley.member.domain.Member;
+import com.myalley.test_user.TestMember;
 import com.myalley.common.domain.BaseTime;
 import lombok.*;
 
@@ -26,16 +26,16 @@ public class BlogReview extends BaseTime {
     private String title;
     @Column(nullable = false)
     private String content;
-    private Integer likeCount;
-    private Integer viewCount;
-    private Integer bookmarkCount;
+    private Integer likeCount = 0;
+    private Integer viewCount = 0;
+    private Integer bookmarkCount = 0;
 
     private String transportation;
     private String revisit;
     private String congestion;
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member member;
+    private TestMember testMember;
     @Column(name = "exhibition_id")
     private Long exhibition;
 
@@ -44,18 +44,15 @@ public class BlogReview extends BaseTime {
 
     @Builder
     public BlogReview(String title, String content, LocalDate viewDate, String transportation,
-                      String revisit, String congestion, Integer viewCount, Integer likeCount,
-                      Integer bookmarkCount, Member member, Long exhibition){ //TransportationType transportation, RevisitType revisit, CongestionType congestion,
+                      String revisit, String congestion, TestMember testMember, Long exhibition){
+        //TransportationType transportation, RevisitType revisit, CongestionType congestion,
         this.title = title;
         this.content = content;
         this.viewDate = viewDate;
         this.transportation = transportation;
         this.revisit = revisit;
         this.congestion = congestion;
-        this.viewCount = viewCount;
-        this.likeCount = likeCount;
-        this.bookmarkCount = bookmarkCount;
-        this.member = member;
+        this.testMember = testMember;
         this.exhibition = exhibition;
     }
 

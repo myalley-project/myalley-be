@@ -2,8 +2,9 @@ package com.myalley.blogReview.service;
 
 import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview.dto.BlogRequestDto;
-import com.myalley.member.domain.Member;
-import com.myalley.member.repository.MemberRepository;
+import com.myalley.test_user.TestMember;
+import com.myalley.test_user.TestMemberRepository;
+
 import com.myalley.blogReview.repository.BlogReviewRepository;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
@@ -17,11 +18,11 @@ import java.time.LocalDate;
 public class BlogReviewService {
 
     private final BlogReviewRepository repository;
-    private final MemberRepository mRepository;
+    private final TestMemberRepository mRepository;
 
     public BlogReview createBlog(BlogRequestDto blogRequestDto, Long memberId){
         //멤버를 id로 받아오는 경우만 해당 됨. 전시회는 id로 받아올 것이기 때문에 전시회 부분도 추가로 해주기!
-        Member writer = mRepository.findById(memberId).orElseThrow(() ->{
+        TestMember writer = mRepository.findById(memberId).orElseThrow(() ->{
             throw new CustomException(BlogReviewExceptionType.BLOG_BAD_REQUEST);
         });
         //중복 허용하기로함 1.18
@@ -33,9 +34,7 @@ public class BlogReviewService {
                 .transportation(blogRequestDto.getTransportation())
                 .revisit(blogRequestDto.getRevisit())
                 .congestion(blogRequestDto.getCongestion())
-                .viewCount(0)
-                .likeCount(0)
-                .member(writer)
+                .testMember(writer)
                 .exhibition(blogRequestDto.getExhibitionId()) //여기도 나중엔 객체로 넣어 주어야 합니둥
                 .build();
         return repository.save(newReview);
@@ -78,7 +77,7 @@ public class BlogReviewService {
         BlogReview review = repository.findById(blogId).orElseThrow(() -> { //404 : 블로그 글이 조회 되지 않는 경우
            throw new CustomException(BlogReviewExceptionType.BLOG_NOT_FOUND);
         });
-        if(!review.getMember().equals(memberId)){ //403 : 권한이 없는 글에 접근하는 경우
+        if(!review.getTestMember().getId().equals(memberId)){ //403 : 권한이 없는 글에 접근하는 경우
             throw new CustomException(BlogReviewExceptionType.BLOG_FORBIDDEN);
         }
         return review;

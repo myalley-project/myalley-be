@@ -1,6 +1,7 @@
 package com.myalley.blogReview.controller;
 
 import com.myalley.blogReview.domain.BlogReview;
+import com.myalley.blogReview.mapper.BlogReviewMapper;
 import com.myalley.blogReview.service.BlogReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class BlogReviewReadController {
     @GetMapping("/{blog-id}")
     public ResponseEntity readBlogReviewDetail(@PathVariable("blog-id") Long blogId){
         BlogReview review = reviewService.retrieveBlogReview(blogId);
-        return new ResponseEntity<>(review,HttpStatus.OK);
+        return new ResponseEntity<>(BlogReviewMapper.INSTANCE.blogToDetailBlogDto(review),HttpStatus.OK);
     }
     //2. 목록
     @GetMapping

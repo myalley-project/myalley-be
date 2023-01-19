@@ -1,8 +1,5 @@
 package com.myalley.blogReview_deleted.domain;
 
-import com.myalley.blogReview.option.CongestionType;
-import com.myalley.blogReview.option.RevisitType;
-import com.myalley.blogReview.option.TransportationType;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
@@ -39,8 +36,9 @@ public class BlogReviewDeleted {
 
     @Builder
     public BlogReviewDeleted(String title, String content, LocalDate viewDate, String transportation,
-                             String revisit, String congestion, Integer viewCount, Integer likeCount,
-                             LocalDateTime createdAt, LocalDateTime deletedAt, Long member, Long exhibition){
+                      String revisit, String congestion, Integer viewCount, Integer likeCount,
+                      LocalDateTime createdAt, LocalDateTime deletedAt, Long member, Long exhibition){
+
         this.title = title;
         this.content = content;
         this.viewDate = viewDate;

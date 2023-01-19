@@ -2,13 +2,15 @@ package com.myalley.blogReview.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public class BlogResponseDto {
 
-    @Data
+    @Setter
     @NoArgsConstructor
     public static class SimpleBlogDto{
         private Long id;

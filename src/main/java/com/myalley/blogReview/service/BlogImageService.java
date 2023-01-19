@@ -3,7 +3,6 @@ package com.myalley.blogReview.service;
 import com.myalley.blogReview.domain.BlogImage;
 import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview.repository.BlogImageRepository;
-import com.myalley.blogReview.repository.BlogReviewRepository;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
 import lombok.RequiredArgsConstructor;
