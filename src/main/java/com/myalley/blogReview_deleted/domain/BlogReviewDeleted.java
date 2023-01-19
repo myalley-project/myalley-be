@@ -28,15 +28,9 @@ public class BlogReviewDeleted {
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
 
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private TransportationType transportation;
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private RevisitType revisit;
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private CongestionType congestion;
+    private String transportation;
+    private String revisit;
+    private String congestion;
 
     @Column(name = "member_id")
     private Long member;
@@ -44,9 +38,9 @@ public class BlogReviewDeleted {
     private Long exhibition;
 
     @Builder
-    public BlogReviewDeleted(String title, String content, LocalDate viewDate, TransportationType transportation,
-                      RevisitType revisit, CongestionType congestion, Integer viewCount, Integer likeCount,
-                      LocalDateTime createdAt, LocalDateTime deletedAt, Long member, Long exhibition){
+    public BlogReviewDeleted(String title, String content, LocalDate viewDate, String transportation,
+                             String revisit, String congestion, Integer viewCount, Integer likeCount,
+                             LocalDateTime createdAt, LocalDateTime deletedAt, Long member, Long exhibition){
         this.title = title;
         this.content = content;
         this.viewDate = viewDate;
