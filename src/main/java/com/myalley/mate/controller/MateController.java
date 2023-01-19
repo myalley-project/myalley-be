@@ -1,19 +1,19 @@
 package com.myalley.mate.controller;
 
-import com.myalley.exhibition.domain.Exhibition;
-import com.myalley.exhibition.dto.response.ExhibitionBasicResponse;
 import com.myalley.exhibition.dto.response.ExhibitionMateListResponse;
-import com.myalley.exhibition.dto.response.ExhibitionPageResponse;
 import com.myalley.mate.domain.Mate;
 import com.myalley.mate.dto.MatePageResponse;
 import com.myalley.mate.dto.MateRequest;
 import com.myalley.mate.dto.MateSimpleResponse;
 import com.myalley.mate.dto.MateUpdateRequest;
 import com.myalley.mate.service.MateService;
+import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,18 +29,25 @@ public class MateController {
 
     @PostMapping("/api/mates")
     public ResponseEntity save(@Valid @RequestBody MateRequest mateRequest) {
-        Long memberId = 1L;
+        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long memberId = member.getMemberId();
         mateService.save(mateRequest, memberId);
 
-        return ResponseEntity.ok("메이트 모집글 등록이 완료되었습니다.");
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+        return new ResponseEntity<>("메이트 모집글 등록이 완료되었습니다.", headers, HttpStatus.OK);
     }
 
     @PutMapping("/api/mates/{id}")
     public ResponseEntity update(@PathVariable Long id,
                                  @Valid @RequestBody MateUpdateRequest request) {
-        Long memberId = 1L;
+        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long memberId = member.getMemberId();
         mateService.update(id, request, memberId);
-        return ResponseEntity.ok("메이트 모집글 수정이 완료되었습니다.");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+        return new ResponseEntity<>("메이트 모집글 수정이 완료되었습니다.", headers, HttpStatus.OK);
     }
 
     @GetMapping("/mates/{id}")
@@ -51,9 +58,14 @@ public class MateController {
 
     @DeleteMapping("/api/mates/{id}")
     public ResponseEntity delete(@PathVariable Long id) {
-        Long memberId = 1L;
+        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long memberId = member.getMemberId();
         mateService.delete(id, memberId);
-        return ResponseEntity.ok("전시회 정보가 삭제되었습니다.");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+
+        return new ResponseEntity<>("메이트 모집글 삭제가 완료되었습니다.", headers, HttpStatus.OK);
     }
 
     //메이트글 모집완료 여부 목록 조회

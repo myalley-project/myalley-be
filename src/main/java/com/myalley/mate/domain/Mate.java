@@ -43,7 +43,6 @@ public class Mate extends BaseTime {
     private String contact;
     private Integer viewCount;
 
-    //회원 연관관계 추가하기
 
     @ManyToOne
     @JoinColumn(name = "exhibitionId")

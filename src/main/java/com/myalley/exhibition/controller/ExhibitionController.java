@@ -8,6 +8,7 @@ import com.myalley.exhibition.dto.response.ExhibitionPageResponse;
 import com.myalley.exhibition.service.ExhibitionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,11 @@ public class ExhibitionController {
     @PostMapping("/api/exhibitions")
     public ResponseEntity save(@Valid @RequestBody ExhibitionRequest request) {
         exhibitionService.save(request);
-        return ResponseEntity.ok("전시회 게시글 등록이 완료되었습니다.");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+
+        return new ResponseEntity<>("전시글 등록이 완료되었습니다.", headers, HttpStatus.OK);
     }
 
     /**
@@ -46,7 +51,11 @@ public class ExhibitionController {
     public ResponseEntity update(@PathVariable Long id,
                                  @Valid @RequestBody ExhibitionUpdateRequest updateRequest) {
             exhibitionService.update(updateRequest, id);
-        return ResponseEntity.ok("전시회 게시글 수정이 완료되었습니다.");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+
+        return new ResponseEntity<>("전시글 정보 수정이 완료되었습니다.", headers, HttpStatus.OK);
     }
 
     /**
@@ -59,7 +68,11 @@ public class ExhibitionController {
     @DeleteMapping("/api/exhibitions/{id}")
     public ResponseEntity delete(@PathVariable Long id) {
         exhibitionService.delete(id);
-        return ResponseEntity.ok("해당 전시회 게시글이 삭제되었습니다.");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+
+        return new ResponseEntity<>("해당 전시회 게시글이 삭제되었습니다.", headers, HttpStatus.OK);
     }
 
     /**
