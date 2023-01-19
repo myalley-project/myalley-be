@@ -11,7 +11,7 @@ import com.myalley.mate.dto.MateUpdateRequest;
 import com.myalley.mate.mate_deleted.MateDeleted;
 import com.myalley.mate.mate_deleted.MateDeletedRepository;
 import com.myalley.mate.repository.MateRepository;
-import com.myalley.member.MemberService;
+import com.myalley.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
