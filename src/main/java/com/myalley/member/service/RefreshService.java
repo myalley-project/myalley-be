@@ -33,24 +33,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RefreshService {
 
-    private final PasswordEncoder passwordEncoder;
     private final TokenRedisRepository tokenRedisRepository;
 
     private final MemberRepository memberRepository;
 
-    public Map<String, String> good(String refreshToken) {
-
-        RefreshToken rt = new RefreshToken("han@100", refreshToken);
-        tokenRedisRepository.save(rt);
-        HashMap<String, String> token = new HashMap<>();
-//        Optional<RefreshToken> rts=tokenRedisRepository.findById("han@100");
-//        rts.ifPresent(rtss->{
-//            token.put("email", rtss.getEmail());
-//
-//        });
-
-        return token;
-    }
 
     public Map<String, String> refresh(String refreshToken) {
 
@@ -84,7 +70,7 @@ public class RefreshService {
             Member member = memberRepository.findByEmail(email);
             Map<String, String> token = new HashMap<>();
 
-            if (diffMin< 2) {
+            if (diffDays< 7) {
                 log.info("refresh 토큰이 재발급 되었습니다");
                 token = JwtUtils.createTokenSet(member);
                 tokenRedisRepository.save(new RefreshToken(email, token.get("refreshToken")));
