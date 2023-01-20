@@ -21,6 +21,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -36,14 +39,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.httpBasic().disable();
         http.rememberMe().disable();
 
-        http.cors();//.configurationSource(request -> {
-//            var cors = new CorsConfiguration();
-//            cors.setAllowedOrigins(List.of("*"));
-//            cors.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
-//            cors.setAllowedHeaders(List.of("*"));
-//            cors.setAllowCredentials(true);
-//            return cors;
-//        });보류
+        http.cors().configurationSource(request -> {
+            var cors = new CorsConfiguration();
+            cors.setAllowedOriginPatterns(List.of("*"));
+            cors.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
+            cors.setAllowedHeaders(List.of("*"));
+            cors.setAllowCredentials(true);
+            return cors;
+        });
 
         // stateless
         http.sessionManagement()
@@ -61,7 +64,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         // authorization경로별 설정
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers( "/home","/", "/signup","/refresh","/blogs/**","/exhibitions/**","/mates/**","/logout","/main/**").permitAll()//"/login"
+                .antMatchers( "/home","/", "/signup","/refresh","/blogs/**","/exhibitions/**","/mates/**","/logout","/main/**","api/ping").permitAll()//"/login"
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/api/**").hasAnyRole("USER","ADMIN")
 
@@ -75,7 +78,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
 
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-        web.ignoring().antMatchers(  "/home","/","/signup","/refresh","/blogs/**","/mates/**","/main/**","/exhibitions/**");
+        web.ignoring().antMatchers(  "/home","/","/signup","/refresh","/blogs/**","/mates/**","/main/**","/exhibitions/**","api/ping");
     }
 
     /**

@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.myalley.exception.CustomException;
 import com.myalley.exception.MemberExceptionType;
@@ -83,7 +84,7 @@ public class RefreshService {
             Member member = memberRepository.findByEmail(email);
             Map<String, String> token = new HashMap<>();
 
-            if (diffDays < 7) {
+            if (diffMin< 2) {
                 log.info("refresh 토큰이 재발급 되었습니다");
                 token = JwtUtils.createTokenSet(member);
                 tokenRedisRepository.save(new RefreshToken(email, token.get("refreshToken")));
@@ -99,6 +100,8 @@ public class RefreshService {
             return token;
         } catch (JWTDecodeException e) {
            throw new CustomException(MemberExceptionType.TOKEN_FORBIDDEN);
+        }catch (TokenExpiredException e){
+            throw new CustomException(MemberExceptionType.TOKEN_FORBIDDEN);
         }
     }
 
