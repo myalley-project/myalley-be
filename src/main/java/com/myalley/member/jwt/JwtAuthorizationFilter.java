@@ -55,7 +55,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             DecodedJWT decodedJWT = verifier.verify(accessToken);
 
             String username = decodedJWT.getSubject();
-            //여기서 memberrepository에섶 권한찾기?
+
             Member mem = memberRepository.findByEmail(username);
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(mem, null, mem.getAuthorities());//authority
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);

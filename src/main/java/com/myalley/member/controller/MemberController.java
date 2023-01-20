@@ -64,4 +64,10 @@ public class MemberController {
 
     }
 
+    @GetMapping("/exhibitions/good")
+    ResponseEntity<MemberInfoDto> good(HttpServletRequest request, HttpServletResponse response) {
+
+        return new ResponseEntity<MemberInfoDto>(memberService.memberInfo("test1@naver.com"), HttpStatus.ACCEPTED);
+
+    }
 }
