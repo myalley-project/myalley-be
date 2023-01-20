@@ -1,6 +1,6 @@
 package com.myalley.member.options;
 
-import com.myalley.EnumMapperType;
+import com.myalley.common.option.EnumMapperType;
 
 public enum Gender implements EnumMapperType {
     M("MAN"),
