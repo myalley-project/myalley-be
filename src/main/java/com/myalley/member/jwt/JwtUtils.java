@@ -89,7 +89,7 @@ public class JwtUtils {
                 .setHeaderParam(JwsHeader.KEY_ID, "JWT") // kid
                 .signWith(Keys.hmacShaKeyFor(JwtSecret.JWT_SECRET_KEY.getBytes()),SignatureAlgorithm.HS256) // signature
                 .compact());
-        System.out.println(getEmail(tokens.get("refreshToken")));
+
       //  tokenRedisRepository.save(new RefreshToken(member.getEmail(),token.get("refreshToken")));
 
         return tokens;
