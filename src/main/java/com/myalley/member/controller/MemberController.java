@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.HashMap;
 
 @Controller
 @RequiredArgsConstructor
@@ -71,10 +72,11 @@ public class MemberController {
     }
 
     @GetMapping("/exhibitions/good")
-    ResponseEntity<MemberInfoDto> good(HttpServletRequest request, HttpServletResponse response) {
+    ResponseEntity good(HttpServletRequest request, HttpServletResponse response) {
 
-        return new ResponseEntity<MemberInfoDto>(memberService.memberInfo("test1@naver.com"), HttpStatus.ACCEPTED);
-
+        HashMap<String,String> map=new HashMap<>();
+        map.put("msg","배포 정상적으로 작동");
+        return new ResponseEntity(map,HttpStatus.OK);
     }
 
 
