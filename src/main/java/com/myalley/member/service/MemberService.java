@@ -58,7 +58,7 @@ public class MemberService {
         if (memberRepository.findByEmail(memberRegisterDto.getEmail()) != null) {
             throw new CustomException(MemberExceptionType.ALREADY_EXIST_USERNAME);
         }else if(memberRepository.findByNickname(memberRegisterDto.getNickname())!=null){
-            throw new CustomException(MemberExceptionType.ALREADY_EXIST_NAME);
+            throw new CustomException(MemberExceptionType.ALREADY_EXIST_NICKNAME);
         }
 
         memberRepository.save(Member.builder()
@@ -90,8 +90,9 @@ public class MemberService {
                 .build();
     }
 
-    public ResponseEntity update(MemberUpdateDto memberUpdateDto,Member member){
+    public ResponseEntity update(Member member){
 
+        memberRepository.save(member);
 
         HashMap<String,Integer> map=new HashMap<>();
         map.put("resultCode",200);

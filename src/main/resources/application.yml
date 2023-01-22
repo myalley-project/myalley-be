@@ -1,54 +1,99 @@
-spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${MYSQL_URL}:3306/my_alley?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
-
-  jpa:
-    #open-in-view: true
-    hibernate:
-      ddl-auto: create
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-      #show-sql: true
-  redis:
-    port: ${REDIS_PORT}
-    host: ${REDIS_HOST}
-
-logging:
-  level:
-    org:
-      springframework:
-        orm:
-          jpa: DEBUG
-
-server:
-  port: 8080
-  servlet:
-    cookie:
-      same-site: None
-      secure: true
-    context-path: /
-    encoding:
-      charset: UTF-8
-      #enabled: true
-      force-response: true
-
-cloud:
-  aws:
-    s3:
-      bucket: ${S3_BUCKET}
-    credentials:
-      access-key: ${S3_ACCESS_KEY}
-      secret-key: ${S3_SECRET_KEY}
-    region:
-      static: ap-northeast-2
-    stack:
-      auto: false
+#spring:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://${MYSQL_URL}:3306/my_alley?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+#    username: ${MYSQL_USERNAME}
+#    password: ${MYSQL_PASSWORD}
+#
+#  jpa:
+#    #open-in-view: true
+#    hibernate:
+#      ddl-auto: create
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+#      #show-sql: true
+#  redis:
+#    port: ${REDIS_PORT}
+#    host: ${REDIS_HOST}
+#
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        orm:
+#          jpa: DEBUG
+#
+#server:
+#  port: 8080
+#  servlet:
+#    cookie:
+#      same-site: None
+#      secure: true
+#    context-path: /
+#    encoding:
+#      charset: UTF-8
+#      #enabled: true
+#      force-response: true
+#
+#cloud:
+#  aws:
+#    s3:
+#      bucket: ${S3_BUCKET}
+#    credentials:
+#      access-key: ${S3_ACCESS_KEY}
+#      secret-key: ${S3_SECRET_KEY}
+#    region:
+#      static: ap-northeast-2
+#    stack:
+#      auto: false
 
 exhibition-path: "poster"
 blog-path: "blog"
 profile-path: "profile"
+spring:
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: 'true'
+  jpa:
+    database: mysql
+    show-sql: 'true'
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: 'true'
+  redis:
+    host: 127.0.0.1
+    port: '6379'
+  datasource:
+    url: jdbc:mysql://localhost:3306/my_alley?useSSL=false&allowPublicKeyRetrieval=true
+    password: '0104'
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+
+server:
+  servlet:
+    session:
+      timeout: 10m
+logging:
+  level:
+    sql: ERROR
+    root: INFO
+cloud:
+  aws:
+    stack:
+      auto: false
+    region:
+      static: ap-northeast-2
+    credentials:
+      access-key: AKIARZUSKA4FLAS2RIMN
+      secret-key: 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
+      accessKey: AKIARZUSKA4FLAS2RIMN
+      secretKey: 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
+
+    s3:
+      bucket: alleydudwls
+      dir: blog

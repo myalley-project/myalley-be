@@ -6,10 +6,12 @@ import com.myalley.member.dto.MemberRegisterDto;
 import com.myalley.member.dto.MemberUpdateDto;
 import com.myalley.member.jwt.JwtUtils;
 import com.myalley.member.service.MemberService;
+import com.myalley.member.service.ProfileS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.HashMap;
 
 @Controller
@@ -24,8 +27,8 @@ import java.util.HashMap;
 
 public class MemberController {
     private final MemberService memberService;
-
-
+    private final ProfileS3Service profileS3Service;
+    private final PasswordEncoder passwordEncoder;
     @PostMapping("/signup")
     public ResponseEntity signUp(
            @Valid @RequestBody MemberRegisterDto memberRegisterDto
@@ -39,18 +42,20 @@ public class MemberController {
 
     @PutMapping("/api/me")
     public ResponseEntity updateMember(
-            @Valid @RequestPart MemberUpdateDto memberUpdateDto, @RequestPart MultipartFile multipartFile
-            ) {
-
-        //파일유무에 따라 저장하는 코드실행
-        //multipartFile 저장하는 코드
-
-        //
+            @Valid @RequestPart(name = "data") MemberUpdateDto memberUpdateDto, @RequestPart(name="imageFile",required =false) MultipartFile multipartFile
+            ) throws IOException {
         Member member = (Member)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String url=member.getUserImage();
 
-        return memberService.update(memberUpdateDto,member);
+        if(!multipartFile.isEmpty()){//프로필 수정시 이미지 삭제 및 저장
+            profileS3Service.deleteImage(url);
+            url=profileS3Service.uploadImage(multipartFile);
+        }
 
+        member.update(memberUpdateDto,url);
+        member.setPassword(passwordEncoder.encode(memberUpdateDto.getPassword()));
 
+        return memberService.update(member);
     }
 
     @GetMapping("api/me")
