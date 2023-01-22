@@ -9,9 +9,16 @@ import com.myalley.blogReview.repository.BlogReviewRepository;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +40,24 @@ public class BlogReviewService {
         blog.updateViewCount();
         BlogReview updateBlog = repository.save(blog);
         return updateBlog;
+    }
+
+    public Page<BlogReview> retrieveBlogReviewList(int pageNo,String orderType){
+        //1. 만약 orderType이 null인 경우, Recent 를 담음
+        Page<BlogReview> blogReviewList;
+        //2. 페이지네이션 넣을 정보 담기 pageNo, 한 페이지당 개수 9개, 정렬은 orderType (orderType = User, ViewCount, Recent)
+        if(orderType.equals("User")) {
+            PageRequest pageRequest = PageRequest.of(pageNo, 9, Sort.by("id").descending());
+            blogReviewList = repository.findAllByTestMember(pageRequest);
+        } else if(orderType.equals("ViewCount")) {
+            PageRequest pageRequest = PageRequest.of(pageNo, 9, Sort.by("viewCount").descending());
+            blogReviewList = repository.findAllById(pageRequest);
+        } else{
+            PageRequest pageRequest = PageRequest.of(pageNo, 9, Sort.by("id").descending());
+            blogReviewList = repository.findAllById(pageRequest);
+        }
+        //3. 페이지 정보 구성 및 데이터 작업은 Mapper로
+        return blogReviewList;
     }
 
     public void updateBlogReview(BlogReview postBlogReview, Long blogId, Long memberId) {

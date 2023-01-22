@@ -4,12 +4,10 @@ import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview.mapper.BlogReviewMapper;
 import com.myalley.blogReview.service.BlogReviewService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/blogs")
@@ -24,8 +22,9 @@ public class BlogReviewReadController {
     }
     //2. 목록
     @GetMapping
-    public ResponseEntity readBlogReviews(){
-        //BlogReview review = reviewService.retrieveBlogReview(blogId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity readBlogReviews(@RequestParam(value = "page") int pageNo,
+                                          @RequestParam(required = false, value = "order") String orderType){
+        Page<BlogReview> blogReviewPage = reviewService.retrieveBlogReviewList(pageNo,orderType);
+        return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
     }
 }

@@ -1,6 +1,7 @@
 package com.myalley.blogReview.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.myalley.common.dto.pagingDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class BlogResponseDto {
+
+    @Data
+    @NoArgsConstructor
+    public static class BlogListDto{
+        private List<SimpleBlogDto> blogInfo;
+        private pagingDto pageInfo;
+    }
 
     @Setter
     @NoArgsConstructor
@@ -39,7 +47,7 @@ public class BlogResponseDto {
         private String transportation;  //주차공간
         private String revisit;  //재방문의향
         private String congestion; //혼잡도
-        private List<ImageResponseDto> images;
+        private List<ImageResponseDto> imageInfo;
 
         private SimpleMemberDto memberInfo;
         private Long exhibitionId;
