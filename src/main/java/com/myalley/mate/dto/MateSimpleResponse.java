@@ -2,7 +2,6 @@ package com.myalley.mate.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.myalley.exhibition.dto.response.ExhibitionMateListResponse;
-import com.myalley.exhibition.dto.response.ExhibitionResponse;
 import com.myalley.mate.domain.Mate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

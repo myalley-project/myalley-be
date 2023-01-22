@@ -2,21 +2,27 @@ package com.myalley.exhibition.service;
 
 import com.myalley.exception.CustomException;
 import com.myalley.exception.ExhibitionExceptionType;
+import com.myalley.exception.MemberExceptionType;
 import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.exhibition.dto.request.ExhibitionRequest;
 import com.myalley.exhibition.dto.request.ExhibitionUpdateRequest;
 import com.myalley.exhibition.dto.response.ExhibitionBasicResponse;
 import com.myalley.exhibition.dto.response.ExhibitionDetailResponse;
 import com.myalley.exhibition.exhibitionImage.service.ImageService;
+import com.myalley.exhibition.repository.ExhibitionBookmarkRepository;
 import com.myalley.exhibition.repository.ExhibitionRepository;
 import com.myalley.exhibition_deleted.domain.ExhibitionDeleted;
 import com.myalley.exhibition_deleted.repository.ExhibitionDeletedRepository;
+import com.myalley.member.domain.Member;
+import com.myalley.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +31,8 @@ public class ExhibitionService {
     private final ExhibitionRepository exhibitionRepository;
     private final ImageService imageService;
     private final ExhibitionDeletedRepository deletedRepository;
+    private final MemberRepository memberRepository;
+    private final ExhibitionBookmarkRepository bookmarkRepository;
 
     public ExhibitionBasicResponse save(ExhibitionRequest request) {
 
@@ -41,6 +49,7 @@ public class ExhibitionService {
                 .content(request.getContent())
                 .author(request.getAuthor())
                 .viewCount(0)
+                .bookmarkCount(0)
                 .build();
 
         return ExhibitionBasicResponse.of(exhibitionRepository.save(newExhibition));
@@ -69,6 +78,7 @@ public class ExhibitionService {
     }
 
     //전시글 삭제 - 삭제 테이블로 이동시키고 기존 테이블에서 삭제
+    @Transactional
     public void delete(Long id) {
        Exhibition exhibition = exhibitionRepository.findById(id)
                .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
@@ -89,18 +99,34 @@ public class ExhibitionService {
                 .content(exhibition.getContent())
                 .author(exhibition.getAuthor())
                 .viewCount(exhibition.getViewCount())
+                .bookmarkCount(0)
                 .createdAt(exhibition.getCreatedAt())
                 .deletedAt(exhibition.getModifiedAt())
                 .build();
         deletedRepository.save(deleted);
+        bookmarkRepository.deleteByExhibition(exhibition); //북마크 쪽에서 먼저 북마크 삭제해줌
         exhibitionRepository.deleteById(id);
     }
 
-    //특정 전시글 상세페이지 조회
-    public ExhibitionDetailResponse findInfo(Long id) {
+    //특정 전시글 상세페이지 조회 - 비회원
+    public ExhibitionDetailResponse findInfoGeneral(Long id) {
         return exhibitionRepository.findById(id)
                 .map(ExhibitionDetailResponse::of)
                 .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
+    }
+
+    //특정 전시글 상세페이지 조회 - 로그인 한 유저의 요청
+    public ExhibitionDetailResponse findInfoMember(Long id, Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(MemberExceptionType.NOT_FOUND_MEMBER));
+
+        Exhibition exhibition = exhibitionRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
+
+        boolean bookmarked = bookmarkRepository.existsByExhibitionAndMember(exhibition, member);
+
+        return ExhibitionDetailResponse.of(exhibition, bookmarked);
+
     }
 
     //조회수 증가
@@ -130,5 +156,19 @@ public class ExhibitionService {
     public Exhibition verifyExhibition(Long id) {
         return exhibitionRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
+    }
+
+    @Transactional
+    public void bookmarkCountUp(Long exhibitionId) {
+        Optional<Exhibition> byId = exhibitionRepository.findById(exhibitionId);
+        Exhibition exhibition = byId.get();
+        exhibition.bookmarkCountUp();
+    }
+
+    @Transactional
+    public void bookmarkCountDown(Long exhibitionId) {
+        Optional<Exhibition> byId = exhibitionRepository.findById(exhibitionId);
+        Exhibition exhibition = byId.get();
+        exhibition.bookmarkCountDown();
     }
 }
