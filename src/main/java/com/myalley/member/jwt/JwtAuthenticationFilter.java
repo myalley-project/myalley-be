@@ -40,11 +40,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final RedisService redisService;
 
 
-//    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
-//        super(authenticationManager);
-//        this.authenticationManager = authenticationManager;
-//    }
-
     /**
      * 로그인 인증 시도
      */
@@ -72,10 +67,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         );
         return authenticationManager.authenticate(authenticationToken);
     }
-    /**
-     * 인증에 성공했을 때 사용
-     * JWT Token을 생성해서 쿠키에 넣는다.
-     */
+
     @Override
     protected void successfulAuthentication(
             HttpServletRequest request,
@@ -87,7 +79,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         Member member = (Member) authResult.getPrincipal();
         Map<String,String> token = JwtUtils.createTokenSet(member);
         redisService.save(member.getEmail(),token.get("refreshToken"));
-        //tokenRedisRepository.save(new RefreshToken(member.getEmail(),token.get("refreshToken")));
         response.setContentType("application/json");
 
 
@@ -101,7 +92,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             HttpServletResponse response,
             AuthenticationException failed
     ) throws IOException {
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setStatus(400);
         response.setContentType("application/json");
 
         Map<String, Object> body = new LinkedHashMap<>();

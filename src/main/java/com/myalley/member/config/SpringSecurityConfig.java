@@ -21,6 +21,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -32,18 +35,18 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // basic authentication
-        http.httpBasic().disable(); // basic authentication filter 비활성화
+
+        http.httpBasic().disable();
         http.rememberMe().disable();
 
-        http.cors();//.configurationSource(request -> {
-//            var cors = new CorsConfiguration();
-//            cors.setAllowedOrigins(List.of("*"));
-//            cors.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
-//            cors.setAllowedHeaders(List.of("*"));
-//            cors.setAllowCredentials(true);
-//            return cors;
-//        });보류
+        http.cors().configurationSource(request -> {
+            var cors = new CorsConfiguration();
+            cors.setAllowedOriginPatterns(List.of("*"));
+            cors.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
+            cors.setAllowedHeaders(List.of("*"));
+            cors.setAllowCredentials(true);
+            return cors;
+        });
 
         // stateless
         http.sessionManagement()
@@ -61,9 +64,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         // authorization경로별 설정
         http.csrf().disable()
                 .authorizeRequests()
-                // /와 /home은 모두에게 허용
-                .antMatchers( "/home", "/signup","/refresh","/blogs/**","/exhibitions/**","mates/**","/logout").permitAll()//"/login"
-                // hello 페이지는 USER 롤을 가진 유저에게만 허용
+                .antMatchers( "/home","/", "/signup","/refresh","/blogs/**","/exhibitions/**","/mates/**","/logout","/main/**","/api/ping").permitAll()//"/login"
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/api/**").hasAnyRole("USER","ADMIN")
 
@@ -71,19 +72,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers(HttpMethod.DELETE, "/notice").hasRole("ADMIN")
                 .anyRequest().authenticated();
 
-        // logout
-//        http.csrf().disable().logout()
-//                .logoutUrl("/logout")
-//                .invalidateHttpSession(true);
-//               // .deleteCookies(JwtProperties.COOKIE_NAME);
     }
 
     @Override
     public void configure(WebSecurity web) {
-        // 정적 리소스 spring security 대상에서 제외 static 폴더아래
-//        web.ignoring().antMatchers("/images/**", "/css/**"); // 아래 코드와 같은 코드입니다.
+
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-        web.ignoring().antMatchers(  "/signup","/refresh","/blogs/**","/exhibitions/**","mates/**");
+        web.ignoring().antMatchers(  "/home","/","/signup","/refresh","/blogs/**","/mates/**","/main/**","/exhibitions/**","api/ping");
     }
 
     /**

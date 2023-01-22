@@ -23,10 +23,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static javax.servlet.http.HttpServletResponse.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
 @RequiredArgsConstructor
@@ -55,7 +56,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             DecodedJWT decodedJWT = verifier.verify(accessToken);
 
             String username = decodedJWT.getSubject();
-            //여기서 memberrepository에섶 권한찾기?
+
             Member mem = memberRepository.findByEmail(username);
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(mem, null, mem.getAuthorities());//authority
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -63,20 +64,24 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             chain.doFilter(request, response);
         } catch (TokenExpiredException e) {
             log.info("Access Token이 만료되었습니다.");
-            response.setStatus(SC_UNAUTHORIZED);
+            response.setStatus(SC_FORBIDDEN);
             response.setContentType(APPLICATION_JSON_VALUE);
             response.setCharacterEncoding("utf-8");
-            CustomException customException = new CustomException(MemberExceptionType.ACESSTOKEN_EXPIRED);
-            new ObjectMapper().writeValue(response.getWriter(), customException);
+
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("errorCode", 403);
+            body.put("errorMsg", "Acess토큰 만료");
+            new ObjectMapper().writeValue(response.getWriter(), body);
 
         } catch (Exception e) {
             log.info("JWT 토큰이 잘못되었습니다.");
-            response.setStatus(SC_BAD_REQUEST);
+            response.setStatus(SC_FORBIDDEN);
             response.setContentType(APPLICATION_JSON_VALUE);
             response.setCharacterEncoding("utf-8");
-
-            CustomException customException = new CustomException(MemberExceptionType.TOKEN_FORBIDDEN);
-            new ObjectMapper().writeValue(response.getWriter(), customException);
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("errorCode", 403);
+            body.put("errorMsg", "Forbidden");
+            new ObjectMapper().writeValue(response.getWriter(), body);
         }
 
     }

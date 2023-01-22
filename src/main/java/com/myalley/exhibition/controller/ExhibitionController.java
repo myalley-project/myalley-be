@@ -8,6 +8,7 @@ import com.myalley.exhibition.dto.response.ExhibitionPageResponse;
 import com.myalley.exhibition.service.ExhibitionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping
@@ -31,7 +33,11 @@ public class ExhibitionController {
     @PostMapping("/api/exhibitions")
     public ResponseEntity save(@Valid @RequestBody ExhibitionRequest request) {
         exhibitionService.save(request);
-        return ResponseEntity.ok("전시회 게시글 등록이 완료되었습니다.");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+
+        return new ResponseEntity<>("전시글 등록이 완료되었습니다.", headers, HttpStatus.OK);
     }
 
     /**
@@ -46,7 +52,11 @@ public class ExhibitionController {
     public ResponseEntity update(@PathVariable Long id,
                                  @Valid @RequestBody ExhibitionUpdateRequest updateRequest) {
             exhibitionService.update(updateRequest, id);
-        return ResponseEntity.ok("전시회 게시글 수정이 완료되었습니다.");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+
+        return new ResponseEntity<>("전시글 정보 수정이 완료되었습니다.", headers, HttpStatus.OK);
     }
 
     /**
@@ -59,7 +69,11 @@ public class ExhibitionController {
     @DeleteMapping("/api/exhibitions/{id}")
     public ResponseEntity delete(@PathVariable Long id) {
         exhibitionService.delete(id);
-        return ResponseEntity.ok("해당 전시회 게시글이 삭제되었습니다.");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+
+        return new ResponseEntity<>("해당 전시회 게시글이 삭제되었습니다.", headers, HttpStatus.OK);
     }
 
     /**
@@ -70,9 +84,14 @@ public class ExhibitionController {
      * @author Hwadam
      * */
     @GetMapping("/exhibitions/{id}")
-    public ResponseEntity read(@PathVariable Long id) {
+    public ResponseEntity read(@PathVariable Long id, @RequestHeader("memberId") Long data) {
+        Long memberId =  data;
         exhibitionService.updateViewCount(id);
-        return ResponseEntity.ok(exhibitionService.findInfo(id));
+
+        if (memberId == 0) {
+            return ResponseEntity.ok(exhibitionService.findInfoGeneral(id));
+        }
+        return ResponseEntity.ok(exhibitionService.findInfoMember(id, memberId));
     }
 
 
@@ -84,12 +103,11 @@ public class ExhibitionController {
             @RequestParam(value = "type", required = false) String type) {
         int size = 8;
             Page<Exhibition> pageExhibitions = exhibitionService.readPageAllSearch(status, type, page, size);
-            Page<ExhibitionBasicResponse> responsePage = pageExhibitions
-                    .map(exhibition -> new ExhibitionBasicResponse(
-                            exhibition.getId(), exhibition.getTitle(), exhibition.getSpace(),
-                            exhibition.getPosterUrl(), exhibition.getDuration(),
-                            exhibition.getType(), exhibition.getStatus(), exhibition.getViewCount()));
-            List<ExhibitionBasicResponse> exhibitions = responsePage.getContent();
+            List<ExhibitionBasicResponse> exhibitions = pageExhibitions
+                    .stream()
+                    .map(ExhibitionBasicResponse::of)
+                    .collect(Collectors.toList());
+
             return new ResponseEntity<>(
                     new ExhibitionPageResponse<>(exhibitions, pageExhibitions),
                     HttpStatus.OK);
@@ -103,12 +121,10 @@ public class ExhibitionController {
             @RequestParam(value = "status", required = true) String status) {
         int size = 8;
         Page<Exhibition> pageExhibitions = exhibitionService.readPageAll(status, page, size);
-        Page<ExhibitionBasicResponse> responsePage = pageExhibitions
-                .map(exhibition -> new ExhibitionBasicResponse(
-                        exhibition.getId(), exhibition.getTitle(), exhibition.getSpace(),
-                        exhibition.getPosterUrl(), exhibition.getDuration(), exhibition.getType(),
-                        exhibition.getStatus(), exhibition.getViewCount()));
-        List<ExhibitionBasicResponse> exhibitions = responsePage.getContent();
+        List<ExhibitionBasicResponse> exhibitions = pageExhibitions
+                .stream()
+                .map(ExhibitionBasicResponse::of)
+                .collect(Collectors.toList());
 
         return new ResponseEntity<>(
                 new ExhibitionPageResponse<>(exhibitions, pageExhibitions),
