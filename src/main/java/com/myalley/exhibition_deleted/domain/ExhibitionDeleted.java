@@ -49,6 +49,8 @@ public class ExhibitionDeleted {
     @Column(nullable = false)
     private String type;
 
+    private Integer bookmarkCount;
+
     @CreatedDate
     @Column
     private LocalDateTime createdAt;
@@ -59,7 +61,7 @@ public class ExhibitionDeleted {
 
     @Builder
     public ExhibitionDeleted(String title, Integer adultPrice, String space, String fileName, String posterUrl,
-                             String duration, String webLink, String content, String author,
+                             String duration, String webLink, String content, String author, Integer bookmarkCount,
                              Integer viewCount, String status, String type, LocalDateTime createdAt, LocalDateTime deletedAt) {
         this.title = title;
         this.adultPrice = adultPrice;
@@ -73,6 +75,7 @@ public class ExhibitionDeleted {
         this.viewCount = viewCount;
         this.status = status;
         this.type = type;
+        this.bookmarkCount = bookmarkCount;
         this.createdAt = createdAt;
         this.deletedAt = deletedAt;
     }

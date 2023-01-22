@@ -2,6 +2,7 @@ package com.myalley.mate.service;
 
 import com.myalley.exception.CustomException;
 import com.myalley.exception.MateExceptionType;
+;import com.myalley.exception.MemberExceptionType;
 import com.myalley.exhibition.service.ExhibitionService;
 import com.myalley.mate.domain.Mate;
 import com.myalley.mate.dto.MateDetailResponse;
@@ -10,7 +11,10 @@ import com.myalley.mate.dto.MateSimpleResponse;
 import com.myalley.mate.dto.MateUpdateRequest;
 import com.myalley.mate.mate_deleted.MateDeleted;
 import com.myalley.mate.mate_deleted.MateDeletedRepository;
+import com.myalley.mate.repository.MateBookmarkRepository;
 import com.myalley.mate.repository.MateRepository;
+import com.myalley.member.domain.Member;
+import com.myalley.member.repository.MemberRepository;
 import com.myalley.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +22,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +33,8 @@ public class MateService {
     private final ExhibitionService exhibitionService;
     private final MateDeletedRepository deletedRepository;
     private final MemberService memberService;
+    private final MateBookmarkRepository bookmarkRepository;
+    private final MemberRepository memberRepository;
 
     //메이트글 등록
     public MateSimpleResponse save(MateRequest request, Long memberId) {
@@ -39,6 +47,7 @@ public class MateService {
                 .content(request.getContent())
                 .contact(request.getContact())
                 .viewCount(0)
+                .bookmarkCount(0)
                 .exhibition(exhibitionService.verifyExhibition(request.getExhibitionId()))
                 .member(memberService.verifyMember(memberId))
                 .build();
@@ -66,14 +75,28 @@ public class MateService {
         mateRepository.updateViewCount(id);
     }
 
-    //메이트글 상세조회
+    //메이트글 상세조회 - 비회원
     public MateDetailResponse findDetail(Long id) {
         return mateRepository.findById(id)
                 .map(MateDetailResponse::of)
                 .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
     }
 
+    //메이트글 상세조회 - 로그인 한 회원의 요청
+    public MateDetailResponse findDetail(Long id, Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(MemberExceptionType.NOT_FOUND_MEMBER));
+
+        Mate mate = mateRepository.findById(id)
+                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+
+        boolean bookmarked = bookmarkRepository.existsByMateAndMember(mate, member);
+
+        return MateDetailResponse.of(mate, bookmarked);
+    }
+
     //메이트글 삭제
+    @Transactional
     public void delete(Long id, Long memberId) {
         Mate mate = mateRepository.findById(id)
                 .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
@@ -91,10 +114,12 @@ public class MateService {
                 .content(mate.getContent())
                 .contact(mate.getContact())
                 .viewCount(mate.getViewCount())
+                .bookmarkCount(0)
                 .exhibition(exhibitionService.verifyExhibition(mate.getExhibition().getId()))
                 .member(memberService.verifyMember(mate.getMember().getMemberId()))
                 .build();
         deletedRepository.save(deleted);
+        bookmarkRepository.deleteByMate(mate); //북마크 쪽에서 먼저 북마크 삭제해줌
         mateRepository.deleteById(id);
     }
 
@@ -102,5 +127,28 @@ public class MateService {
      public Page<Mate> readPageAll(String status, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("id").descending());
         return mateRepository.findAllByStatus(status, pageRequest);
+    }
+
+    //본인이 작성한 메이트글 조회
+    public Page<Mate> findMyMates(Long memberId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("createdAt").descending());
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(MemberExceptionType.NOT_FOUND_MEMBER));
+        return mateRepository.findByMember(member, pageRequest);
+    }
+
+
+    @Transactional
+    public void bookmarkCountUp(Long id) {
+        Mate mate = mateRepository.findById(id)
+                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+        mate.bookmarkCountUp();
+    }
+
+    @Transactional
+    public void bookmarkCountDown(Long id) {
+        Mate mate = mateRepository.findById(id)
+                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+        mate.bookmarkCountDown();
     }
 }

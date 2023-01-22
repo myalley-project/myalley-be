@@ -41,20 +41,22 @@ public class MateDeleted extends BaseTime {
 
     private String contact;
     private Integer viewCount;
+    private Integer bookmarkCount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exhibitionId")
     @JsonBackReference
     private Exhibition exhibition;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId")
     @JsonBackReference
     private Member member;
 
     @Builder
     public MateDeleted(String title, String status, String mateGender, String mateAge,
-                String availableDate, String content, String contact, Integer viewCount, Exhibition exhibition, Member member) {
+                String availableDate, String content, String contact, Integer viewCount,
+                       Integer bookmarkCount, Exhibition exhibition, Member member) {
         this.title = title;
         this.status = status;
         this.mateGender = mateGender;
@@ -63,6 +65,7 @@ public class MateDeleted extends BaseTime {
         this.content = content;
         this.contact = contact;
         this.viewCount = viewCount;
+        this.bookmarkCount = bookmarkCount;
         this.exhibition = exhibition;
         this.member = member;
     }

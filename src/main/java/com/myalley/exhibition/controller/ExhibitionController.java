@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping
@@ -83,9 +84,14 @@ public class ExhibitionController {
      * @author Hwadam
      * */
     @GetMapping("/exhibitions/{id}")
-    public ResponseEntity read(@PathVariable Long id) {
+    public ResponseEntity read(@PathVariable Long id, @RequestHeader("memberId") Long data) {
+        Long memberId =  data;
         exhibitionService.updateViewCount(id);
-        return ResponseEntity.ok(exhibitionService.findInfo(id));
+
+        if (memberId == 0) {
+            return ResponseEntity.ok(exhibitionService.findInfoGeneral(id));
+        }
+        return ResponseEntity.ok(exhibitionService.findInfoMember(id, memberId));
     }
 
 
@@ -97,12 +103,11 @@ public class ExhibitionController {
             @RequestParam(value = "type", required = false) String type) {
         int size = 8;
             Page<Exhibition> pageExhibitions = exhibitionService.readPageAllSearch(status, type, page, size);
-            Page<ExhibitionBasicResponse> responsePage = pageExhibitions
-                    .map(exhibition -> new ExhibitionBasicResponse(
-                            exhibition.getId(), exhibition.getTitle(), exhibition.getSpace(),
-                            exhibition.getPosterUrl(), exhibition.getDuration(),
-                            exhibition.getType(), exhibition.getStatus(), exhibition.getViewCount()));
-            List<ExhibitionBasicResponse> exhibitions = responsePage.getContent();
+            List<ExhibitionBasicResponse> exhibitions = pageExhibitions
+                    .stream()
+                    .map(ExhibitionBasicResponse::of)
+                    .collect(Collectors.toList());
+
             return new ResponseEntity<>(
                     new ExhibitionPageResponse<>(exhibitions, pageExhibitions),
                     HttpStatus.OK);
@@ -116,12 +121,10 @@ public class ExhibitionController {
             @RequestParam(value = "status", required = true) String status) {
         int size = 8;
         Page<Exhibition> pageExhibitions = exhibitionService.readPageAll(status, page, size);
-        Page<ExhibitionBasicResponse> responsePage = pageExhibitions
-                .map(exhibition -> new ExhibitionBasicResponse(
-                        exhibition.getId(), exhibition.getTitle(), exhibition.getSpace(),
-                        exhibition.getPosterUrl(), exhibition.getDuration(), exhibition.getType(),
-                        exhibition.getStatus(), exhibition.getViewCount()));
-        List<ExhibitionBasicResponse> exhibitions = responsePage.getContent();
+        List<ExhibitionBasicResponse> exhibitions = pageExhibitions
+                .stream()
+                .map(ExhibitionBasicResponse::of)
+                .collect(Collectors.toList());
 
         return new ResponseEntity<>(
                 new ExhibitionPageResponse<>(exhibitions, pageExhibitions),
