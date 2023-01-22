@@ -62,7 +62,7 @@ public class ExceptionAdvice {//예외처리 responseEntity로 return
     @AllArgsConstructor
     static class ExceptionDto {
         private int errorCode;
-        private String errMsg;
+        private String errorMsg;
     }
 
 

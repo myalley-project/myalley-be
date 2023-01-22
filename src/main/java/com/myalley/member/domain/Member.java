@@ -40,7 +40,7 @@ public class Member extends BaseTime implements UserDetails {
     @Column(name="birth")
     private LocalDate birth;
 
-    @Column(name="admin_no",unique=true)
+    @Column(name="admin_no")
     private int adminNo;
 
     @Enumerated(value= EnumType.STRING)
