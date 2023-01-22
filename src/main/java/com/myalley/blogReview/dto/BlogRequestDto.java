@@ -1,21 +1,39 @@
 package com.myalley.blogReview.dto;
 
-import com.myalley.blogReview.option.CongestionType;
-import com.myalley.blogReview.option.TransportationType;
-import com.myalley.blogReview.option.RevisitType;
-import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class BlogRequestDto {
-    private Long exhibitionId;
-    private String viewDate;
-    private String title;
-    private String content;
-    private MultipartFile[] images; //확실하지 않음. 아직 Json으로 받아오는 거 하지 않음. 적용안함
-    private String transportation;
-    private String revisit;
-    private String congestion;
+
+    @Data
+    @NoArgsConstructor
+    public static class PostBlogDto {
+        private Long exhibition;
+        private String viewDate;
+        private String time;
+        private String title;
+        private String content;
+        private String transportation;
+        private String revisit;
+        private String congestion;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class PutBlogDto {
+        //전시회를 변경할 수 있게 할지 말지 생각하는 중.
+        //과연 기존 전시회 블로그로 썼던 글을 다른 전시회로 쓰려고 할까?
+        //지금으로써는 안 바꿀 것 같음
+        //private Long exhibition;
+        private String viewDate;
+        private String time;
+        private String title;
+        private String content;
+        private String transportation;
+        private String revisit;
+        private String congestion;
+    }
 }

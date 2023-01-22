@@ -52,7 +52,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(
                 new JwtAuthenticationFilter(authenticationManager(),redisService),
                 UsernamePasswordAuthenticationFilter.class
-        ).addFilterBefore(
+                 ).addFilterBefore(
                 new JwtAuthorizationFilter(memberRepository),
                 BasicAuthenticationFilter.class
         );

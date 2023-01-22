@@ -4,13 +4,12 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.myalley.blogReview.domain.BlogImage;
-import com.myalley.blogReview.repository.BlogImageRepository;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -86,12 +85,13 @@ public class S3Service {
             return new String[]{fileName,imagePath};
     }
 
-    public HashMap uploadBlogImages(MultipartFile[] images) throws IOException {
+    public HashMap uploadBlogImages(List<MultipartFile> images) throws IOException {
         HashMap<String, String> imageInformationMaps = new HashMap<>();
-
-        for(MultipartFile multipartFile: images) {
-            String[] imageInformation = uploadBlogImage(multipartFile);
-            imageInformationMaps.put(imageInformation[0],imageInformation[1]);
+        if(!CollectionUtils.isEmpty(images)) {
+            for (MultipartFile multipartFile : images) {
+                String[] imageInformation = uploadBlogImage(multipartFile);
+                imageInformationMaps.put(imageInformation[0], imageInformation[1]);
+            }
         }
 
         //이미지가 하나도 오지 않은 경우 - 일단은 400 : 지원하지 않는 파일 로 처리
@@ -99,8 +99,8 @@ public class S3Service {
         //1. 안 온 경우는 기본 이미지를 업로드 하는 것으로 해야되나
         //- 테이블은 만들지 않고 목록을 보내주는 경우 만약 이미지가 조회되지 않으면 기본 이미지 url을 보내주도록?
         //- 상세페이지는 상관없음
-        if (imageInformationMaps.isEmpty())
-            throw new CustomException(BlogReviewExceptionType.IMAGE_BAD_REQUEST);
+        //if (imageInformationMaps.isEmpty())
+        //    throw new CustomException(BlogReviewExceptionType.IMAGE_BAD_REQUEST);
         return imageInformationMaps;
     }
 

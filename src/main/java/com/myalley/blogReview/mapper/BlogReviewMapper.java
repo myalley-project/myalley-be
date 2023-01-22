@@ -2,6 +2,7 @@ package com.myalley.blogReview.mapper;
 
 import com.myalley.blogReview.domain.BlogImage;
 import com.myalley.blogReview.domain.BlogReview;
+import com.myalley.blogReview.dto.BlogRequestDto;
 import com.myalley.blogReview.dto.BlogResponseDto;
 import com.myalley.blogReview.dto.ImageResponseDto;
 import com.myalley.test_user.TestMember;
@@ -16,6 +17,8 @@ import java.util.stream.Collectors;
 public interface BlogReviewMapper {
     BlogReviewMapper INSTANCE = Mappers.getMapper(BlogReviewMapper.class);
 
+    BlogReview postBlogDtoToBlogReview(BlogRequestDto.PostBlogDto requestDto);
+    BlogReview putBlogDtoToBlogReview(BlogRequestDto.PutBlogDto requestDto);
     default BlogResponseDto.DetailBlogDto blogToDetailBlogDto(BlogReview blog){
         BlogResponseDto.DetailBlogDto dto = new BlogResponseDto.DetailBlogDto();
         dto.setId(blog.getId());
@@ -27,6 +30,7 @@ public interface BlogReviewMapper {
         dto.setCongestion(blog.getCongestion());
         dto.setRevisit(blog.getRevisit());
         dto.setViewDate(blog.getViewDate());
+        dto.setCreatedAt(blog.getCreatedAt());
         dto.setViewCount(blog.getViewCount());
         dto.setImages(imageToImageDtoList(blog.getImages()));
         dto.setMemberInfo(memberToSimpleMemberDto(blog.getTestMember()));

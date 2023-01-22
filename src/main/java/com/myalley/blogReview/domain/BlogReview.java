@@ -23,6 +23,8 @@ public class BlogReview extends BaseTime {
     @Column(nullable = false)
     private LocalDate viewDate;
     @Column(nullable = false)
+    private String time;
+    @Column(nullable = false)
     private String title;
     @Column(nullable = false)
     private String content;
@@ -43,12 +45,12 @@ public class BlogReview extends BaseTime {
     private List<BlogImage> images = new ArrayList<>();
 
     @Builder
-    public BlogReview(String title, String content, LocalDate viewDate, String transportation,
+    public BlogReview(String title, String content, LocalDate viewDate, String time, String transportation,
                       String revisit, String congestion, TestMember testMember, Long exhibition){
-        //TransportationType transportation, RevisitType revisit, CongestionType congestion,
         this.title = title;
         this.content = content;
         this.viewDate = viewDate;
+        this.time = time;
         this.transportation = transportation;
         this.revisit = revisit;
         this.congestion = congestion;
@@ -56,13 +58,14 @@ public class BlogReview extends BaseTime {
         this.exhibition = exhibition;
     }
 
-    public void updateReview(BlogRequestDto newBlogReview){
-        this.title= newBlogReview.getTitle();
-        this.content = newBlogReview.getContent();
-        this.viewDate = LocalDate.parse(newBlogReview.getViewDate());
-        this.congestion = newBlogReview.getCongestion();
-        this.revisit = newBlogReview.getRevisit();
-        this.transportation = newBlogReview.getTransportation();
+    public void updateReview(BlogReview target){
+        this.title= target.getTitle();
+        this.content = target.getContent();
+        this.viewDate = target.getViewDate();
+        this.time = target.getTime();
+        this.congestion = target.getCongestion();
+        this.revisit = target.getRevisit();
+        this.transportation = target.getTransportation();
     }
 
     public void updateViewCount(){
@@ -76,14 +79,19 @@ public class BlogReview extends BaseTime {
         else //음.. 나중에 바꾸기
             throw new CustomException(BlogReviewExceptionType.LIKES_BAD_REQUEST);
     }
-    //public void updateBookmarkCount(){ this.bookmarkCount++; }
+    //public void updateBookmarkCount(Boolean status){
+    // if(status.equals(Boolean.FALSE)) this.bookmarkCount++;
+    // else this.bookmarkCount--; }
 
-    public void updateImages(BlogImage image){
-        this.images.add(image);
-    }
+    //public void updateImages(BlogImage image){
+    //    this.images.add(image);
+    //}
 
     public void setImage(BlogImage image){
-            image.setBlog(this);
             this.images.add(image);
     }
+    public void setMember(TestMember testMember){
+        this.testMember = testMember;
+    }
+
 }

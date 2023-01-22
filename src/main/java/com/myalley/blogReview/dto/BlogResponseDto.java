@@ -1,11 +1,13 @@
 package com.myalley.blogReview.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class BlogResponseDto {
@@ -25,7 +27,10 @@ public class BlogResponseDto {
     @NoArgsConstructor
     public static class DetailBlogDto {
         private Long id;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private LocalDate viewDate;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+        private LocalDateTime createdAt;
         private String title;
         private String content;
         private Integer likeCount;

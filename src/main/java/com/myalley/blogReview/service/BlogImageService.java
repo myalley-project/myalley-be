@@ -3,6 +3,7 @@ package com.myalley.blogReview.service;
 import com.myalley.blogReview.domain.BlogImage;
 import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview.repository.BlogImageRepository;
+import com.myalley.blogReview.repository.BlogReviewRepository;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -16,19 +17,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BlogImageService {
     private final BlogImageRepository blogImageRepository;
+    private final BlogReviewRepository blogReviewRepository;
 
     public void addBlogImageList(HashMap<String,String> map, BlogReview blogReview){ //List<BlogImage>
         map.forEach((fileName,S3url)->{
             addBlogImage(fileName,S3url,blogReview);
         });
     }
-    public BlogImage addBlogImage(String fileName, String S3url, BlogReview blogReview){ //원래 void
+    public void addBlogImage(String fileName, String S3url, BlogReview blogReview){
         BlogImage newImage=BlogImage.builder()
                 .fileName(fileName)
                 .url(S3url)
                 .build();
-        blogReview.setImage(newImage);
-        return blogImageRepository.save(newImage);
+        //blogReview.setImage(newImage);
+        newImage.setBlog(blogReview);
+        blogImageRepository.save(newImage);
     }
 
     public void deleteBlogImage(BlogImage image){

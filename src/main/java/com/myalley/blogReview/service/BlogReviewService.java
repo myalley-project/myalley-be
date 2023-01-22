@@ -16,29 +16,17 @@ import java.time.LocalDate;
 @Service
 @RequiredArgsConstructor
 public class BlogReviewService {
-
     private final BlogReviewRepository repository;
     private final TestMemberRepository mRepository;
-
-    public BlogReview createBlog(BlogRequestDto blogRequestDto, Long memberId){
+    public BlogReview createBlog(BlogReview blogReview, Long memberId){
         //멤버를 id로 받아오는 경우만 해당 됨. 전시회는 id로 받아올 것이기 때문에 전시회 부분도 추가로 해주기!
         TestMember writer = mRepository.findById(memberId).orElseThrow(() ->{
             throw new CustomException(BlogReviewExceptionType.BLOG_BAD_REQUEST);
         });
-        //중복 허용하기로함 1.18
-        //duplicateCheckBlogReview(memberId,blogRequestDto.getExhibitionId());
-        BlogReview newReview = BlogReview.builder()
-                .title(blogRequestDto.getTitle())
-                .content(blogRequestDto.getContent())
-                .viewDate(LocalDate.parse(blogRequestDto.getViewDate()))
-                .transportation(blogRequestDto.getTransportation())
-                .revisit(blogRequestDto.getRevisit())
-                .congestion(blogRequestDto.getCongestion())
-                .testMember(writer)
-                .exhibition(blogRequestDto.getExhibitionId()) //여기도 나중엔 객체로 넣어 주어야 합니둥
-                .build();
-        return repository.save(newReview);
+        blogReview.setMember(writer);
+        return repository.save(blogReview);
     }
+
 
     public BlogReview retrieveBlogReview(Long blogId){
         BlogReview blog = findBlogReview(blogId);
@@ -47,9 +35,9 @@ public class BlogReviewService {
         return updateBlog;
     }
 
-    public void updateBlogReview(BlogRequestDto blogRequestDto, Long blogId, Long memberId) {
+    public void updateBlogReview(BlogReview postBlogReview, Long blogId, Long memberId) {
         BlogReview preBlogReview = verifyRequester(blogId,memberId);
-        preBlogReview.updateReview(blogRequestDto);
+        preBlogReview.updateReview(postBlogReview);
         repository.save(preBlogReview);
     }
 
