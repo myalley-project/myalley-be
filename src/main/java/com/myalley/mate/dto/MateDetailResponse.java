@@ -26,15 +26,30 @@ public class MateDetailResponse {
     private Integer viewCount;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdAt;
+    private Integer bookmarkCount;
+    private boolean bookmarked;
 
     private ExhibitionResponse exhibition;
 
     private MemberMateDto member;
 
+    public static MateDetailResponse of (Mate mate, boolean bookmarked) {
+        return new MateDetailResponse(mate.getId(), mate.getTitle(), mate.getStatus(), mate.getMateGender(),
+                mate.getMateAge(), mate.getAvailableDate(), mate.getContent(), mate.getContact(),
+                mate.getViewCount(), mate.getCreatedAt(), mate.getBookmarkCount(), bookmarked,
+                new ExhibitionResponse(mate.getExhibition().getId(),
+                mate.getExhibition().getTitle(), mate.getExhibition().getSpace(),
+                mate.getExhibition().getPosterUrl(), mate.getExhibition().getDuration(), mate.getExhibition().getStatus()),
+                new MemberMateDto(mate.getMember().getMemberId(), mate.getMember().getNickname(),
+                        mate.getMember().getUserImage(), mate.getMember().getGender().getKey(),
+                        mate.getMember().getBirth().toString().substring(0,4)));
+    }
+
     public static MateDetailResponse of (Mate mate) {
         return new MateDetailResponse(mate.getId(), mate.getTitle(), mate.getStatus(), mate.getMateGender(),
                 mate.getMateAge(), mate.getAvailableDate(), mate.getContent(), mate.getContact(),
-                mate.getViewCount(), mate.getCreatedAt(), new ExhibitionResponse(mate.getExhibition().getId(),
+                mate.getViewCount(), mate.getCreatedAt(), mate.getBookmarkCount(), false,
+                new ExhibitionResponse(mate.getExhibition().getId(),
                 mate.getExhibition().getTitle(), mate.getExhibition().getSpace(),
                 mate.getExhibition().getPosterUrl(), mate.getExhibition().getDuration(), mate.getExhibition().getStatus()),
                 new MemberMateDto(mate.getMember().getMemberId(), mate.getMember().getNickname(),

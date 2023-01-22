@@ -29,11 +29,23 @@ public class ExhibitionDetailResponse {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdAt;
 
-    public static ExhibitionDetailResponse of (Exhibition exhibition) {
+    private Integer bookmarkCount;
+    private boolean bookmarked;
+
+    public static ExhibitionDetailResponse of (Exhibition exhibition, boolean bookmarked) {
         return new ExhibitionDetailResponse(exhibition.getId(), exhibition.getTitle(), exhibition.getStatus(),
                 exhibition.getType(), exhibition.getSpace(), exhibition.getAdultPrice(),
                  exhibition.getPosterUrl(), exhibition.getDuration(), exhibition.getWebLink(),
-                exhibition.getContent(), exhibition.getAuthor(), exhibition.getViewCount(), exhibition.getCreatedAt());
+                exhibition.getContent(), exhibition.getAuthor(), exhibition.getViewCount(),
+                exhibition.getCreatedAt(), exhibition.getBookmarkCount(), bookmarked);
+    }
+
+    public static ExhibitionDetailResponse of (Exhibition exhibition) {
+        return new ExhibitionDetailResponse(exhibition.getId(), exhibition.getTitle(), exhibition.getStatus(),
+                exhibition.getType(), exhibition.getSpace(), exhibition.getAdultPrice(),
+                exhibition.getPosterUrl(), exhibition.getDuration(), exhibition.getWebLink(),
+                exhibition.getContent(), exhibition.getAuthor(), exhibition.getViewCount(),
+                exhibition.getCreatedAt(), exhibition.getBookmarkCount(), false);
     }
 }
 
