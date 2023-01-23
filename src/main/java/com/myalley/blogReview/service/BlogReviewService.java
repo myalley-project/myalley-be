@@ -47,9 +47,10 @@ public class BlogReviewService {
         Page<BlogReview> blogReviewList;
         //2. 페이지네이션 넣을 정보 담기 pageNo, 한 페이지당 개수 9개, 정렬은 orderType (orderType = User, ViewCount, Recent)
         if(orderType!=null && orderType.equals("ViewCount")) {
-            PageRequest pageRequest = PageRequest.of(pageNo, 9, Sort.by("viewCount").descending());
+            PageRequest pageRequest = PageRequest.of(pageNo, 9, Sort.by("viewCount").descending()
+                    .and(Sort.by("id").descending()));
             blogReviewList = repository.findAll(pageRequest);
-        } else if(orderType==null){
+        } else if(orderType==null || orderType.equals("Recent")){
             PageRequest pageRequest = PageRequest.of(pageNo, 9, Sort.by("id").descending());
             blogReviewList = repository.findAll(pageRequest);
             System.out.println(blogReviewList.getTotalElements());

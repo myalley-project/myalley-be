@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/bookmarks")
+@RequestMapping("/api/blog-bookmarks")
 @RequiredArgsConstructor
 public class BlogBookmarkController {
     private final BlogBookmarkService blogBookmarkService;
