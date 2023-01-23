@@ -1,6 +1,7 @@
 package com.myalley.member.domain;
 
 import com.myalley.common.domain.BaseTime;
+import com.myalley.member.dto.MemberUpdateDto;
 import com.myalley.member.options.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -64,6 +65,13 @@ public class Member extends BaseTime implements UserDetails {
 
 
 
+    public void update(MemberUpdateDto memberUpdateDto,String url){
+        this.setUserImage(url);
+        this.setNickname(memberUpdateDto.getNickname());
+      //  this.setGender(memberUpdateDto.getGender());
+        this.setBirth(memberUpdateDto.getBirth());
+
+    }
 
 
     public Boolean isAdmin() {
