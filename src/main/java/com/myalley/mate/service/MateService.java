@@ -1,8 +1,11 @@
 package com.myalley.mate.service;
 
 import com.myalley.exception.CustomException;
+import com.myalley.exception.ExhibitionExceptionType;
 import com.myalley.exception.MateExceptionType;
 ;import com.myalley.exception.MemberExceptionType;
+import com.myalley.exhibition.domain.Exhibition;
+import com.myalley.exhibition.repository.ExhibitionRepository;
 import com.myalley.exhibition.service.ExhibitionService;
 import com.myalley.mate.domain.Mate;
 import com.myalley.mate.dto.MateDetailResponse;
@@ -35,6 +38,8 @@ public class MateService {
     private final MemberService memberService;
     private final MateBookmarkRepository bookmarkRepository;
     private final MemberRepository memberRepository;
+
+    private final ExhibitionRepository exhibitionRepository;
 
     //메이트글 등록
     public MateSimpleResponse save(MateRequest request, Long memberId) {
@@ -137,6 +142,21 @@ public class MateService {
         return mateRepository.findByMember(member, pageRequest);
     }
 
+
+    //전시글 상세페이지에서 해당 전시회 id에 해당하는 메이트글 목록조회
+    public Page<Mate> findExhibitionMates(Long exhibitionId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("createdAt").descending());
+        Exhibition exhibition = exhibitionRepository.findById(exhibitionId)
+                .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
+
+        return mateRepository.findByExhibition(exhibition, pageRequest);
+    }
+
+    //메이트 목록 조회 검색바 (title or content)
+    public Page<Mate> findTitleOrContent(String keyword, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("id").descending());
+        return mateRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageRequest);
+    }
 
     @Transactional
     public void bookmarkCountUp(Long id) {

@@ -95,12 +95,30 @@ public class ExhibitionController {
     }
 
 
+    //전시글 목록조회 서치바
+    @GetMapping("/exhibitions/search")
+    public ResponseEntity findInfoByTitle( @Positive @RequestParam int page,
+                                           @RequestParam(value = "status", required = true) String status,
+                                           @RequestParam(value = "title", required = false) String title) {
+        int size = 8;
+        Page<Exhibition> pageExhibitions = exhibitionService.findTitle(status, title, page, size);
+        List<ExhibitionBasicResponse> exhibitions = pageExhibitions
+                .stream()
+                .map(ExhibitionBasicResponse::of)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(
+                new ExhibitionPageResponse<>(exhibitions, pageExhibitions),
+                HttpStatus.OK);
+
+    }
+
     //전시회 상태와 유형 같이 검색
     @GetMapping("/exhibitions")
     public ResponseEntity getExhibitions(
             @Positive @RequestParam int page,
             @RequestParam(value = "status", required = true) String status,
-            @RequestParam(value = "type", required = false) String type) {
+            @RequestParam(value = "type", required = true) String type) {
         int size = 8;
             Page<Exhibition> pageExhibitions = exhibitionService.readPageAllSearch(status, type, page, size);
             List<ExhibitionBasicResponse> exhibitions = pageExhibitions

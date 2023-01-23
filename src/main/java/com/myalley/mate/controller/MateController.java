@@ -1,6 +1,9 @@
 package com.myalley.mate.controller;
 
+import com.myalley.exhibition.domain.Exhibition;
+import com.myalley.exhibition.dto.response.ExhibitionBasicResponse;
 import com.myalley.exhibition.dto.response.ExhibitionMateListResponse;
+import com.myalley.exhibition.dto.response.ExhibitionPageResponse;
 import com.myalley.mate.domain.Mate;
 import com.myalley.mate.domain.MateBookmark;
 import com.myalley.mate.dto.*;
@@ -79,21 +82,15 @@ public class MateController {
             @Positive @RequestParam int page,
             @RequestParam(value = "status", required = false) String status) {
         int size = 4;
-        Page<Mate> pageMate = mateService.readPageAll(status, page, size);
-        Page<MateSimpleResponse> responsePage = pageMate
-                .map(mate -> new MateSimpleResponse(
-                        mate.getId(), mate.getTitle(),mate.getAvailableDate(),
-                        mate.getStatus(), mate.getMateGender(), mate.getMateAge(),
-                        mate.getCreatedAt(), mate.getViewCount(), mate.getMember().getMemberId(),
-                        mate.getMember().getNickname(), new ExhibitionMateListResponse(
-                        mate.getExhibition().getId(), mate.getExhibition().getTitle(),
-                        mate.getExhibition().getSpace(), mate.getExhibition().getPosterUrl(),
-                        mate.getExhibition().getStatus()
-                )));
-        List<MateSimpleResponse> mateList = responsePage.getContent();
+        Page<Mate> mates = mateService.readPageAll(status, page, size);
+       List<MateSimpleResponse> response = mates
+               .stream()
+               .map(MateSimpleResponse::of)
+               .collect(Collectors.toList());
+//        List<MateSimpleResponse> mateList = responsePage.getContent();
 
         return new ResponseEntity<>(
-                new MatePageResponse<>(mateList, pageMate),
+                new MatePageResponse<>(response, mates),
                 HttpStatus.OK);
     }
 
@@ -112,5 +109,38 @@ public class MateController {
 
         return new ResponseEntity<>(
                 new MatePageResponse<>(responses, mate), HttpStatus.OK);
+    }
+
+    //전시글 상세페이지에서 해당 전시회에 해당하는 메이트 모집글 목록 조회
+    @GetMapping("/exhibitions/mates/{id}")
+    public ResponseEntity getMatesByExhibition(@Positive @RequestParam("page") int page,
+                                               @PathVariable Long id) {
+        int size = 4;
+
+        Page<Mate> mates = mateService.findExhibitionMates(id, page, size);
+        List<MateSimpleResponse> response = mates
+                .stream()
+                .map(MateSimpleResponse::of)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(
+                new MatePageResponse<>(response, mates), HttpStatus.OK);
+    }
+
+
+    //메이트글 서치바 (제목 or 내용 검색)
+    @GetMapping("/mates/search")
+    public ResponseEntity findInfoByTitle( @Positive @RequestParam int page,
+                                           @RequestParam(value = "keyword", required = false) String keyword) {
+        int size = 8;
+        Page<Mate> pageMate = mateService.findTitleOrContent(keyword, page, size);
+        List<MateSimpleResponse> mates = pageMate
+                .stream()
+                .map(MateSimpleResponse::of)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(
+                new MatePageResponse<>(mates, pageMate), HttpStatus.OK);
+
     }
 }
