@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -58,13 +59,13 @@ public class MemberService {
         if (memberRepository.findByEmail(memberRegisterDto.getEmail()) != null) {
             throw new CustomException(MemberExceptionType.ALREADY_EXIST_USERNAME);
         }else if(memberRepository.findByNickname(memberRegisterDto.getNickname())!=null){
-            throw new CustomException(MemberExceptionType.ALREADY_EXIST_NAME);
+            throw new CustomException(MemberExceptionType.ALREADY_EXIST_NICKNAME);
         }
 
         memberRepository.save(Member.builder()
                 .email(memberRegisterDto.getEmail())
                 .password(passwordEncoder.encode(memberRegisterDto.getPassword()))
-                .nickname(memberRegisterDto.getNickname())
+                .nickname(memberRegisterDto.getNickname()+ "."+  UUID.randomUUID().toString())
                 .authority(Authority.ROLE_ADMIN)//Authority.ROLE_ADMIN
                 .status(Status.활동중)
                 .adminNo(memberRegisterDto.getAdminNo())
@@ -77,11 +78,14 @@ public class MemberService {
 
     public MemberInfoDto memberInfo(String email){
         Member member=memberRepository.findByEmail(email);
-
+        String nickname=member.getNickname();
+        if(member.isAdmin()){//관리자 닉네임 겹치지않게관리
+            nickname=nickname.substring(nickname.indexOf("."));
+        }
         return MemberInfoDto.builder()
                 .memberId(member.getMemberId())
                 .email(member.getEmail())
-                .nickname(member.getNickname())
+                .nickname(nickname)
                 .gender(member.getGender().name())
                 .birth(member.getBirth())
                 .level(member.getLevel().name())
@@ -90,8 +94,9 @@ public class MemberService {
                 .build();
     }
 
-    public ResponseEntity update(MemberUpdateDto memberUpdateDto,Member member){
+    public ResponseEntity update(Member member){
 
+        memberRepository.save(member);
 
         HashMap<String,Integer> map=new HashMap<>();
         map.put("resultCode",200);
