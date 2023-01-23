@@ -70,9 +70,19 @@ public class BlogReview extends BaseTime {
         this.transportation = target.getTransportation();
     }
 
+    public void setImage(BlogImage image){
+        this.images.add(image);
+    }
+    public void setMember(TestMember testMember){
+        this.testMember = testMember;
+    }
+
+    //조회수 관리
     public void updateViewCount(){
         this.viewCount++;
     }
+    
+    //좋아요 관리
     public void updateLikeCount(Boolean status){
         if(status.equals(Boolean.FALSE)) 
             this.likeCount++;
@@ -81,19 +91,8 @@ public class BlogReview extends BaseTime {
         else //음.. 나중에 바꾸기
             throw new CustomException(BlogReviewExceptionType.LIKES_BAD_REQUEST);
     }
-    //public void updateBookmarkCount(Boolean status){
-    // if(status.equals(Boolean.FALSE)) this.bookmarkCount++;
-    // else this.bookmarkCount--; }
-
-    //public void updateImages(BlogImage image){
-    //    this.images.add(image);
-    //}
-
-    public void setImage(BlogImage image){
-            this.images.add(image);
-    }
-    public void setMember(TestMember testMember){
-        this.testMember = testMember;
-    }
-
+    
+    //북마크 관리
+    public void increaseBookmarkCount(){ this.bookmarkCount++; }
+    public void decreaseBookmarkCount(){ this.bookmarkCount--; }
 }

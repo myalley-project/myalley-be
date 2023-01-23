@@ -85,7 +85,7 @@ public class BlogReviewService {
 
     
     //1. 존재하는 글인지 확인
-    private BlogReview findBlogReview(Long blogId){
+    public BlogReview findBlogReview(Long blogId){
         BlogReview blog = repository.findById(blogId).orElseThrow(() -> { //404 : 존재 하지 않는 글
             throw new CustomException(BlogReviewExceptionType.BLOG_NOT_FOUND);
         });
