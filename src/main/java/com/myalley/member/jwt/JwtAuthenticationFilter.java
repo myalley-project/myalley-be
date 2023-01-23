@@ -92,7 +92,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             HttpServletResponse response,
             AuthenticationException failed
     ) throws IOException {
-        response.setStatus(400);
+        response.setStatus(404);
         response.setContentType("application/json");
 
         Map<String, Object> body = new LinkedHashMap<>();

@@ -46,10 +46,12 @@ public class Exhibition extends BaseTime {
     @Column(nullable = false)
     private String type;
 
+    private Integer bookmarkCount;
+
     @Builder
     public Exhibition(String title, Integer adultPrice, String space, String fileName, String posterUrl,
                       String duration, String webLink, String content, String author,
-                      Integer viewCount, String status, String type) {
+                      Integer viewCount, String status, String type, Integer bookmarkCount) {
         this.title = title;
         this.adultPrice = adultPrice;
         this.space = space;
@@ -62,6 +64,7 @@ public class Exhibition extends BaseTime {
         this.viewCount = viewCount;
         this.status = status;
         this.type = type;
+        this.bookmarkCount = bookmarkCount;
     }
 
     public void updateInfo(Long id, ExhibitionUpdateRequest request) {
@@ -78,5 +81,14 @@ public class Exhibition extends BaseTime {
         this.content = request.getContent();
         this.author = request.getAuthor();
     }
+
+    public void bookmarkCountUp() {
+        this.bookmarkCount ++;
+    }
+
+    public void bookmarkCountDown() {
+        this.bookmarkCount --;
+    }
+
 }
 
