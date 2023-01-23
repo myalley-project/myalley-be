@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -64,7 +65,7 @@ public class MemberService {
         memberRepository.save(Member.builder()
                 .email(memberRegisterDto.getEmail())
                 .password(passwordEncoder.encode(memberRegisterDto.getPassword()))
-                .nickname(memberRegisterDto.getNickname())
+                .nickname(memberRegisterDto.getNickname()+ "."+  UUID.randomUUID().toString())
                 .authority(Authority.ROLE_ADMIN)//Authority.ROLE_ADMIN
                 .status(Status.활동중)
                 .adminNo(memberRegisterDto.getAdminNo())
@@ -77,11 +78,14 @@ public class MemberService {
 
     public MemberInfoDto memberInfo(String email){
         Member member=memberRepository.findByEmail(email);
-
+        String nickname=member.getNickname();
+        if(member.isAdmin()){//관리자 닉네임 겹치지않게관리
+            nickname=nickname.substring(nickname.indexOf("."));
+        }
         return MemberInfoDto.builder()
                 .memberId(member.getMemberId())
                 .email(member.getEmail())
-                .nickname(member.getNickname())
+                .nickname(nickname)
                 .gender(member.getGender().name())
                 .birth(member.getBirth())
                 .level(member.getLevel().name())
