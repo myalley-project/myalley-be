@@ -18,13 +18,14 @@ public class LikesService {
     private final TestMemberRepository memberRepository;
     private final BlogReviewRepository blogReviewRepository;
 
-    public void findLikes(Long blogId, Long memberId){
+    public Boolean findLikes(Long blogId, Long memberId){
         TestMember testMember = memberRepository.findById(memberId).get();
         BlogReview blog = blogReviewRepository.findById(blogId).get();
         if(blog.getTestMember().getId()==memberId)
             throw new CustomException(BlogReviewExceptionType.LIKES_BAD_REQUEST);
         BlogLikes like = likesRepository.findByTestMemberAndBlog(testMember,blog).orElseGet(() -> new BlogLikes(testMember,blog));
         changeLike(like);
+        return like.getIsDeleted();
     }
 
     public void changeLike(BlogLikes like){

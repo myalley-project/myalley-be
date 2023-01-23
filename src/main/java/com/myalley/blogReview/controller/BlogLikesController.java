@@ -4,10 +4,7 @@ import com.myalley.blogReview.service.LikesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/likes")
@@ -20,7 +17,9 @@ public class BlogLikesController {
     //-> 추후에 변경할 예정
     @PutMapping("/{blog-id}/{member-id}")
     public ResponseEntity clickLikes(@PathVariable("blog-id") Long blogId,@PathVariable("member-id") Long memberId){
-        likesService.findLikes(blogId,memberId);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        Boolean result = likesService.findLikes(blogId,memberId);
+        if(result)
+            return new ResponseEntity<>("off", HttpStatus.OK);
+        else return new ResponseEntity<>("on", HttpStatus.CREATED);
     }
 }
