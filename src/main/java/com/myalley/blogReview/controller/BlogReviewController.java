@@ -7,6 +7,7 @@ import com.myalley.blogReview.service.BlogReviewService;
 import com.myalley.blogReview.service.S3Service;
 import com.myalley.blogReview_deleted.service.BlogReviewDeletedService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,5 +52,12 @@ public class BlogReviewController {
         s3Service.deleteBlogAllImages(fileNameList);
         blogReviewService.deleteBlogReview(target);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/me/{member-id}")
+    public ResponseEntity getUserBlogReviewList(@PathVariable("member-id") Long memberId,
+                                                @RequestParam(value = "page") int pageNo){
+        Page<BlogReview> blogReviewPage = blogReviewService.retrieveMyBlogReviewList(memberId,pageNo);
+        return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
     }
 }
