@@ -46,18 +46,25 @@ public class BlogReviewService {
         //1. 만약 orderType이 null인 경우, Recent 를 담음
         Page<BlogReview> blogReviewList;
         //2. 페이지네이션 넣을 정보 담기 pageNo, 한 페이지당 개수 9개, 정렬은 orderType (orderType = User, ViewCount, Recent)
-        if(orderType.equals("User")) {
-            PageRequest pageRequest = PageRequest.of(pageNo, 9, Sort.by("id").descending());
-            blogReviewList = repository.findAllByTestMember(pageRequest);
-        } else if(orderType.equals("ViewCount")) {
+        if(orderType!=null && orderType.equals("ViewCount")) {
             PageRequest pageRequest = PageRequest.of(pageNo, 9, Sort.by("viewCount").descending());
-            blogReviewList = repository.findAllById(pageRequest);
-        } else{
+            blogReviewList = repository.findAll(pageRequest);
+        } else if(orderType==null){
             PageRequest pageRequest = PageRequest.of(pageNo, 9, Sort.by("id").descending());
-            blogReviewList = repository.findAllById(pageRequest);
+            blogReviewList = repository.findAll(pageRequest);
+            System.out.println(blogReviewList.getTotalElements());
+        } else{
+            throw new CustomException(BlogReviewExceptionType.BLOG_NOT_FOUND);
         }
         //3. 페이지 정보 구성 및 데이터 작업은 Mapper로
         return blogReviewList;
+    }
+
+    public Page<BlogReview> retrieveMyBlogReviewList(Long memberId, int pageNo) {
+        TestMember member = mRepository.findById(memberId).get();
+        PageRequest pageRequest = PageRequest.of(pageNo, 9, Sort.by("id").descending());
+        Page<BlogReview> myBlogReviewList = repository.findAllByTestMember(member,pageRequest);
+        return myBlogReviewList;
     }
 
     public void updateBlogReview(BlogReview postBlogReview, Long blogId, Long memberId) {

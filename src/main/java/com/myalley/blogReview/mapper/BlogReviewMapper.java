@@ -10,6 +10,7 @@ import com.myalley.test_user.TestMember;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,8 @@ public interface BlogReviewMapper {
             BlogResponseDto.SimpleBlogDto simpleBlogDto = new BlogResponseDto.SimpleBlogDto();
             simpleBlogDto.setId(blogReview.getId());
             simpleBlogDto.setViewDate(blogReview.getViewDate());
-            simpleBlogDto.setImageInfo(imageToImageDto(blogReview.getImages().get(0))); //아직 이미지가 없는 건 처리못함
+            if(!CollectionUtils.isEmpty(blogReview.getImages()))
+                simpleBlogDto.setImageInfo(imageToImageDto(blogReview.getImages().get(0))); //아직 이미지가 없는 건 처리못함
             simpleBlogDto.setTitle(blogReview.getTitle());
             simpleBlogDto.setWriter(blogReview.getTestMember().getNickname());
             simpleBlogDto.setViewCount(blogReview.getViewCount());

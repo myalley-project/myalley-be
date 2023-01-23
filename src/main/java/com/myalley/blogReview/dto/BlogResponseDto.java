@@ -20,12 +20,13 @@ public class BlogResponseDto {
         private pagingDto pageInfo;
     }
 
-    @Setter
+    @Data
     @NoArgsConstructor
     public static class SimpleBlogDto{
         private Long id;
         private String title;
         private String writer;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private LocalDate viewDate;
         private Integer viewCount;
         private ImageResponseDto imageInfo;
