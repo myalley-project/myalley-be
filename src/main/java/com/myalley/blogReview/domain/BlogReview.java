@@ -1,7 +1,6 @@
 package com.myalley.blogReview.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.myalley.blogReview.dto.BlogRequestDto;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
 import com.myalley.test_user.TestMember;

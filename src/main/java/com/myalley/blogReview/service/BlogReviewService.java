@@ -1,7 +1,6 @@
 package com.myalley.blogReview.service;
 
 import com.myalley.blogReview.domain.BlogReview;
-import com.myalley.blogReview.dto.BlogRequestDto;
 import com.myalley.test_user.TestMember;
 import com.myalley.test_user.TestMemberRepository;
 
@@ -11,14 +10,8 @@ import com.myalley.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
