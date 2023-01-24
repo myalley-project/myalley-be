@@ -38,10 +38,12 @@ public class SimpleReviewController {
     }
 
     @DeleteMapping("/api/simple-reviews/{simple-id}")
-    public ResponseEntity deleteSimpleReview(){
+    public ResponseEntity deleteSimpleReview(@PathVariable("simple-id") Long simpleId){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        simpleService.removeSimpleReview(simpleId,member);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
     @GetMapping("/simple-reviews/{exhibition-id}")
     public ResponseEntity getExhibitionSimpleReviewList(@PathVariable("exhibition-id") Long exhibitionId){
         return new ResponseEntity<>(HttpStatus.OK);

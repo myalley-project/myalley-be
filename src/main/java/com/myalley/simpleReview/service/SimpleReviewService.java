@@ -8,6 +8,9 @@ import com.myalley.exhibition.service.ExhibitionService;
 import com.myalley.member.domain.Member;
 import com.myalley.simpleReview.domain.SimpleReview;
 import com.myalley.simpleReview.repository.SimpleReviewRepository;
+import com.myalley.simpleReview_deleted.SimpleReviewDeleted;
+import com.myalley.simpleReview_deleted.SimpleReviewDeletedRepository;
+import com.myalley.simpleReview_deleted.SimpleReviewDeletedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class SimpleReviewService {
     private final SimpleReviewRepository simpleRepository;
     private final ExhibitionService exhibitionService;
+    private final SimpleReviewDeletedService simpleDeletedService;
 
     public void createSimpleReview(SimpleReview simpleReview, Member member, Long exhibitionId){
         Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
@@ -28,6 +32,12 @@ public class SimpleReviewService {
         SimpleReview pre = verifySimpleReview(simpleReview.getId(), member);
         pre.updateSimpleReview(simpleReview);
         simpleRepository.save(pre);
+    }
+
+    public void removeSimpleReview(Long simpleId, Member member){
+        SimpleReview target = verifySimpleReview(simpleId, member);
+        simpleDeletedService.createdSimpleDeleted(target);
+        simpleRepository.delete(target);
     }
 
 
