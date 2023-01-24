@@ -1,5 +1,6 @@
 package com.myalley.simpleReview.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.myalley.common.dto.pagingDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,7 @@ public class SimpleResponseDto {
     @NoArgsConstructor
     public static class ExhibitionSimpleReviewResponseDto {
         private Long id;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private LocalDate viewDate;
         private Integer rate;
         private String content;
@@ -53,6 +55,7 @@ public class SimpleResponseDto {
     @NoArgsConstructor
     public static class UserSimpleReviewResponseDto {
         private Long id;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private LocalDate viewDate;
         private Integer rate;
         private String content;

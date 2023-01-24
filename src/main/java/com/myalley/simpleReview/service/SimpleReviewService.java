@@ -1,6 +1,5 @@
 package com.myalley.simpleReview.service;
 
-import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
 import com.myalley.exception.SimpleReviewExceptionType;
 import com.myalley.exhibition.domain.Exhibition;
@@ -8,11 +7,8 @@ import com.myalley.exhibition.service.ExhibitionService;
 import com.myalley.member.domain.Member;
 import com.myalley.simpleReview.domain.SimpleReview;
 import com.myalley.simpleReview.repository.SimpleReviewRepository;
-import com.myalley.simpleReview_deleted.SimpleReviewDeleted;
-import com.myalley.simpleReview_deleted.SimpleReviewDeletedRepository;
 import com.myalley.simpleReview_deleted.SimpleReviewDeletedService;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.build.Plugin;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -32,8 +28,8 @@ public class SimpleReviewService {
         simpleRepository.save(simpleReview);
     }
 
-    public void updateSimpleReview(SimpleReview simpleReview, Member member){
-        SimpleReview pre = verifySimpleReview(simpleReview.getId(), member);
+    public void updateSimpleReview(Long simpleId, SimpleReview simpleReview, Member member){
+        SimpleReview pre = verifySimpleReview(simpleId, member);
         pre.updateSimpleReview(simpleReview);
         simpleRepository.save(pre);
     }
@@ -44,17 +40,26 @@ public class SimpleReviewService {
         simpleRepository.delete(target);
     }
 
-    public Page<SimpleReview> retrieveExhibitionSimpleReviewList(Long exhibitionId, int pageNo){
+    public Page<SimpleReview> retrieveExhibitionSimpleReviewList(Long exhibitionId, Integer pageNo){
         Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
+        if(pageNo==null)
+            pageNo=0;
         PageRequest pageRequest = PageRequest.of(pageNo,10, Sort.by("id").descending());
         return simpleRepository.findAllByExhibition(exhibition,pageRequest);
+    }
+
+    public Page<SimpleReview> retrieveUserSimpleReviewList(Member member, Integer pageNo){
+        if(pageNo==null)
+            pageNo=0;
+        PageRequest pageRequest = PageRequest.of(pageNo,5, Sort.by("id").descending());
+        return simpleRepository.findAllByMember(member,pageRequest);
     }
 
 
     //Test
     public SimpleReview getSimpleReview(Long simpleId){
         return simpleRepository.findById(simpleId).orElseThrow(()->{
-            throw new CustomException(BlogReviewExceptionType.BLOG_NOT_FOUND); //원래는 simple review도 따로 있어야함
+            throw new CustomException(SimpleReviewExceptionType.SIMPLE_NOT_FOUND); //원래는 simple review도 따로 있어야함
         });
     }
 

@@ -31,10 +31,10 @@ public class SimpleReviewController {
 
     @PatchMapping("/api/simple-reviews/{simple-id}")
     public ResponseEntity patchSimpleReview(@PathVariable("simple-id") Long simpleId,
-                                            @RequestBody SimpleRequestDto.PatchSimpleDto simpleDto){
+                                            @Valid @RequestBody SimpleRequestDto.PatchSimpleDto simpleDto){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         SimpleReview post = SimpleReviewMapper.INSTANCE.patchSimpleDtoToSimpleReview(simpleDto);
-        simpleService.updateSimpleReview(post, member);
+        simpleService.updateSimpleReview(simpleId,post, member);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -47,16 +47,18 @@ public class SimpleReviewController {
 
     @GetMapping("/simple-reviews/{exhibition-id}")
     public ResponseEntity getExhibitionSimpleReviewList(@PathVariable("exhibition-id") Long exhibitionId,
-                                                        @RequestParam("page") int pageNo){
+                                                        @RequestParam(required = false, value = "page") Integer pageNo){
         Page<SimpleReview> simpleReviewPage = simpleService.retrieveExhibitionSimpleReviewList(exhibitionId,pageNo);
         return new ResponseEntity<>(SimpleReviewMapper.INSTANCE.listExhibitionSimpleReviewDto(simpleReviewPage),
                 HttpStatus.OK);
     }
 
     @GetMapping("/api/simple-reviews/me")
-    public ResponseEntity getUserSimpleReviewList(@PathParam("page") int pageNo){
+    public ResponseEntity getUserSimpleReviewList(@RequestParam(required = false, value = "page") Integer pageNo){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return new ResponseEntity<>(HttpStatus.OK);
+        Page<SimpleReview> simpleReviewPage = simpleService.retrieveUserSimpleReviewList(member, pageNo);
+        return new ResponseEntity<>(SimpleReviewMapper.INSTANCE.listUserSimpleReviewDto(simpleReviewPage),
+                HttpStatus.OK);
     }
 
 
