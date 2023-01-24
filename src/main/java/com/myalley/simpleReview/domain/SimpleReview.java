@@ -1,6 +1,9 @@
 package com.myalley.simpleReview.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myalley.common.domain.BaseTime;
+import com.myalley.exhibition.domain.Exhibition;
+import com.myalley.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,18 +28,31 @@ public class SimpleReview extends BaseTime {
     private String time;
     private String congestion;
 
-    private Long member;
-    private Long exhibition;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name="member_id")
+    private Member member;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name="exhibition_id")
+    private Exhibition exhibition;
 
     @Builder
     public SimpleReview(LocalDate viewDate, String time, String congestion, Integer rate,
-                        String content, Long member, Long exhibition){
+                        String content, Member member, Exhibition exhibition){
         this.viewDate = viewDate;
         this.time = time;
         this.congestion = congestion;
         this.rate = rate;
         this.content = content;
         this.member = member;
+        this.exhibition = exhibition;
+    }
+
+    public void setMember(Member member){
+        this.member = member;
+    }
+    public void setExhibition(Exhibition exhibition){
         this.exhibition = exhibition;
     }
 }
