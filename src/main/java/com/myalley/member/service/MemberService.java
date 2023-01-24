@@ -1,8 +1,6 @@
 package com.myalley.member.service;
 
-import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.member.dto.MemberInfoDto;
-import com.myalley.member.dto.MemberUpdateDto;
 import com.myalley.member.options.Authority;
 import com.myalley.member.options.Level;
 import com.myalley.member.options.Status;
@@ -11,8 +9,9 @@ import com.myalley.member.dto.MemberRegisterDto;
 import com.myalley.exception.CustomException;
 import com.myalley.exception.MemberExceptionType;
 import com.myalley.member.repository.MemberRepository;
+import com.myalley.member_deleted.domain.MemberDeleted;
+import com.myalley.member_deleted.repository.MemberDeletedRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +27,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final MemberDeletedRepository memberDeletedRepository;
 
 
     public ResponseEntity signup(MemberRegisterDto memberRegisterDto) {
@@ -107,9 +106,10 @@ public class MemberService {
     }
 
 
-    public ResponseEntity delete(Long id) {
+    public ResponseEntity delete(Member member) {
 
-        memberRepository.deleteById(id);
+        memberDeletedRepository.save(new MemberDeleted(member));
+        memberRepository.delete(member);
 
         HashMap<String,Integer> map=new HashMap<>();
         map.put("resultCode",200);
