@@ -64,20 +64,4 @@ public interface SimpleReviewMapper {
         return responseDto;
     }
 
-
-
-    //(Test) 개별 조회 시 사용
-    default SimpleResponseDto.GetSimpleResponseDto simpleReviewToGetSimpleResponseDto(SimpleReview simpleReview){
-        SimpleResponseDto.GetSimpleResponseDto responseDto = new SimpleResponseDto.GetSimpleResponseDto();
-        responseDto.setId(simpleReview.getId());
-        responseDto.setViewDate(simpleReview.getViewDate());
-        responseDto.setRate(simpleReview.getRate());
-        responseDto.setContent(simpleReview.getContent());
-        responseDto.setCongestion(simpleReview.getCongestion());
-        responseDto.setTime(simpleReview.getTime());
-        responseDto.setMemberInfo(simpleMemberDtoToMember(simpleReview.getMember()));
-        responseDto.setExhibitionInfo(simpleExhibitionDtoToExhibition(simpleReview.getExhibition()));
-        return responseDto;
-    }
-
 }

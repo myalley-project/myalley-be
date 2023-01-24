@@ -7,7 +7,6 @@ import com.myalley.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.bytebuddy.build.Plugin;
 
 import javax.persistence.*;
 import java.time.LocalDate;

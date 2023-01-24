@@ -1,7 +1,5 @@
-package com.myalley.simpleReview_deleted;
+package com.myalley.simpleReview_deleted.domain;
 
-import com.myalley.exhibition.domain.Exhibition;
-import com.myalley.member.domain.Member;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 

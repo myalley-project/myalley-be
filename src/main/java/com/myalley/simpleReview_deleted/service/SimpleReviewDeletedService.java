@@ -1,6 +1,8 @@
-package com.myalley.simpleReview_deleted;
+package com.myalley.simpleReview_deleted.service;
 
 import com.myalley.simpleReview.domain.SimpleReview;
+import com.myalley.simpleReview_deleted.domain.SimpleReviewDeleted;
+import com.myalley.simpleReview_deleted.repository.SimpleReviewDeletedRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

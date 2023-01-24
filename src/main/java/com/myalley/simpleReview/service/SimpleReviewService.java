@@ -7,7 +7,7 @@ import com.myalley.exhibition.service.ExhibitionService;
 import com.myalley.member.domain.Member;
 import com.myalley.simpleReview.domain.SimpleReview;
 import com.myalley.simpleReview.repository.SimpleReviewRepository;
-import com.myalley.simpleReview_deleted.SimpleReviewDeletedService;
+import com.myalley.simpleReview_deleted.service.SimpleReviewDeletedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,11 +40,18 @@ public class SimpleReviewService {
         simpleRepository.delete(target);
     }
 
-    public Page<SimpleReview> retrieveExhibitionSimpleReviewList(Long exhibitionId, Integer pageNo){
+    public Page<SimpleReview> retrieveExhibitionSimpleReviewList(Long exhibitionId, Integer pageNo, String orderType){
         Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
         if(pageNo==null)
             pageNo=0;
-        PageRequest pageRequest = PageRequest.of(pageNo,10, Sort.by("id").descending());
+        PageRequest pageRequest;
+        if(orderType != null && orderType.equals("StarScore")) {
+            pageRequest = PageRequest.of(pageNo, 10, Sort.by("rate").descending()
+                    .and(Sort.by("id").descending()));
+        }else if(orderType == null || orderType.equals("Recent"))
+            pageRequest = PageRequest.of(pageNo,10, Sort.by("id").descending());
+        else
+            throw new CustomException(SimpleReviewExceptionType.SIMPLE_BAD_REQUEST);
         return simpleRepository.findAllByExhibition(exhibition,pageRequest);
     }
 
@@ -53,14 +60,6 @@ public class SimpleReviewService {
             pageNo=0;
         PageRequest pageRequest = PageRequest.of(pageNo,5, Sort.by("id").descending());
         return simpleRepository.findAllByMember(member,pageRequest);
-    }
-
-
-    //Test
-    public SimpleReview getSimpleReview(Long simpleId){
-        return simpleRepository.findById(simpleId).orElseThrow(()->{
-            throw new CustomException(SimpleReviewExceptionType.SIMPLE_NOT_FOUND); //원래는 simple review도 따로 있어야함
-        });
     }
 
     //존재하는지, 작성자 본인인지 확인
