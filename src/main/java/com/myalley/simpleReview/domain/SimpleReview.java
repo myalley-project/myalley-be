@@ -7,6 +7,7 @@ import com.myalley.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.bytebuddy.build.Plugin;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -54,5 +55,15 @@ public class SimpleReview extends BaseTime {
     }
     public void setExhibition(Exhibition exhibition){
         this.exhibition = exhibition;
+    }
+
+    public void updateSimpleReview(SimpleReview post){
+        if(post.getTime() != null)
+            this.time = post.getTime();
+        if(post.getCongestion() != null)
+            this.congestion = post.getCongestion();
+        this.rate = post.getRate();
+        this.viewDate = post.getViewDate();
+        this.content = post.getContent();
     }
 }

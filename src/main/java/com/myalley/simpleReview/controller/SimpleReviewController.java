@@ -19,6 +19,7 @@ import javax.websocket.server.PathParam;
 @RequiredArgsConstructor
 public class SimpleReviewController {
     private final SimpleReviewService simpleService;
+
     @PostMapping("/api/simple-reviews")
     public ResponseEntity postSimpleReview(@Valid @RequestBody SimpleRequestDto.PostSimpleDto simpleDto){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -26,11 +27,16 @@ public class SimpleReviewController {
         simpleService.createSimpleReview(newSimpleReview,member, simpleDto.getExhibitionId());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
     @PatchMapping("/api/simple-reviews/{simple-id}")
-    public ResponseEntity patchSimpleReview(@PathVariable("simple-id") Long simpleId){
+    public ResponseEntity patchSimpleReview(@PathVariable("simple-id") Long simpleId,
+                                            @RequestBody SimpleRequestDto.PatchSimpleDto simpleDto){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        SimpleReview post = SimpleReviewMapper.INSTANCE.patchSimpleDtoToSimpleReview(simpleDto);
+        simpleService.updateSimpleReview(post, member);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @DeleteMapping("/api/simple-reviews/{simple-id}")
     public ResponseEntity deleteSimpleReview(){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
