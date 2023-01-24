@@ -74,7 +74,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             new ObjectMapper().writeValue(response.getWriter(), body);
 
         } catch (Exception e) {
-            log.info("JWT 토큰이 잘못되었습니다.");
+
+            log.info(e.getMessage()+ " JWT 토큰이 잘못되었습니다.");
             response.setStatus(SC_FORBIDDEN);
             response.setContentType(APPLICATION_JSON_VALUE);
             response.setCharacterEncoding("utf-8");

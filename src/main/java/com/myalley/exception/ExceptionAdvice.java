@@ -25,7 +25,7 @@ public class ExceptionAdvice {//예외처리 responseEntity로 return
         log.error("BaseException errorMsg(): {}",exception.getExceptionType().getErrorMsg());
 
         return new ResponseEntity(
-                new ExceptionDto(exception.getExceptionType().getErrorCode(),exception.getExceptionType().getErrorMsg()), HttpStatus.valueOf(400));
+                new ExceptionDto(exception.getExceptionType().getErrorCode(),exception.getExceptionType().getErrorMsg()), HttpStatus.valueOf(exception.getExceptionType().getErrorCode()));
 
     }
 
