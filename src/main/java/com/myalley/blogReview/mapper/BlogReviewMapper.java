@@ -1,6 +1,7 @@
 package com.myalley.blogReview.mapper;
 
 import com.myalley.blogReview.domain.BlogImage;
+import com.myalley.blogReview.domain.BlogLikes;
 import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview.dto.BlogRequestDto;
 import com.myalley.blogReview.dto.BlogResponseDto;
@@ -60,6 +61,27 @@ public interface BlogReviewMapper {
         dto.setPageInfo(paging);
         return dto;
     }
+
+    default BlogResponseDto.BlogListDto pageableLikesToMyBlogLikesDto(Page<BlogLikes> pageLikes){
+        BlogResponseDto.BlogListDto dto = new BlogResponseDto.BlogListDto();
+        List<BlogResponseDto.SimpleBlogDto> simpleBlogDtoList = pageLikes.get().map( blogLikes -> {
+            BlogResponseDto.SimpleBlogDto simpleBlogDto = new BlogResponseDto.SimpleBlogDto();
+            simpleBlogDto.setId(blogLikes.getBlog().getId());
+            simpleBlogDto.setViewDate(blogLikes.getBlog().getViewDate());
+            if(!CollectionUtils.isEmpty(blogLikes.getBlog().getImages()))
+                simpleBlogDto.setImageInfo(imageToImageDto(blogLikes.getBlog().getImages().get(0))); //아직 이미지가 없는 건 처리못함
+            simpleBlogDto.setTitle(blogLikes.getBlog().getTitle());
+            simpleBlogDto.setWriter(blogLikes.getBlog().getMember().getNickname());
+            simpleBlogDto.setViewCount(blogLikes.getBlog().getViewCount());
+            return simpleBlogDto;
+        }).collect(Collectors.toList());
+        pagingDto paging = new pagingDto(pageLikes.getNumber(), pageLikes.getSize(),
+                pageLikes.getTotalElements(), pageLikes.getTotalPages());
+        dto.setBlogInfo(simpleBlogDtoList);
+        dto.setPageInfo(paging);
+        return dto;
+    }
+
     BlogResponseDto.SimpleMemberDto memberToSimpleMemberDto(Member member);
     BlogResponseDto.SimpleExhibitionDto exhibitionToSimpleExhibitionDto(Exhibition exhibition);
     default BlogResponseDto.SimpleBlogDto blogToSimpleBlogDto(BlogReview blog){

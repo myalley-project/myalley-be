@@ -8,6 +8,9 @@ import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
 import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,4 +29,10 @@ public class LikesService {
         return like.getIsDeleted();
     }
 
+    public Page<BlogLikes> retrieveMyBlogLikes(Member member, Integer pageNo){
+        if(pageNo == null)
+            pageNo = 0;
+        PageRequest pageRequest = PageRequest.of(pageNo,6, Sort.by("id").descending());
+        return likesRepository.findAllByMember(member,pageRequest);
+    }
 }
