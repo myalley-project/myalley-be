@@ -17,10 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.UUID;
-
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -95,7 +96,9 @@ public class MemberService {
     }
 
     public ResponseEntity update(Member member){
-
+        if(memberRepository.findByNickname(member.getNickname())!=null){
+            throw new CustomException(MemberExceptionType.ALREADY_EXIST_NICKNAME);
+        }
         memberRepository.save(member);
 
         HashMap<String,Integer> map=new HashMap<>();
