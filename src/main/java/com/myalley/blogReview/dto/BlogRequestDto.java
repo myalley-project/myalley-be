@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @NoArgsConstructor
 public class BlogRequestDto {
@@ -11,11 +13,15 @@ public class BlogRequestDto {
     @Data
     @NoArgsConstructor
     public static class PostBlogDto {
-        private Long exhibition;
+        @NotNull
+        private Long exhibitionId;
+        @NotNull
         private String viewDate;
-        private String time;
+        @NotNull
         private String title;
+        @NotNull
         private String content;
+        private String time;
         private String transportation;
         private String revisit;
         private String congestion;
@@ -24,14 +30,13 @@ public class BlogRequestDto {
     @Data
     @NoArgsConstructor
     public static class PutBlogDto {
-        //전시회를 변경할 수 있게 할지 말지 생각하는 중.
-        //과연 기존 전시회 블로그로 썼던 글을 다른 전시회로 쓰려고 할까?
-        //지금으로써는 안 바꿀 것 같음
-        //private Long exhibition;
+        @NotNull
         private String viewDate;
-        private String time;
+        @NotNull
         private String title;
+        @NotNull
         private String content;
+        private String time;
         private String transportation;
         private String revisit;
         private String congestion;

@@ -2,7 +2,7 @@ package com.myalley.blogReview.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myalley.common.domain.BaseTime;
-import com.myalley.test_user.TestMember;
+import com.myalley.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +21,7 @@ public class BlogLikes extends BaseTime {
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name="member_id")
-    private TestMember testMember;
+    private Member member;
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name="blog_id")
@@ -29,8 +29,8 @@ public class BlogLikes extends BaseTime {
     private Boolean isDeleted=Boolean.TRUE;
 
     @Builder
-    public BlogLikes(TestMember testMember, BlogReview blog){
-        this.testMember = testMember;
+    public BlogLikes(Member member, BlogReview blog){
+        this.member = member;
         this.blog=blog;
     }
 

@@ -3,8 +3,9 @@ package com.myalley.blogReview.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
-import com.myalley.test_user.TestMember;
+import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.common.domain.BaseTime;
+import com.myalley.member.domain.Member;
 import lombok.*;
 
 import javax.persistence.*;
@@ -38,16 +39,18 @@ public class BlogReview extends BaseTime {
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private TestMember testMember;
-    @Column(name = "exhibition_id")
-    private Long exhibition;
+    private Member member;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "exhibition_id")
+    private Exhibition exhibition;
 
     @OneToMany(mappedBy = "blog")
     private List<BlogImage> images = new ArrayList<>();
 
     @Builder
     public BlogReview(String title, String content, LocalDate viewDate, String time, String transportation,
-                      String revisit, String congestion, TestMember testMember, Long exhibition){
+                      String revisit, String congestion, Member member, Exhibition exhibition){
         this.title = title;
         this.content = content;
         this.viewDate = viewDate;
@@ -55,7 +58,7 @@ public class BlogReview extends BaseTime {
         this.transportation = transportation;
         this.revisit = revisit;
         this.congestion = congestion;
-        this.testMember = testMember;
+        this.member = member;
         this.exhibition = exhibition;
     }
 
@@ -72,9 +75,10 @@ public class BlogReview extends BaseTime {
     public void setImage(BlogImage image){
         this.images.add(image);
     }
-    public void setMember(TestMember testMember){
-        this.testMember = testMember;
+    public void setMember(Member member){
+        this.member = member;
     }
+    public void setExhibition(Exhibition exhibition) {this.exhibition=exhibition;}
 
     //조회수 관리
     public void updateViewCount(){

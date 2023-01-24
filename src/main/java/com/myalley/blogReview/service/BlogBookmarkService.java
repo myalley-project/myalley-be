@@ -6,9 +6,6 @@ import com.myalley.blogReview.repository.BlogBookmarkRepository;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
 import com.myalley.member.domain.Member;
-import com.myalley.member.service.MemberService;
-import com.myalley.test_user.TestMember;
-import com.myalley.test_user.TestMemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,15 +15,11 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class BlogBookmarkService {
     private final BlogBookmarkRepository blogBookmarkRepository;
-    //private final MemberService memberService;
-    private final TestMemberRepository memberRepository;
     private final BlogReviewService blogReviewService;
 
-    public void createBookmark(Long blogId, Long memberId){
-        //Member member = memberService.verifyMember(memberId);
-        TestMember member = memberRepository.findById(memberId).get(); //임시 (테스트 할 때까지만)
+    public void createBookmark(Long blogId, Member member){
         BlogReview blogReview = blogReviewService.findBlogReview(blogId);
-        if(blogReview.getTestMember().getId()==memberId)
+        if(blogReview.getMember().getMemberId() == member.getMemberId())
             throw new CustomException(BlogReviewExceptionType.BOOKMARK_FORBIDDEN);
         if(blogBookmarkRepository.findByMemberAndBlog(member,blogReview).isPresent())
             throw new CustomException(BlogReviewExceptionType.BOOKMARK_BAD_REQUEST);
@@ -35,9 +28,7 @@ public class BlogBookmarkService {
         blogBookmarkRepository.save(newBlogBookmark);
     }
 
-    public void deleteBookmark(Long memberId, Long blogId){
-        //Member member = memberService.verifyMember(memberId);
-        TestMember member = memberRepository.findById(memberId).get(); //임시 (테스트 할 때까지만)
+    public void deleteBookmark(Long blogId, Member member){
         BlogReview blogReview = blogReviewService.findBlogReview(blogId);
         BlogBookmark bookmark = blogBookmarkRepository.findByMemberAndBlog(member,blogReview).orElseThrow(() -> {
             throw new CustomException(BlogReviewExceptionType.BOOKMARK_BAD_REQUEST);

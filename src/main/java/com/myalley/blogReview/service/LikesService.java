@@ -6,8 +6,7 @@ import com.myalley.blogReview.repository.BlogReviewRepository;
 import com.myalley.blogReview.repository.BlogLikesRepository;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
-import com.myalley.test_user.TestMember;
-import com.myalley.test_user.TestMemberRepository;
+import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,24 +14,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class LikesService {
     private final BlogLikesRepository likesRepository;
-    private final TestMemberRepository memberRepository;
     private final BlogReviewRepository blogReviewRepository;
 
-    public Boolean findLikes(Long blogId, Long memberId){
-        TestMember testMember = memberRepository.findById(memberId).get();
+    public Boolean findLikes(Long blogId, Member member){
         BlogReview blog = blogReviewRepository.findById(blogId).get();
-        if(blog.getTestMember().getId()==memberId)
+        if(blog.getMember().getMemberId()==member.getMemberId())
             throw new CustomException(BlogReviewExceptionType.LIKES_BAD_REQUEST);
-        BlogLikes like = likesRepository.findByTestMemberAndBlog(testMember,blog).orElseGet(() -> new BlogLikes(testMember,blog));
-        changeLike(like);
+        BlogLikes like = likesRepository.findByMemberAndBlog(member,blog).orElseGet(() -> new BlogLikes(member,blog));
+        like.changeLikesStatus();
+        likesRepository.save(like);
         return like.getIsDeleted();
-    }
-
-    public void changeLike(BlogLikes like){
-            like.changeLikesStatus();
-            likesRepository.save(like);
-            //현재 Likes내의 blog에 casCade = CascadeType.Persist로 놓음
-            //blogReviewRepository.save(like.getBlog());
     }
 
 }

@@ -6,58 +6,56 @@ import com.myalley.blogReview.service.BlogImageService;
 import com.myalley.blogReview.service.BlogReviewService;
 import com.myalley.blogReview.service.S3Service;
 import com.myalley.blogReview_deleted.service.BlogReviewDeletedService;
+import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/blogs")
+@RequestMapping
 @RequiredArgsConstructor
 public class BlogReviewController {
 
     private final BlogReviewService blogReviewService;
-    private final BlogReviewDeletedService blogReviewDeletedService;
-    private final BlogImageService blogImageService;
-    private final S3Service s3Service;
 
 
-    @PostMapping("{member-id}")
-    public ResponseEntity createBlogReview(@PathVariable("member-id") Long memberId,@RequestPart(value = "blogInfo") BlogRequestDto.PostBlogDto blogRequestDto, @RequestPart(required = false) List<MultipartFile> images) throws Exception { //@RequestPart("images") MultipartFile[] files,
+    @PostMapping("/api/blogs")
+    public ResponseEntity postBlogReview(@RequestPart(value = "blogInfo") BlogRequestDto.PostBlogDto blogRequestDto,
+                                           @RequestPart(required = false) List<MultipartFile> images) throws Exception { //@RequestPart("images") MultipartFile[] files,
+        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview target = BlogReviewMapper.INSTANCE.postBlogDtoToBlogReview(blogRequestDto);
-        BlogReview newBlog = blogReviewService.createBlog(target, memberId);
-        HashMap<String,String> map = s3Service.uploadBlogImages(images);
-        if(!map.isEmpty())
-            blogImageService.addBlogImageList(map, newBlog);
+        blogReviewService.createBlog(target, member,blogRequestDto.getExhibitionId(),images);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping("/{blog-id}/{member-id}")
-    public ResponseEntity updateBlogReview(@PathVariable("blog-id") Long blogId, @PathVariable("member-id") Long memberId, @RequestBody BlogRequestDto.PutBlogDto blogRequestDto) {
+    @PutMapping("/api/blogs/{blog-id}")
+    public ResponseEntity putBlogReview(@PathVariable("blog-id") Long blogId,
+                                           @Valid @RequestBody BlogRequestDto.PutBlogDto blogRequestDto) {
+        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview target = BlogReviewMapper.INSTANCE.putBlogDtoToBlogReview(blogRequestDto);
-        blogReviewService.updateBlogReview(target,blogId,memberId);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        blogReviewService.updateBlogReview(target,blogId,member);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{blog-id}/{member-id}")
-    public ResponseEntity deleteBlogReview(@PathVariable("blog-id") Long blogId,@PathVariable("member-id") Long memberId){
-        BlogReview target = blogReviewService.preVerifyBlogReview(blogId,memberId);
-        blogReviewDeletedService.addDeletedBlogReview(target);
-        List<String> fileNameList = blogImageService.deleteBlogAllImages(blogId);
-        s3Service.deleteBlogAllImages(fileNameList);
-        blogReviewService.deleteBlogReview(target);
+    @DeleteMapping("/api/blogs/{blog-id}")
+    public ResponseEntity deleteBlogReview(@PathVariable("blog-id") Long blogId){
+        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        blogReviewService.removeBlogReview(blogId,member);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/me/{member-id}")
-    public ResponseEntity getUserBlogReviewList(@PathVariable("member-id") Long memberId,
-                                                @RequestParam(value = "page") int pageNo){
-        Page<BlogReview> blogReviewPage = blogReviewService.retrieveMyBlogReviewList(memberId,pageNo);
+    @GetMapping("/api/blogs/me")
+    public ResponseEntity getUserBlogReviewList(@RequestParam(value = "page",required = false) Integer pageNo){
+        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Page<BlogReview> blogReviewPage = blogReviewService.retrieveMyBlogReviewList(member,pageNo);
         return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
     }
 }

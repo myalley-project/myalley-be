@@ -8,7 +8,10 @@ import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,48 +20,63 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BlogImageService {
     private final BlogImageRepository blogImageRepository;
-    private final BlogReviewRepository blogReviewRepository;
+
+    private final S3Service s3Service;
 
     public void addBlogImageList(HashMap<String,String> map, BlogReview blogReview){ //List<BlogImage>
         map.forEach((fileName,S3url)->{
             addBlogImage(fileName,S3url,blogReview);
         });
     }
+    public void createNewBlogImage(BlogReview blogReview, MultipartFile image) throws IOException {//(Long blogId
+        //BlogReview blogReview = blogReviewService.findBlogReview(blogId); //
+        String[] information = s3Service.uploadBlogImage(image);
+        addBlogImage(information[0],information[1],blogReview);
+    }
+
     public void addBlogImage(String fileName, String S3url, BlogReview blogReview){
         BlogImage newImage=BlogImage.builder()
                 .fileName(fileName)
                 .url(S3url)
                 .build();
-        //blogReview.setImage(newImage);
         newImage.setBlog(blogReview);
         blogImageRepository.save(newImage);
     }
 
-    public void deleteBlogImage(BlogImage image){
-        blogImageRepository.delete(image);
+    public void removeBlogImage(BlogReview blogReview,Long imageId){//(Long blogId,Long imageId){
+        //BlogReview blogReview = blogReviewService.findBlogReview(blogId); //
+        BlogImage foundImage = retrieveBlogImage(blogReview,imageId);
+        s3Service.deleteBlogImage(foundImage.getFileName());
+        blogImageRepository.delete(foundImage);
     }
 
-    public List<String> deleteBlogAllImages(Long blogId){
-        List<BlogImage> blogImageList = retrieveBlogImages(blogId);
+    public List<String> removeBlogAllImages(BlogReview blogReview){
+        List<BlogImage> blogImageList = blogImageRepository.findAllByBlog(blogReview);
+        if(CollectionUtils.isEmpty(blogImageList))
+            return null;
         List<String> fileNames = new ArrayList<>();
         for(BlogImage blogImage : blogImageList) {
-            deleteBlogImage(blogImage);
+            blogImageRepository.delete(blogImage);
             fileNames.add(blogImage.getFileName());
         }
         return fileNames;
     }
 
-    public BlogImage retrieveBlogImage(Long blogId, Long imageId){
-        BlogImage image = blogImageRepository.findByIdAndBlogId(imageId,blogId).orElseThrow(() -> {
+    private BlogImage retrieveBlogImage(BlogReview blogReview, Long imageId){
+        BlogImage image = blogImageRepository.findByIdAndBlog(imageId,blogReview).orElseThrow(() -> {
                 throw new CustomException(BlogReviewExceptionType.IMAGE_NOT_FOUND);
         });
         return image;
     }
 
+    /*
     public List<BlogImage> retrieveBlogImages(Long blogId){
-        List<BlogImage> images = blogImageRepository.findAllByBlogId(blogId);
+        //blogReviewService
+        List<BlogImage> images = blogImageRepository.findAllByBlog(blogId);
         if(images.isEmpty())
             throw new CustomException(BlogReviewExceptionType.IMAGE_NOT_FOUND);
         return images;
     }
+
+ */
 }

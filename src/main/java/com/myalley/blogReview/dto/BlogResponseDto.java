@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.myalley.common.dto.pagingDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -51,20 +49,25 @@ public class BlogResponseDto {
         private List<ImageResponseDto> imageInfo;
 
         private SimpleMemberDto memberInfo;
-        private Long exhibitionId;
+        private SimpleExhibitionDto exhibitionInfo;
     }
 
     @Data
     @NoArgsConstructor
     public static class SimpleMemberDto {
-        private Long id;
+        private Long memberId;
         private String nickname;
+        private String UserImage;
     }
 
     @Data
     @NoArgsConstructor
     public static class SimpleExhibitionDto {
         private Long id;
+        private String title;
+        private String posterUrl;
+        private String duration;
+        private String space;
     }
 
 }

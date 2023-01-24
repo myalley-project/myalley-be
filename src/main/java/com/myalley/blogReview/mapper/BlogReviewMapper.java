@@ -6,7 +6,8 @@ import com.myalley.blogReview.dto.BlogRequestDto;
 import com.myalley.blogReview.dto.BlogResponseDto;
 import com.myalley.blogReview.dto.ImageResponseDto;
 import com.myalley.common.dto.pagingDto;
-import com.myalley.test_user.TestMember;
+import com.myalley.exhibition.domain.Exhibition;
+import com.myalley.member.domain.Member;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
@@ -36,8 +37,8 @@ public interface BlogReviewMapper {
         dto.setCreatedAt(blog.getCreatedAt());
         dto.setViewCount(blog.getViewCount());
         dto.setImageInfo(imageToImageDtoList(blog.getImages()));
-        dto.setMemberInfo(memberToSimpleMemberDto(blog.getTestMember()));
-        dto.setExhibitionId(blog.getExhibition());
+        dto.setMemberInfo(memberToSimpleMemberDto(blog.getMember()));
+        dto.setExhibitionInfo(exhibitionToSimpleExhibitionDto(blog.getExhibition()));
 
         return dto;
     }
@@ -50,7 +51,7 @@ public interface BlogReviewMapper {
             if(!CollectionUtils.isEmpty(blogReview.getImages()))
                 simpleBlogDto.setImageInfo(imageToImageDto(blogReview.getImages().get(0))); //아직 이미지가 없는 건 처리못함
             simpleBlogDto.setTitle(blogReview.getTitle());
-            simpleBlogDto.setWriter(blogReview.getTestMember().getNickname());
+            simpleBlogDto.setWriter(blogReview.getMember().getNickname());
             simpleBlogDto.setViewCount(blogReview.getViewCount());
             return simpleBlogDto;
         }).collect(Collectors.toList());
@@ -59,12 +60,13 @@ public interface BlogReviewMapper {
         dto.setPageInfo(paging);
         return dto;
     }
-    BlogResponseDto.SimpleMemberDto memberToSimpleMemberDto(TestMember testMember);
+    BlogResponseDto.SimpleMemberDto memberToSimpleMemberDto(Member member);
+    BlogResponseDto.SimpleExhibitionDto exhibitionToSimpleExhibitionDto(Exhibition exhibition);
     default BlogResponseDto.SimpleBlogDto blogToSimpleBlogDto(BlogReview blog){
         BlogResponseDto.SimpleBlogDto dto = new BlogResponseDto.SimpleBlogDto();
         dto.setId(blog.getId());
         dto.setTitle(blog.getTitle());
-        dto.setWriter(blog.getTestMember().getNickname());
+        dto.setWriter(blog.getMember().getNickname());
         dto.setViewDate(blog.getViewDate());
         dto.setViewCount(blog.getViewCount());
         dto.setImageInfo(imageListToImageDto(blog.getImages()));
