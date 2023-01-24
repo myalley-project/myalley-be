@@ -6,6 +6,7 @@ import com.myalley.simpleReview.dto.SimpleRequestDto;
 import com.myalley.simpleReview.mapper.SimpleReviewMapper;
 import com.myalley.simpleReview.service.SimpleReviewService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,14 +46,19 @@ public class SimpleReviewController {
     }
 
     @GetMapping("/simple-reviews/{exhibition-id}")
-    public ResponseEntity getExhibitionSimpleReviewList(@PathVariable("exhibition-id") Long exhibitionId){
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity getExhibitionSimpleReviewList(@PathVariable("exhibition-id") Long exhibitionId,
+                                                        @RequestParam("page") int pageNo){
+        Page<SimpleReview> simpleReviewPage = simpleService.retrieveExhibitionSimpleReviewList(exhibitionId,pageNo);
+        return new ResponseEntity<>(SimpleReviewMapper.INSTANCE.listExhibitionSimpleReviewDto(simpleReviewPage),
+                HttpStatus.OK);
     }
+
     @GetMapping("/api/simple-reviews/me")
     public ResponseEntity getUserSimpleReviewList(@PathParam("page") int pageNo){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 
     //Test
     @GetMapping("/api/simple-reviews/{simple-id}")

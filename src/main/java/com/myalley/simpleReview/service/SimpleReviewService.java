@@ -12,6 +12,10 @@ import com.myalley.simpleReview_deleted.SimpleReviewDeleted;
 import com.myalley.simpleReview_deleted.SimpleReviewDeletedRepository;
 import com.myalley.simpleReview_deleted.SimpleReviewDeletedService;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.build.Plugin;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,6 +42,12 @@ public class SimpleReviewService {
         SimpleReview target = verifySimpleReview(simpleId, member);
         simpleDeletedService.createdSimpleDeleted(target);
         simpleRepository.delete(target);
+    }
+
+    public Page<SimpleReview> retrieveExhibitionSimpleReviewList(Long exhibitionId, int pageNo){
+        Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
+        PageRequest pageRequest = PageRequest.of(pageNo,10, Sort.by("id").descending());
+        return simpleRepository.findAllByExhibition(exhibition,pageRequest);
     }
 
 
