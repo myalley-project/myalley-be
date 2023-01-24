@@ -18,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.UUID;
 @Transactional
@@ -82,6 +84,11 @@ public class MemberService {
         if(member.isAdmin()){//관리자 닉네임 겹치지않게관리
             nickname=nickname.substring(nickname.indexOf("."));
         }
+        LocalDate now=LocalDate.now(ZoneId.of("Asia/Seoul"));
+
+        int age=member.getBirth().getYear()-now.getYear()-1;
+        if(member.getBirth().getDayOfYear()-now.getDayOfYear()<=0)
+            age++;
         return MemberInfoDto.builder()
                 .memberId(member.getMemberId())
                 .email(member.getEmail())
@@ -91,6 +98,7 @@ public class MemberService {
                 .level(member.getLevel().name())
                 .memberImage(member.getUserImage())
                 .authority(member.getAuthority().name())
+                .age(age)
                 .build();
     }
 
