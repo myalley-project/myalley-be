@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -26,20 +27,13 @@ public class BlogLikes extends BaseTime {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name="blog_id")
     private BlogReview blog;
-    private Boolean isDeleted=Boolean.TRUE;
+    private LocalDateTime createdAt;
 
     @Builder
-    public BlogLikes(Member member, BlogReview blog){
+    public BlogLikes(Member member, BlogReview blog, LocalDateTime createdAt){
         this.member = member;
-        this.blog=blog;
-    }
-
-    //눌렀을 때 사용하는 칭기
-    public void changeLikesStatus(){
-        if(isDeleted.equals(Boolean.FALSE))
-            this.isDeleted=Boolean.TRUE;
-        else this.isDeleted=Boolean.FALSE;
-        this.blog.updateLikeCount(this.isDeleted);
+        this.blog = blog;
+        this.createdAt = createdAt;
     }
 
 }

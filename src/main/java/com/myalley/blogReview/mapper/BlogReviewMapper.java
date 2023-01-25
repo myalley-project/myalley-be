@@ -1,9 +1,6 @@
 package com.myalley.blogReview.mapper;
 
-import com.myalley.blogReview.domain.BlogBookmark;
-import com.myalley.blogReview.domain.BlogImage;
-import com.myalley.blogReview.domain.BlogLikes;
-import com.myalley.blogReview.domain.BlogReview;
+import com.myalley.blogReview.domain.*;
 import com.myalley.blogReview.dto.BlogRequestDto;
 import com.myalley.blogReview.dto.BlogResponseDto;
 import com.myalley.blogReview.dto.ImageResponseDto;
@@ -31,22 +28,24 @@ public interface BlogReviewMapper {
     
     //** RESPONSE **
     //1. 블로그 상세
-    default BlogResponseDto.DetailBlogDto blogToDetailBlogDto(BlogReview blog){
+    default BlogResponseDto.DetailBlogDto blogToDetailBlogDto(DetailBlogReview blog){
         BlogResponseDto.DetailBlogDto dto = new BlogResponseDto.DetailBlogDto();
-        dto.setId(blog.getId());
-        dto.setTitle(blog.getTitle());
-        dto.setContent(blog.getContent());
-        dto.setLikeCount(blog.getLikeCount());
-        dto.setBookmarkCount(blog.getBookmarkCount());
-        dto.setTransportation(blog.getTransportation());
-        dto.setCongestion(blog.getCongestion());
-        dto.setRevisit(blog.getRevisit());
-        dto.setViewDate(blog.getViewDate());
-        dto.setCreatedAt(blog.getCreatedAt());
-        dto.setViewCount(blog.getViewCount());
-        dto.setImageInfo(imageToImageDtoList(blog.getImages()));
-        dto.setMemberInfo(memberToSimpleMemberDto(blog.getMember()));
-        dto.setExhibitionInfo(exhibitionToSimpleExhibitionDto(blog.getExhibition()));
+        dto.setId(blog.getBlogReview().getId());
+        dto.setTitle(blog.getBlogReview().getTitle());
+        dto.setContent(blog.getBlogReview().getContent());
+        dto.setLikeCount(blog.getBlogReview().getLikeCount());
+        dto.setBookmarkCount(blog.getBlogReview().getBookmarkCount());
+        dto.setTransportation(blog.getBlogReview().getTransportation());
+        dto.setCongestion(blog.getBlogReview().getCongestion());
+        dto.setRevisit(blog.getBlogReview().getRevisit());
+        dto.setViewDate(blog.getBlogReview().getViewDate());
+        dto.setCreatedAt(blog.getBlogReview().getCreatedAt());
+        dto.setViewCount(blog.getBlogReview().getViewCount());
+        dto.setImageInfo(imageToImageDtoList(blog.getBlogReview().getImages()));
+        dto.setMemberInfo(memberToSimpleMemberDto(blog.getBlogReview().getMember()));
+        dto.setExhibitionInfo(exhibitionToSimpleExhibitionDto(blog.getBlogReview().getExhibition()));
+        dto.setLikeStatus(blog.isLikesStatus());
+        dto.setBookmarkStatus(blog.isBookmarkStatus());
 
         return dto;
     }
@@ -59,7 +58,6 @@ public interface BlogReviewMapper {
             simpleBlogDto.setViewDate(blogReview.getViewDate());
             if(!CollectionUtils.isEmpty(blogReview.getImages()))
                 simpleBlogDto.setImageInfo(imageListToImageDto(blogReview.getImages()));
-                //simpleBlogDto.setImageInfo(imageToImageDto(blogReview.getImages().get(0))); //이미지가 없는 건 일단 Null이 들어감
             simpleBlogDto.setTitle(blogReview.getTitle());
             simpleBlogDto.setWriter(blogReview.getMember().getNickname());
             simpleBlogDto.setViewCount(blogReview.getViewCount());
@@ -70,7 +68,25 @@ public interface BlogReviewMapper {
         dto.setPageInfo(paging);
         return dto;
     }
-    //3. 블로그 목록 : 마이페이지 좋아요
+    //3. 블로그 목록 : 내 블로그
+    default BlogResponseDto.UserBlogListDto pageableBlogToUserBlogListDto(Page<BlogReview> pageBlogs){
+        BlogResponseDto.UserBlogListDto dto = new BlogResponseDto.UserBlogListDto();
+        List<BlogResponseDto.SimpleUserBlogDto> simpleBlogDtoList = pageBlogs.get().map( blogReview -> {
+            BlogResponseDto.SimpleUserBlogDto userBlogDto = new BlogResponseDto.SimpleUserBlogDto();
+            userBlogDto.setId(blogReview.getId());
+            userBlogDto.setViewDate(blogReview.getViewDate());
+            if(!CollectionUtils.isEmpty(blogReview.getImages()))
+                userBlogDto.setImageInfo(imageListToImageDto(blogReview.getImages()));
+            userBlogDto.setTitle(blogReview.getTitle());
+            userBlogDto.setViewCount(blogReview.getViewCount());
+            return userBlogDto;
+        }).collect(Collectors.toList());
+        pagingDto paging = new pagingDto(pageBlogs.getNumber(), pageBlogs.getSize(), pageBlogs.getTotalElements(), pageBlogs.getTotalPages());
+        dto.setBlogInfo(simpleBlogDtoList);
+        dto.setPageInfo(paging);
+        return dto;
+    }
+    //4. 블로그 목록 : 마이페이지 좋아요
     default BlogResponseDto.BlogListDto pageableLikesToMyBlogLikesDto(Page<BlogLikes> pageLikes){
         BlogResponseDto.BlogListDto dto = new BlogResponseDto.BlogListDto();
         List<BlogResponseDto.SimpleBlogDto> simpleBlogDtoList = pageLikes.get().map( blogLikes -> {
@@ -79,7 +95,6 @@ public interface BlogReviewMapper {
             simpleBlogDto.setViewDate(blogLikes.getBlog().getViewDate());
             if(!CollectionUtils.isEmpty(blogLikes.getBlog().getImages()))
                 simpleBlogDto.setImageInfo(imageListToImageDto(blogLikes.getBlog().getImages()));
-                //simpleBlogDto.setImageInfo(imageToImageDto(blogLikes.getBlog().getImages().get(0))); //아직 이미지가 없는 건 처리못함
             simpleBlogDto.setTitle(blogLikes.getBlog().getTitle());
             simpleBlogDto.setWriter(blogLikes.getBlog().getMember().getNickname());
             simpleBlogDto.setViewCount(blogLikes.getBlog().getViewCount());
@@ -91,7 +106,7 @@ public interface BlogReviewMapper {
         dto.setPageInfo(paging);
         return dto;
     }
-    //4. 블로그 목록 : 마이페이지 북마크
+    //5. 블로그 목록 : 마이페이지 북마크
     default BlogResponseDto.BlogListDto pageableBookmarkToMyBlogBookmarkDto(Page<BlogBookmark> bookmarkPage){
         BlogResponseDto.BlogListDto dto = new BlogResponseDto.BlogListDto();
         List<BlogResponseDto.SimpleBlogDto> simpleBlogDtoList = bookmarkPage.get().map( blogBookmark -> {
@@ -100,7 +115,6 @@ public interface BlogReviewMapper {
             simpleBlogDto.setViewDate(blogBookmark.getBlog().getViewDate());
             if(!CollectionUtils.isEmpty(blogBookmark.getBlog().getImages()))
                 simpleBlogDto.setImageInfo(imageListToImageDto(blogBookmark.getBlog().getImages()));
-                //simpleBlogDto.setImageInfo(imageToImageDto(blogBookmark.getBlog().getImages().get(0))); //아직 이미지가 없는 건 처리못함
             simpleBlogDto.setTitle(blogBookmark.getBlog().getTitle());
             simpleBlogDto.setWriter(blogBookmark.getBlog().getMember().getNickname());
             simpleBlogDto.setViewCount(blogBookmark.getBlog().getViewCount());

@@ -14,13 +14,12 @@ public class BlogRequestDto {
     @NoArgsConstructor
     public static class PostBlogDto {
         @NotNull
-        private Long exhibitionId;
-        @NotNull
         private String viewDate;
         @NotNull
         private String title;
         @NotNull
         private String content;
+        @NotNull
         private String time;
         private String transportation;
         private String revisit;
@@ -36,6 +35,7 @@ public class BlogRequestDto {
         private String title;
         @NotNull
         private String content;
+        @NotNull
         private String time;
         private String transportation;
         private String revisit;

@@ -86,14 +86,8 @@ public class BlogReview extends BaseTime {
     }
     
     //좋아요 관리
-    public void updateLikeCount(Boolean status){
-        if(status.equals(Boolean.FALSE)) 
-            this.likeCount++;
-        else if(status.equals(Boolean.TRUE))
-            this.likeCount--;
-        else //음.. 나중에 바꾸기
-            throw new CustomException(BlogReviewExceptionType.LIKES_BAD_REQUEST);
-    }
+    public void increaseLikesCount(){ this.likeCount++; }
+    public void decreaseLikesCount(){ this.likeCount--; }
     
     //북마크 관리
     public void increaseBookmarkCount(){ this.bookmarkCount++; }

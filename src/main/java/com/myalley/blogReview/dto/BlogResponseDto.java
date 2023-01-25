@@ -20,14 +20,9 @@ public class BlogResponseDto {
 
     @Data
     @NoArgsConstructor
-    public static class SimpleBlogDto{
-        private Long id;
-        private String title;
-        private String writer;
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-        private LocalDate viewDate;
-        private Integer viewCount;
-        private ImageResponseDto imageInfo;
+    public static class UserBlogListDto{
+        private List<SimpleUserBlogDto> blogInfo;
+        private pagingDto pageInfo;
     }
 
     @Data
@@ -43,13 +38,38 @@ public class BlogResponseDto {
         private Integer likeCount;
         private Integer viewCount;
         private Integer bookmarkCount;
-        private String transportation;  //주차공간
-        private String revisit;  //재방문의향
-        private String congestion; //혼잡도
+        private String transportation;
+        private String revisit;
+        private String congestion;
+        private boolean likeStatus;
+        private boolean bookmarkStatus;
         private List<ImageResponseDto> imageInfo;
 
         private SimpleMemberDto memberInfo;
         private SimpleExhibitionDto exhibitionInfo;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class SimpleBlogDto{
+        private Long id;
+        private String title;
+        private String writer;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+        private LocalDate viewDate;
+        private Integer viewCount;
+        private ImageResponseDto imageInfo;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class SimpleUserBlogDto{
+        private Long id;
+        private String title;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+        private LocalDate viewDate;
+        private Integer viewCount;
+        private ImageResponseDto imageInfo;
     }
 
     @Data

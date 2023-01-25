@@ -1,6 +1,7 @@
 package com.myalley.blogReview.service;
 
 import com.myalley.blogReview.domain.BlogReview;
+import com.myalley.blogReview.domain.DetailBlogReview;
 import com.myalley.blogReview_deleted.service.BlogReviewDeletedService;
 import com.myalley.exhibition.service.ExhibitionService;
 import com.myalley.member.domain.Member;
@@ -13,11 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -29,24 +28,23 @@ public class BlogReviewService {
     private final BlogImageService blogImageService;
     private final BlogBookmarkService bookmarkService;
     private final BlogLikesService likesService;
-    //private final S3Service s3Service;
 
     public void createBlog(BlogReview blogReview, Member member, Long exhibitionId,
                                  List<MultipartFile> images) throws IOException {
         blogReview.setMember(member);
         blogReview.setExhibition(exhibitionService.verifyExhibition(exhibitionId));
         BlogReview newBlog = blogReviewRepository.save(blogReview);
-        //HashMap<String,String> map = s3Service.uploadBlogImages(images);
-        //if(!map.isEmpty())
         blogImageService.addBlogImageList(images, newBlog);
     }
 
-
-    public BlogReview retrieveBlogReview(Long blogId){
+    public DetailBlogReview retrieveBlogReview(Long blogId, Long memberId){
+        DetailBlogReview detail = new DetailBlogReview();
         BlogReview blog = findBlogReview(blogId);
         blog.updateViewCount();
-        BlogReview updateBlog = blogReviewRepository.save(blog);
-        return updateBlog;
+        detail.setLikesStatus(likesService.retrieveBlogLikes(blog,memberId));
+        detail.setBookmarkStatus(bookmarkService.retrieveBlogBookmark(blog,memberId));
+        detail.setBlogReview(blogReviewRepository.save(blog));
+        return detail;
     }
 
     public Page<BlogReview> retrieveBlogReviewList(Integer pageNo,String orderType){
@@ -68,9 +66,11 @@ public class BlogReviewService {
     }
 
     public Page<BlogReview> retrieveMyBlogReviewList(Member member, Integer pageNo) {
+        PageRequest pageRequest;
         if(pageNo == null)
-            pageNo = 0;
-        PageRequest pageRequest = PageRequest.of(pageNo, 6, Sort.by("id").descending());
+            pageRequest = PageRequest.of(0, 6, Sort.by("id").descending());
+        else
+            pageRequest = PageRequest.of(pageNo, 6, Sort.by("id").descending());
         Page<BlogReview> myBlogReviewList = blogReviewRepository.findAllByMember(member,pageRequest);
         return myBlogReviewList;
     }
@@ -81,22 +81,19 @@ public class BlogReviewService {
         blogReviewRepository.save(preBlogReview);
     }
 
-
     public void removeBlogReview(Long blogId, Member member){
         BlogReview pre = verifyRequester(blogId,member.getMemberId());
-        blogReviewDeletedService.addDeletedBlogReview(pre);
-        //List<String> fileNameList = blogImageService.removeBlogAllImages(pre);
-        //if(!CollectionUtils.isEmpty(fileNameList))
-        //    s3Service.deleteBlogAllImages(fileNameList);
         blogImageService.removeBlogAllImages(pre);
         bookmarkService.removeBlogAllBookmark(pre);
         likesService.removeBlogAllLikes(pre);
+        blogReviewDeletedService.addDeletedBlogReview(pre);
         blogReviewRepository.delete(pre);
     }
-    
+
+
     //1. 존재하는 글인지 확인
     public BlogReview findBlogReview(Long blogId){
-        BlogReview blog = blogReviewRepository.findById(blogId).orElseThrow(() -> { //404 : 존재 하지 않는 글
+        BlogReview blog = blogReviewRepository.findById(blogId).orElseThrow(() -> {
             throw new CustomException(BlogReviewExceptionType.BLOG_NOT_FOUND);
         });
         return blog;
@@ -104,10 +101,10 @@ public class BlogReviewService {
     
     //2. 작성자인지 확인
     private BlogReview verifyRequester(Long blogId,Long memberId){
-        BlogReview review = blogReviewRepository.findById(blogId).orElseThrow(() -> { //404 : 블로그 글이 조회 되지 않는 경우
+        BlogReview review = blogReviewRepository.findById(blogId).orElseThrow(() -> {
            throw new CustomException(BlogReviewExceptionType.BLOG_NOT_FOUND);
         });
-        if(!review.getMember().getMemberId().equals(memberId)){ //403 : 권한이 없는 글에 접근하는 경우
+        if(!review.getMember().getMemberId().equals(memberId)){
             throw new CustomException(BlogReviewExceptionType.BLOG_FORBIDDEN);
         }
         return review;

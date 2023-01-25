@@ -7,6 +7,7 @@ import com.myalley.simpleReview.mapper.SimpleReviewMapper;
 import com.myalley.simpleReview.service.SimpleReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +26,9 @@ public class SimpleReviewController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         SimpleReview newSimpleReview = SimpleReviewMapper.INSTANCE.postSimpleDtoToSimpleReview(simpleDto);
         simpleService.createSimpleReview(newSimpleReview,member, simpleDto.getExhibitionId());
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+        return new ResponseEntity<>("한 줄 리뷰가 등록되었습니다",headers,HttpStatus.CREATED);
     }
 
     @PatchMapping("/api/simple-reviews/{simple-id}")
@@ -34,17 +37,21 @@ public class SimpleReviewController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         SimpleReview post = SimpleReviewMapper.INSTANCE.patchSimpleDtoToSimpleReview(simpleDto);
         simpleService.updateSimpleReview(simpleId,post, member);
-        return new ResponseEntity<>(HttpStatus.OK);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+        return new ResponseEntity<>("한 줄 리뷰가 수정되었습니다",headers,HttpStatus.OK);
     }
 
     @DeleteMapping("/api/simple-reviews/{simple-id}")
     public ResponseEntity deleteSimpleReview(@PathVariable("simple-id") Long simpleId){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         simpleService.removeSimpleReview(simpleId,member);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+        return new ResponseEntity<>("한 줄 리뷰가 삭제되었습니다",headers,HttpStatus.OK);
     }
 
-    @GetMapping("/simple-reviews/{exhibition-id}")
+    @GetMapping("/simple-reviews/exhibitions/{exhibition-id}")
     public ResponseEntity getExhibitionSimpleReviewList(@PathVariable("exhibition-id") Long exhibitionId,
                                                         @RequestParam(required = false, value = "page") Integer pageNo,
                                                         @RequestParam(required = false, value = "order") String orderType){

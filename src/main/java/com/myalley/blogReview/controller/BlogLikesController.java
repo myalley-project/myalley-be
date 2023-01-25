@@ -20,14 +20,20 @@ public class BlogLikesController {
     private final BlogLikesService blogLikesService;
     private final BlogReviewService blogReviewService;
 
-    @PutMapping("/{blog-id}")
-    public ResponseEntity clickLikes(@PathVariable("blog-id") Long blogId){
+    @PostMapping("/blogs/{blog-id}")
+    public ResponseEntity postLikes(@PathVariable("blog-id") Long blogId){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview blogReview = blogReviewService.findBlogReview(blogId);
-        Boolean result = blogLikesService.findLikes(blogReview,member);
-        if(result)
-            return new ResponseEntity<>("off", HttpStatus.OK);
-        else return new ResponseEntity<>("on", HttpStatus.CREATED);
+        blogLikesService.createLikes(blogReview,member);
+        return new ResponseEntity<>("on",HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/blogs/{blog-id}")
+    public ResponseEntity deleteLikes(@PathVariable("blog-id") Long blogId) {
+        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        BlogReview blogReview = blogReviewService.findBlogReview(blogId);
+        blogLikesService.removeLikes(blogReview, member);
+        return new ResponseEntity<>("off", HttpStatus.OK);
     }
 
     @GetMapping("/me")

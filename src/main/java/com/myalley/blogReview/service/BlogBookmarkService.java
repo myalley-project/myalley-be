@@ -6,6 +6,7 @@ import com.myalley.blogReview.repository.BlogBookmarkRepository;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
 import com.myalley.member.domain.Member;
+import com.myalley.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class BlogBookmarkService {
     private final BlogBookmarkRepository blogBookmarkRepository;
+    private final MemberService memberService; //블로그 조회 시 등록되어있는지 확인하기 위함
 
     public void createBookmark(BlogReview blogReview, Member member){
         if(blogReview.getMember().getMemberId() == member.getMemberId())
@@ -44,9 +46,20 @@ public class BlogBookmarkService {
     }
 
     public Page<BlogBookmark> retrieveMyBlogBookmarks(Member member, Integer pageNo){
-        if(pageNo==null)
-            pageNo=0;
-        PageRequest pageRequest = PageRequest.of(pageNo, 6, Sort.by("id").descending());
+        PageRequest pageRequest;
+        if(pageNo == null)
+            pageRequest = PageRequest.of(0, 6, Sort.by("id").descending());
+        else
+            pageRequest = PageRequest.of(pageNo, 6, Sort.by("id").descending());
         return blogBookmarkRepository.findAllByMember(member, pageRequest);
+    }
+
+    public boolean retrieveBlogBookmark(BlogReview blogReview, Long memberId) {
+        if(memberId != null) {
+            Member member = memberService.verifyMember(memberId);
+            if (blogBookmarkRepository.findByMemberAndBlog(member, blogReview).isPresent())
+                return true;
+        }
+        return false;
     }
 }

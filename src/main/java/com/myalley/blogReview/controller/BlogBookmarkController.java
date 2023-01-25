@@ -20,7 +20,7 @@ public class BlogBookmarkController {
     private final BlogBookmarkService blogBookmarkService;
     private final BlogReviewService blogReviewService;
 
-    @PostMapping("/{blog-id}")
+    @PostMapping("/blogs/{blog-id}")
     public ResponseEntity postBlogBookmark(@PathVariable("blog-id") Long blogId){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview blogReview = blogReviewService.findBlogReview(blogId);
@@ -28,7 +28,7 @@ public class BlogBookmarkController {
         return new ResponseEntity<>("on", HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{blog-id}")
+    @DeleteMapping("/blogs/{blog-id}")
     public ResponseEntity deleteBlogBookmark(@PathVariable("blog-id") Long blogId){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview blogReview = blogReviewService.findBlogReview(blogId);
