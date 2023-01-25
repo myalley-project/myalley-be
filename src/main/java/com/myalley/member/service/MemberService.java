@@ -46,6 +46,7 @@ public class MemberService {
                 .gender(memberRegisterDto.getGender())
                 .birth(memberRegisterDto.getBirth())
                 .level(Level.LEVEL1)
+                .memberImage("")
                 .authority(Authority.ROLE_USER)//Authority.ROLE_USER
                 .status(Status.활동중)
                 .build());
@@ -70,6 +71,7 @@ public class MemberService {
                 .nickname(memberRegisterDto.getNickname()+ "."+  UUID.randomUUID().toString())
                 .authority(Authority.ROLE_ADMIN)//Authority.ROLE_ADMIN
                 .status(Status.활동중)
+                .memberImage("")
                 .adminNo(memberRegisterDto.getAdminNo())
                 .build());
 
@@ -82,8 +84,20 @@ public class MemberService {
         Member member=memberRepository.findByEmail(email);
         String nickname=member.getNickname();
         if(member.isAdmin()){//관리자 닉네임 겹치지않게관리
-            nickname=nickname.substring(nickname.indexOf("."));
+            nickname=nickname.substring(0,nickname.indexOf("."));
+            return MemberInfoDto.builder()
+                    .memberId(member.getMemberId())
+                    .email(member.getEmail())
+                    .nickname(nickname)
+                    .gender("관리자")
+                    .birth(null)
+                    .level("관리자")
+                    .memberImage(member.getMemberImage())
+                    .authority(member.getAuthority().name())
+                    .age(0)
+                    .build();
         }
+
         LocalDate now=LocalDate.now(ZoneId.of("Asia/Seoul"));
 
         int age=member.getBirth().getYear()-now.getYear()-1;
@@ -96,7 +110,7 @@ public class MemberService {
                 .gender(member.getGender().name())
                 .birth(member.getBirth())
                 .level(member.getLevel().name())
-                .memberImage(member.getUserImage())
+                .memberImage(member.getMemberImage())
                 .authority(member.getAuthority().name())
                 .age(age)
                 .build();

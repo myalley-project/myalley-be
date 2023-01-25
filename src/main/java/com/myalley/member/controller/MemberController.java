@@ -8,6 +8,7 @@ import com.myalley.member.jwt.JwtUtils;
 import com.myalley.member.service.MemberService;
 import com.myalley.member.service.ProfileS3Service;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,10 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.HashMap;
-
+@Log
 @Controller
 @RequiredArgsConstructor
-
 public class MemberController {
     private final MemberService memberService;
     private final ProfileS3Service profileS3Service;
@@ -33,6 +33,7 @@ public class MemberController {
     public ResponseEntity signUp(
            @Valid @RequestBody MemberRegisterDto memberRegisterDto
     ) {
+        log.info("유저 회원가입");
         if(memberRegisterDto.getAdminNo()!=null)
              return memberService.signupAdmin(memberRegisterDto);
         else
@@ -40,12 +41,14 @@ public class MemberController {
 
     }
 
+
     @PutMapping("/api/me")
     public ResponseEntity updateMember(
             @Valid @RequestPart(name = "data") MemberUpdateDto memberUpdateDto, @RequestPart(name="imageFile",required =false) MultipartFile multipartFile
             ) throws IOException {
         Member member = (Member)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String url=member.getUserImage();
+        String url=member.getMemberImage();
+        log.info("유저 본인정보 수정");
 
         if(!multipartFile.isEmpty()){//프로필 수정시 이미지 삭제 및 저장
             profileS3Service.deleteImage(url);
@@ -53,28 +56,33 @@ public class MemberController {
         }
 
         member.update(memberUpdateDto,url);
+        if(memberUpdateDto.getPassword()!=null)
         member.setPassword(passwordEncoder.encode(memberUpdateDto.getPassword()));
 
         return memberService.update(member);
     }
 
+
+
     @GetMapping("api/me")
     ResponseEntity<MemberInfoDto> memberInfo(HttpServletRequest request, HttpServletResponse response) {
 
-
+        log.info("본인정보 조회");
         Member member = (Member)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-
         return new ResponseEntity<MemberInfoDto>(memberService.memberInfo(member.getEmail()), HttpStatus.ACCEPTED);
-
     }
 
     @DeleteMapping("api/me/withdrawals")
     public ResponseEntity withdrawal(){
-        Member member = (Member)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return memberService.delete(member);
 
+        log.info("일반유저 회원탈퇴");
+        Member member = (Member)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return memberService.delete(member);
     }
+
+
 
     @GetMapping("/exhibitions/good")
     ResponseEntity good(HttpServletRequest request, HttpServletResponse response) {
