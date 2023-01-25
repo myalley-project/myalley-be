@@ -22,6 +22,6 @@ public class MemberMateDto {
 
     private static MemberMateDto of(Member member){
         return new MemberMateDto(member.getMemberId(),member.getNickname(),
-                member.getUserImage(),member.getGender().getKey(),(member.getBirth().toString()).substring(0,4));
+                member.getMemberImage(),member.getGender().getKey(),(member.getBirth().toString()).substring(0,4));
     }
 }

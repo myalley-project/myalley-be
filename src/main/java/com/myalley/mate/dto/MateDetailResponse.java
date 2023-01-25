@@ -41,7 +41,7 @@ public class MateDetailResponse {
                 mate.getExhibition().getTitle(), mate.getExhibition().getSpace(),
                 mate.getExhibition().getPosterUrl(), mate.getExhibition().getDuration(), mate.getExhibition().getStatus()),
                 new MemberMateDto(mate.getMember().getMemberId(), mate.getMember().getNickname(),
-                        mate.getMember().getUserImage(), mate.getMember().getGender().getKey(),
+                        mate.getMember().getMemberImage(), mate.getMember().getGender().getKey(),
                         mate.getMember().getBirth().toString().substring(0,4)));
     }
 
@@ -53,7 +53,7 @@ public class MateDetailResponse {
                 mate.getExhibition().getTitle(), mate.getExhibition().getSpace(),
                 mate.getExhibition().getPosterUrl(), mate.getExhibition().getDuration(), mate.getExhibition().getStatus()),
                 new MemberMateDto(mate.getMember().getMemberId(), mate.getMember().getNickname(),
-                        mate.getMember().getUserImage(), mate.getMember().getGender().getKey(),
+                        mate.getMember().getMemberImage(), mate.getMember().getGender().getKey(),
                         mate.getMember().getBirth().toString().substring(0,4)));
     }
 }

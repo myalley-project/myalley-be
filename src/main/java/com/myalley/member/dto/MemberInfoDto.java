@@ -29,4 +29,5 @@ public class MemberInfoDto {
 
     private String authority;
 
+    private int age;
 }
