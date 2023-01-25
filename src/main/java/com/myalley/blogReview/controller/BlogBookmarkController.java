@@ -1,8 +1,11 @@
 package com.myalley.blogReview.controller;
 
+import com.myalley.blogReview.domain.BlogBookmark;
+import com.myalley.blogReview.mapper.BlogReviewMapper;
 import com.myalley.blogReview.service.BlogBookmarkService;
 import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,5 +29,13 @@ public class BlogBookmarkController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         blogBookmarkService.deleteBookmark(blogId, member);
         return new ResponseEntity<>("off", HttpStatus.OK);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity getMyBlogBookmark(@RequestParam(required = false, value = "page") Integer pageNo){
+        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Page<BlogBookmark> bookmarkPage = blogBookmarkService.retrieveMyBlogBookmarks(member,pageNo);
+        return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBookmarkToMyBlogBookmarkDto(bookmarkPage),
+                HttpStatus.OK);
     }
 }

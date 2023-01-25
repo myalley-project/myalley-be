@@ -104,7 +104,6 @@ public class S3Service {
         return imageInformationMaps;
     }
 
-
     //2. 이미지 삭제
     public void deleteBlogImage(String fileName){
         amazonS3Client.deleteObject(S3Bucket, fileName);
