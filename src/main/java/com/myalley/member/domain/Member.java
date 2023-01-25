@@ -60,13 +60,13 @@ public class Member extends BaseTime implements UserDetails {
     @Column(name="level")
     private Level level;
 
-    @Column(name="user_image")
-    private String UserImage;
+    @Column(name="member_image")
+    private String memberImage;
 
 
 
     public void update(MemberUpdateDto memberUpdateDto,String url){
-        this.setUserImage(url);
+        this.setMemberImage(url);
         this.setNickname(memberUpdateDto.getNickname());
       //  this.setGender(memberUpdateDto.getGender());
         this.setBirth(memberUpdateDto.getBirth());

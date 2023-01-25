@@ -21,11 +21,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class MemberUpdateDto {
 
-    @NotEmpty(message="비밀번호 형식 오류")
+
     @Pattern(regexp = "(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*\\W)(?=\\S+$).{8,16}", message ="비밀번호 형식 오류" )
     private String password;
 
-    @NotEmpty(message="닉네임 형식 오류")
+
     @Length(min=2,max=10,message="닉네임 형식 오류")
     private String nickname;
 
