@@ -1,8 +1,6 @@
 package com.myalley.member.service;
 
-import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.member.dto.MemberInfoDto;
-import com.myalley.member.dto.MemberUpdateDto;
 import com.myalley.member.options.Authority;
 import com.myalley.member.options.Level;
 import com.myalley.member.options.Status;
@@ -11,14 +9,17 @@ import com.myalley.member.dto.MemberRegisterDto;
 import com.myalley.exception.CustomException;
 import com.myalley.exception.MemberExceptionType;
 import com.myalley.member.repository.MemberRepository;
+import com.myalley.member_deleted.domain.MemberDeleted;
+import com.myalley.member_deleted.repository.MemberDeletedRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.UUID;
 @Transactional
@@ -28,7 +29,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final MemberDeletedRepository memberDeletedRepository;
 
 
     public ResponseEntity signup(MemberRegisterDto memberRegisterDto) {
@@ -45,6 +46,7 @@ public class MemberService {
                 .gender(memberRegisterDto.getGender())
                 .birth(memberRegisterDto.getBirth())
                 .level(Level.LEVEL1)
+                .memberImage("")
                 .authority(Authority.ROLE_USER)//Authority.ROLE_USER
                 .status(Status.활동중)
                 .build());
@@ -69,6 +71,7 @@ public class MemberService {
                 .nickname(memberRegisterDto.getNickname()+ "."+  UUID.randomUUID().toString())
                 .authority(Authority.ROLE_ADMIN)//Authority.ROLE_ADMIN
                 .status(Status.활동중)
+                .memberImage("")
                 .adminNo(memberRegisterDto.getAdminNo())
                 .build());
 
@@ -81,8 +84,25 @@ public class MemberService {
         Member member=memberRepository.findByEmail(email);
         String nickname=member.getNickname();
         if(member.isAdmin()){//관리자 닉네임 겹치지않게관리
-            nickname=nickname.substring(nickname.indexOf("."));
+            nickname=nickname.substring(0,nickname.indexOf("."));
+            return MemberInfoDto.builder()
+                    .memberId(member.getMemberId())
+                    .email(member.getEmail())
+                    .nickname(nickname)
+                    .gender("관리자")
+                    .birth(null)
+                    .level("관리자")
+                    .memberImage(member.getMemberImage())
+                    .authority(member.getAuthority().name())
+                    .age(0)
+                    .build();
         }
+
+        LocalDate now=LocalDate.now(ZoneId.of("Asia/Seoul"));
+
+        int age=member.getBirth().getYear()-now.getYear()-1;
+        if(member.getBirth().getDayOfYear()-now.getDayOfYear()<=0)
+            age++;
         return MemberInfoDto.builder()
                 .memberId(member.getMemberId())
                 .email(member.getEmail())
@@ -90,8 +110,9 @@ public class MemberService {
                 .gender(member.getGender().name())
                 .birth(member.getBirth())
                 .level(member.getLevel().name())
-                .memberImage(member.getUserImage())
+                .memberImage(member.getMemberImage())
                 .authority(member.getAuthority().name())
+                .age(age)
                 .build();
     }
 
@@ -107,9 +128,10 @@ public class MemberService {
     }
 
 
-    public ResponseEntity delete(Long id) {
+    public ResponseEntity delete(Member member) {
 
-        memberRepository.deleteById(id);
+        memberDeletedRepository.save(new MemberDeleted(member));
+        memberRepository.delete(member);
 
         HashMap<String,Integer> map=new HashMap<>();
         map.put("resultCode",200);
