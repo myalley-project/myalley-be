@@ -27,16 +27,18 @@ public class BlogReviewService {
     private final BlogReviewDeletedService blogReviewDeletedService;
     private final ExhibitionService exhibitionService;
     private final BlogImageService blogImageService;
-    private final S3Service s3Service;
+    private final BlogBookmarkService bookmarkService;
+    private final BlogLikesService likesService;
+    //private final S3Service s3Service;
 
     public void createBlog(BlogReview blogReview, Member member, Long exhibitionId,
                                  List<MultipartFile> images) throws IOException {
         blogReview.setMember(member);
         blogReview.setExhibition(exhibitionService.verifyExhibition(exhibitionId));
         BlogReview newBlog = blogReviewRepository.save(blogReview);
-        HashMap<String,String> map = s3Service.uploadBlogImages(images);
-        if(!map.isEmpty())
-            blogImageService.addBlogImageList(map, newBlog);
+        //HashMap<String,String> map = s3Service.uploadBlogImages(images);
+        //if(!map.isEmpty())
+        blogImageService.addBlogImageList(images, newBlog);
     }
 
 
@@ -83,9 +85,12 @@ public class BlogReviewService {
     public void removeBlogReview(Long blogId, Member member){
         BlogReview pre = verifyRequester(blogId,member.getMemberId());
         blogReviewDeletedService.addDeletedBlogReview(pre);
-        List<String> fileNameList = blogImageService.removeBlogAllImages(pre);
-        if(!CollectionUtils.isEmpty(fileNameList))
-            s3Service.deleteBlogAllImages(fileNameList);
+        //List<String> fileNameList = blogImageService.removeBlogAllImages(pre);
+        //if(!CollectionUtils.isEmpty(fileNameList))
+        //    s3Service.deleteBlogAllImages(fileNameList);
+        blogImageService.removeBlogAllImages(pre);
+        bookmarkService.removeBlogAllBookmark(pre);
+        likesService.removeBlogAllLikes(pre);
         blogReviewRepository.delete(pre);
     }
     

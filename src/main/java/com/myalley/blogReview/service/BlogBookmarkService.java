@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -18,10 +19,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class BlogBookmarkService {
     private final BlogBookmarkRepository blogBookmarkRepository;
-    private final BlogReviewService blogReviewService;
 
-    public void createBookmark(Long blogId, Member member){
-        BlogReview blogReview = blogReviewService.findBlogReview(blogId);
+    public void createBookmark(BlogReview blogReview, Member member){
         if(blogReview.getMember().getMemberId() == member.getMemberId())
             throw new CustomException(BlogReviewExceptionType.BOOKMARK_FORBIDDEN);
         if(blogBookmarkRepository.findByMemberAndBlog(member,blogReview).isPresent())
@@ -31,13 +30,17 @@ public class BlogBookmarkService {
         blogBookmarkRepository.save(newBlogBookmark);
     }
 
-    public void deleteBookmark(Long blogId, Member member){
-        BlogReview blogReview = blogReviewService.findBlogReview(blogId);
+    public void removeBookmark(BlogReview blogReview, Member member){
         BlogBookmark bookmark = blogBookmarkRepository.findByMemberAndBlog(member,blogReview).orElseThrow(() -> {
             throw new CustomException(BlogReviewExceptionType.BOOKMARK_BAD_REQUEST);
         });
         bookmark.getBlog().decreaseBookmarkCount();
         blogBookmarkRepository.delete(bookmark);
+    }
+
+    @Transactional
+    public void removeBlogAllBookmark(BlogReview blogReview){
+        blogBookmarkRepository.deleteAllByBlog(blogReview);
     }
 
     public Page<BlogBookmark> retrieveMyBlogBookmarks(Member member, Integer pageNo){

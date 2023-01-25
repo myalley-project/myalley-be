@@ -85,14 +85,15 @@ public class S3Service {
             return new String[]{fileName,imagePath};
     }
 
-    public HashMap uploadBlogImages(List<MultipartFile> images) throws IOException {
-        HashMap<String, String> imageInformationMaps = new HashMap<>();
-        if(!CollectionUtils.isEmpty(images)) {
-            for (MultipartFile multipartFile : images) {
-                String[] imageInformation = uploadBlogImage(multipartFile);
-                imageInformationMaps.put(imageInformation[0], imageInformation[1]);
-            }
-        }
+
+//    public HashMap uploadBlogImages(List<MultipartFile> images) throws IOException {
+//        HashMap<String, String> imageInformationMaps = new HashMap<>();
+//        if(!CollectionUtils.isEmpty(images)) {
+//            for (MultipartFile multipartFile : images) {
+//                String[] imageInformation = uploadBlogImage(multipartFile);
+//                imageInformationMaps.put(imageInformation[0], imageInformation[1]);
+//            }
+//        }
 
         //이미지가 하나도 오지 않은 경우 - 일단은 400 : 지원하지 않는 파일 로 처리
         //Q. 이미지를 전혀 등록하지 않아도 되는 것인지? 아니면 하나는 필수로 등록하도록 해야하는 것인지?
@@ -101,19 +102,19 @@ public class S3Service {
         //- 상세페이지는 상관없음
         //if (imageInformationMaps.isEmpty())
         //    throw new CustomException(BlogReviewExceptionType.IMAGE_BAD_REQUEST);
-        return imageInformationMaps;
-    }
+//        return imageInformationMaps;
+//    }
 
     //2. 이미지 삭제
     public void deleteBlogImage(String fileName){
         amazonS3Client.deleteObject(S3Bucket, fileName);
     }
 
-    public void deleteBlogAllImages(List<String> fileNameList){
-        for(String fileName:fileNameList) {
-            deleteBlogImage(fileName);
-        }
-    }
+//    public void deleteBlogAllImages(List<String> fileNameList){
+//        for(String fileName:fileNameList) {
+//            deleteBlogImage(fileName);
+//        }
+//    }
     
     //S3에 이미지 등록시 사용하는 메서드들
     public String createFileName(String originalFileName){

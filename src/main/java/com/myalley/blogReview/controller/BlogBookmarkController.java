@@ -1,8 +1,10 @@
 package com.myalley.blogReview.controller;
 
 import com.myalley.blogReview.domain.BlogBookmark;
+import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview.mapper.BlogReviewMapper;
 import com.myalley.blogReview.service.BlogBookmarkService;
+import com.myalley.blogReview.service.BlogReviewService;
 import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,18 +18,21 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class BlogBookmarkController {
     private final BlogBookmarkService blogBookmarkService;
+    private final BlogReviewService blogReviewService;
 
     @PostMapping("/{blog-id}")
     public ResponseEntity postBlogBookmark(@PathVariable("blog-id") Long blogId){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        blogBookmarkService.createBookmark(blogId, member);
+        BlogReview blogReview = blogReviewService.findBlogReview(blogId);
+        blogBookmarkService.createBookmark(blogReview, member);
         return new ResponseEntity<>("on", HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{blog-id}")
     public ResponseEntity deleteBlogBookmark(@PathVariable("blog-id") Long blogId){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        blogBookmarkService.deleteBookmark(blogId, member);
+        BlogReview blogReview = blogReviewService.findBlogReview(blogId);
+        blogBookmarkService.removeBookmark(blogReview, member);
         return new ResponseEntity<>("off", HttpStatus.OK);
     }
 

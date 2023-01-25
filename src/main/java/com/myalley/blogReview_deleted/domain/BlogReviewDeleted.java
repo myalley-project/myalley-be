@@ -23,8 +23,6 @@ public class BlogReviewDeleted {
     @Column(nullable = false)
     private String content;
     private Integer viewCount;
-    private Integer likeCount;
-    private Integer bookmarkCount;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
 
@@ -39,7 +37,7 @@ public class BlogReviewDeleted {
 
     @Builder
     public BlogReviewDeleted(String title, String content, LocalDate viewDate, String time, String transportation,
-                      String revisit, String congestion, Integer viewCount, Integer likeCount, Integer bookmarkCount,
+                      String revisit, String congestion, Integer viewCount,
                       LocalDateTime createdAt, LocalDateTime deletedAt, Long member, Long exhibition){
 
         this.title = title;
@@ -50,8 +48,6 @@ public class BlogReviewDeleted {
         this.revisit = revisit;
         this.congestion = congestion;
         this.viewCount = viewCount;
-        this.likeCount = likeCount;
-        this.bookmarkCount = bookmarkCount;
         this.createdAt = createdAt;
         this.deletedAt = deletedAt;
         this.member = member;

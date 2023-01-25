@@ -21,11 +21,20 @@ public class BlogImageService {
     private final BlogImageRepository blogImageRepository;
     private final S3Service s3Service;
 
-    public void addBlogImageList(HashMap<String,String> map, BlogReview blogReview){
-        map.forEach((fileName,S3url)->{
-            addBlogImage(fileName,S3url,blogReview);
-        });
+    public void addBlogImageList(List<MultipartFile> images, BlogReview blogReview) throws IOException {
+        //HashMap<String,String> map = s3Service.uploadBlogImages(images);
+        if (!CollectionUtils.isEmpty(images)) {
+            for (MultipartFile imageFile : images) {
+                String[] imageInformation = s3Service.uploadBlogImage(imageFile);
+                addBlogImage(imageInformation[0],imageInformation[1],blogReview);
+                //imageInformationMaps.put(imageInformation[0], imageInformation[1]);
+            }
+        }
+        //map.forEach((fileName,S3url)->{
+       //     addBlogImage(fileName,S3url,blogReview);
+        //});
     }
+
     public void createNewBlogImage(BlogReview blogReview, MultipartFile image) throws IOException {
         String[] information = s3Service.uploadBlogImage(image);
         addBlogImage(information[0],information[1],blogReview);
@@ -46,16 +55,18 @@ public class BlogImageService {
         blogImageRepository.delete(foundImage);
     }
 
-    public List<String> removeBlogAllImages(BlogReview blogReview){
+    public void removeBlogAllImages(BlogReview blogReview) {
         List<BlogImage> blogImageList = blogImageRepository.findAllByBlog(blogReview);
-        if(CollectionUtils.isEmpty(blogImageList))
-            return null;
-        List<String> fileNames = new ArrayList<>();
-        for(BlogImage blogImage : blogImageList) {
-            blogImageRepository.delete(blogImage);
-            fileNames.add(blogImage.getFileName());
+        if (!CollectionUtils.isEmpty(blogImageList)) {
+            //List<String> fileNames = new ArrayList<>();
+            for (BlogImage blogImage : blogImageList) {
+                blogImageRepository.delete(blogImage);
+                s3Service.deleteBlogImage(blogImage.getFileName());
+                //fileNames.add(blogImage.getFileName());
+            }
+            //if(!CollectionUtils.isEmpty(fileNames))
+            //    s3Service.deleteBlogAllImages(fileNames);
         }
-        return fileNames;
     }
 
     private BlogImage retrieveBlogImage(BlogReview blogReview, Long imageId){
