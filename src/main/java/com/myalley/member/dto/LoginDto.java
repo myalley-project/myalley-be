@@ -10,11 +10,11 @@ import javax.validation.constraints.Pattern;
 @Data
 public class LoginDto {
 
-    @NotBlank(message="이메일 형식 오류")
+
     @Email(message="이메일 형식 오류")
     private String email;
 
-    @NotEmpty(message="비밀번호 형식 오류")
+
     @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message ="비밀번호 형식 오류" )
     private String password;
 }
