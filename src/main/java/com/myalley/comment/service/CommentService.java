@@ -7,6 +7,8 @@ import com.myalley.exception.CustomException;
 import com.myalley.exception.MateExceptionType;
 import com.myalley.exception.MemberExceptionType;
 import com.myalley.mate.domain.Mate;
+import com.myalley.mate.dto.MateSimpleResponse;
+import com.myalley.mate.dto.MateUpdateRequest;
 import com.myalley.mate.repository.MateRepository;
 import com.myalley.member.domain.Member;
 import com.myalley.member.repository.MemberRepository;
@@ -29,7 +31,7 @@ public class CommentService {
 
     //댓글 작성
     @Transactional
-    public Long addComment(Long mateId, NewCommentRequest request, Long memberId) {
+    public Long addComment(Long mateId, CommentRequest request, Long memberId) {
         Mate mate = mateRepository.findById(mateId)
                 .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
 
@@ -44,7 +46,7 @@ public class CommentService {
 
     //대댓글 작성
     @Transactional
-    public Long addReply(Long commentId, NewReplyRequest request, Long memberId) {
+    public Long addReply(Long commentId, CommentRequest request, Long memberId) {
         Comment parent = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(MateExceptionType.COMMENT_NOT_FOUND));
 
@@ -62,6 +64,22 @@ public class CommentService {
         return reply.getId();
     }
 
+    //댓글&대댓글 수정
+    @Transactional
+    public Long updateComment(Long commentId, Long memberId, CommentRequest request) {
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(MateExceptionType.COMMENT_NOT_FOUND));
+
+        if (!memberId.equals(comment.getMember().getMemberId())) {
+            throw new CustomException(MateExceptionType.UNAUTHORIZED_ACCESS);
+        }
+        comment.updateContent(commentId, request.getContent());
+
+        return comment.getId();
+    }
+
+    
     public CommentsResponse findComments(Long mateId) {
         List<Comment> comments = commentRepository.findCommentsByMateId(mateId);
         List<CommentResponse> commentResponses = comments.stream()

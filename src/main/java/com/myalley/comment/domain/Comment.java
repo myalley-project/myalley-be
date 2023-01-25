@@ -63,13 +63,6 @@ public class Comment extends BaseTime {
         return child;
     }
 
-//    public void validateOwner(Member member) {
-//        if (!accessMemberId.equals(member.getMemberId())) {
-//            throw new CustomException(MemberExceptionType.TOKEN_FORBIDDEN);
-//        }
-//    }
-
-
     public boolean isSoftRemoved() {
         return softRemoved;
     }
@@ -88,6 +81,11 @@ public class Comment extends BaseTime {
 
     public boolean hasNoReply() {
         return children.isEmpty();
+    }
+
+    public void updateContent(Long commentId, String content) {
+        this.id = commentId;
+        this.message = content;
     }
 
 }

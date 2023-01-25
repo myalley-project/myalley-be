@@ -1,9 +1,10 @@
 package com.myalley.comment.controller;
 
 import com.myalley.comment.dto.CommentsResponse;
-import com.myalley.comment.dto.NewCommentRequest;
-import com.myalley.comment.dto.NewReplyRequest;
+import com.myalley.comment.dto.CommentRequest;
 import com.myalley.comment.service.CommentService;
+import com.myalley.exception.CustomException;
+import com.myalley.exception.MateExceptionType;
 import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -22,7 +23,7 @@ public class CommentController {
 
     @PostMapping("/api/mates/{id}/comments")
     public ResponseEntity addComment(@PathVariable(name = "id") Long mateId,
-                                     @Valid @RequestBody NewCommentRequest request) {
+                                     @Valid @RequestBody CommentRequest request) {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
         commentService.addComment(mateId, request, memberId);
@@ -34,7 +35,7 @@ public class CommentController {
 
     @PostMapping("/api/comments/{id}/reply")
     public ResponseEntity addReply(@PathVariable(name = "id") Long commentId,
-                                   @Valid @RequestBody NewReplyRequest request) {
+                                   @Valid @RequestBody CommentRequest request) {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
         commentService.addReply(commentId, request, memberId);
@@ -44,6 +45,24 @@ public class CommentController {
 
         return new ResponseEntity<>("답글이 등록되었습니다.", headers, HttpStatus.OK);
     }
+
+    @PatchMapping("/api/mates/comments/{id}")
+    public ResponseEntity updateComment(@PathVariable(name = "id") Long commentId,
+                                        @Valid @RequestBody CommentRequest request) {
+        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long memberId = member.getMemberId();
+
+        if (request.getContent().isEmpty()) {
+            throw new CustomException(MateExceptionType.COMMENT_NOT_FOUND);
+        }
+
+        commentService.updateComment(commentId, memberId, request);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+
+        return new ResponseEntity<>("댓글이 수정되었습니다.", headers, HttpStatus.OK);
+    }
+
 
     @GetMapping("/mates/{id}/comments")
     public ResponseEntity<CommentsResponse> findComments(@PathVariable(name = "id") Long mateId) {
