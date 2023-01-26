@@ -1,55 +1,78 @@
 package com.myalley.blogReview.controller;
+
 import com.myalley.blogReview.domain.BlogReview;
+import com.myalley.blogReview.domain.DetailBlogReview;
 import com.myalley.blogReview.dto.BlogRequestDto;
-import com.myalley.blogReview.service.BlogImageService;
+import com.myalley.blogReview.mapper.BlogReviewMapper;
 import com.myalley.blogReview.service.BlogReviewService;
-import com.myalley.blogReview.service.S3Service;
-import com.myalley.blogReview_deleted.service.BlogReviewDeletedService;
+import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
+import org.springframework.web.multipart.MultipartFile;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/blogs")
+@RequestMapping
 @RequiredArgsConstructor
 public class BlogReviewController {
-
     private final BlogReviewService blogReviewService;
-    private final BlogReviewDeletedService blogReviewDeletedService;
-    private final BlogImageService blogImageService;
-    private final S3Service s3Service;
 
-    //우선 테스트 용으로 pathVariable을 통해 member-id 받아옴
-    @PostMapping("{member-id}")
-    public ResponseEntity createBlogReview(@PathVariable("member-id") Long memberId,BlogRequestDto blogRequestDto) throws Exception { //@RequestPart("images") MultipartFile[] files,
-        BlogReview newBlog = blogReviewService.createBlog(blogRequestDto, memberId);
-        HashMap<String,String> map = s3Service.uploadBlogImages(blogRequestDto.getImages());
-        if(map.isEmpty())
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        blogImageService.addBlogImageList(map, newBlog);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @PostMapping("/api/blogs")
+    public ResponseEntity postBlogReview(@RequestPart(value = "blogInfo") BlogRequestDto.PostBlogDto blogRequestDto,
+                                         @RequestPart(value = "images",required = false) List<MultipartFile> images,
+                                         @RequestPart(value = "exhibitionId")Long exhibitionId) throws Exception {
+        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        BlogReview target = BlogReviewMapper.INSTANCE.postBlogDtoToBlogReview(blogRequestDto);
+        blogReviewService.createBlog(target, member,exhibitionId,images);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+        return new ResponseEntity<>("블로그 글이 등록되었습니다",headers,HttpStatus.CREATED);
     }
 
-    //우선 테스트 용으로 pathVariable을 통해 member-id 받아옴
-    @PutMapping("/{blog-id}/{member-id}")
-    public ResponseEntity updateBlogReview(@PathVariable("blog-id") Long blogId, @PathVariable("member-id") Long memberId, BlogRequestDto blogRequestDto) {
-        blogReviewService.updateBlogReview(blogRequestDto,blogId,memberId);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    @PutMapping("/api/blogs/{blog-id}")
+    public ResponseEntity putBlogReview(@PathVariable("blog-id") Long blogId,
+                                           @Valid @RequestBody BlogRequestDto.PutBlogDto blogRequestDto) {
+        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        BlogReview target = BlogReviewMapper.INSTANCE.putBlogDtoToBlogReview(blogRequestDto);
+        blogReviewService.updateBlogReview(target,blogId,member);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+        return new ResponseEntity("블로그 글이 수정되었습니다.",headers,HttpStatus.OK);
     }
-    
-    //우선 테스트 용으로 pathVariable을 통해 member-id 받아옴
-    @DeleteMapping("/{blog-id}/{member-id}")
-    public ResponseEntity deleteBlogReview(@PathVariable("blog-id") Long blogId,@PathVariable("member-id") Long memberId){
-        //BlogReview target = blogReviewService.deleteBlogReview(blogId,memberId);
-        BlogReview target = blogReviewService.preVerifyBlogReview(blogId,memberId);
-        blogReviewDeletedService.addDeletedBlogReview(target);
-        List<String> fileNameList = blogImageService.deleteBlogAllImages(blogId);
-        s3Service.deleteBlogAllImages(fileNameList);
-        blogReviewService.deleteBlogReview(target);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT); //요청을 성공적으로 수행하였지만 Body에 들어가는 내용은 존재하지 않음
+
+    @DeleteMapping("/api/blogs/{blog-id}")
+    public ResponseEntity deleteBlogReview(@PathVariable("blog-id") Long blogId){
+        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        blogReviewService.removeBlogReview(blogId,member);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+        return new ResponseEntity<>("블로그 글이 삭제되었습니다.",headers,HttpStatus.OK);
+    }
+
+    @GetMapping("/blogs/{blog-id}")
+    public ResponseEntity getBlogReviewDetail(@PathVariable("blog-id") Long blogId,
+                                              @RequestHeader(value = "memberId", required = false) Long memberId){
+        DetailBlogReview review = blogReviewService.retrieveBlogReview(blogId, memberId);
+        return new ResponseEntity<>(BlogReviewMapper.INSTANCE.blogToDetailBlogDto(review),HttpStatus.OK);
+    }
+
+    @GetMapping("/blogs")
+    public ResponseEntity getBlogReviews(@RequestParam(required = false, value = "page") int pageNo,
+                                         @RequestParam(required = false, value = "order") String orderType){
+        Page<BlogReview> blogReviewPage = blogReviewService.retrieveBlogReviewList(pageNo,orderType);
+        return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
+    }
+
+    @GetMapping("/api/blogs/me")
+    public ResponseEntity getUserBlogReviewList(@RequestParam(value = "page",required = false) Integer pageNo){
+        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Page<BlogReview> blogReviewPage = blogReviewService.retrieveMyBlogReviewList(member,pageNo);
+        return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToUserBlogListDto(blogReviewPage),HttpStatus.OK);
     }
 }

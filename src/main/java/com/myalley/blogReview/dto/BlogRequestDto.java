@@ -1,21 +1,44 @@
 package com.myalley.blogReview.dto;
 
-import com.myalley.blogReview.option.CongestionType;
-import com.myalley.blogReview.option.TransportationType;
-import com.myalley.blogReview.option.RevisitType;
-import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotNull;
 
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class BlogRequestDto {
-    private Long exhibitionId;
-    private String viewDate;
-    private String title;
-    private String content;
-    private MultipartFile[] images; //확실하지 않음. 아직 Json으로 받아오는 거 하지 않음. 적용안함
-    private String transportation;
-    private String revisit;
-    private String congestion;
+
+    @Data
+    @NoArgsConstructor
+    public static class PostBlogDto {
+        @NotNull
+        private String viewDate;
+        @NotNull
+        private String title;
+        @NotNull
+        private String content;
+        @NotNull
+        private String time;
+        private String transportation;
+        private String revisit;
+        private String congestion;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class PutBlogDto {
+        @NotNull
+        private String viewDate;
+        @NotNull
+        private String title;
+        @NotNull
+        private String content;
+        @NotNull
+        private String time;
+        private String transportation;
+        private String revisit;
+        private String congestion;
+    }
 }
