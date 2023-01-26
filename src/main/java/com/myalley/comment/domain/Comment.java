@@ -1,8 +1,6 @@
 package com.myalley.comment.domain;
 
 import com.myalley.common.domain.BaseTime;
-import com.myalley.exception.CustomException;
-import com.myalley.exception.MemberExceptionType;
 import com.myalley.mate.domain.Mate;
 import com.myalley.member.domain.Member;
 import lombok.AccessLevel;
@@ -17,6 +15,7 @@ import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Table(name = "comment")
 @Entity
 public class Comment extends BaseTime {
 
