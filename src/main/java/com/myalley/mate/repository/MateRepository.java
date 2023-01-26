@@ -21,5 +21,5 @@ public interface MateRepository extends JpaRepository<Mate, Long> {
     Page<Mate> findByMember(Member member, Pageable pageable);
     Page<Mate> findByExhibition(Exhibition exhibition, Pageable pageable);
 
-    Page<Mate> findByTitleContainingOrContentContaining(String title, String content, Pageable pageable);
+    Page<Mate> findByTitleContaining(String title, Pageable pageable);
 }

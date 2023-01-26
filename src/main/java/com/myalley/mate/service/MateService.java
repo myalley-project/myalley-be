@@ -152,10 +152,10 @@ public class MateService {
         return mateRepository.findByExhibition(exhibition, pageRequest);
     }
 
-    //메이트 목록 조회 검색바 (title or content)
-    public Page<Mate> findTitleOrContent(String keyword, int page, int size) {
+    //메이트 목록 조회 검색바 (title)
+    public Page<Mate> findTitle(String keyword, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("id").descending());
-        return mateRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageRequest);
+        return mateRepository.findByTitleContaining(keyword, pageRequest);
     }
 
     @Transactional

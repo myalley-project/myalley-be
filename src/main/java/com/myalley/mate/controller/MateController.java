@@ -1,15 +1,11 @@
 package com.myalley.mate.controller;
 
-import com.myalley.exhibition.domain.Exhibition;
-import com.myalley.exhibition.dto.response.ExhibitionBasicResponse;
-import com.myalley.exhibition.dto.response.ExhibitionMateListResponse;
-import com.myalley.exhibition.dto.response.ExhibitionPageResponse;
 import com.myalley.mate.domain.Mate;
-import com.myalley.mate.domain.MateBookmark;
 import com.myalley.mate.dto.*;
 import com.myalley.mate.service.MateService;
 import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,6 +18,7 @@ import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Log
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
@@ -31,6 +28,7 @@ public class MateController {
 
     @PostMapping("/api/mates")
     public ResponseEntity save(@Valid @RequestBody MateRequest mateRequest) {
+        log.info("메이트 모집글 등록");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
         mateService.save(mateRequest, memberId);
@@ -43,6 +41,7 @@ public class MateController {
     @PutMapping("/api/mates/{id}")
     public ResponseEntity update(@PathVariable Long id,
                                  @Valid @RequestBody MateUpdateRequest request) {
+        log.info("메이트 모집글 수정");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
         mateService.update(id, request, memberId);
@@ -55,6 +54,7 @@ public class MateController {
     //메이트글 상세페이지 조회 (회원/비회원)
     @GetMapping("/mates/{id}")
     public ResponseEntity showMateDetail(@PathVariable Long id, @RequestHeader("memberId") Long data) {
+        log.info("메이트 모집글 상세페이지 조회");
         Long memberId =  data;
         mateService.updateViewCount(id);
 
@@ -66,6 +66,7 @@ public class MateController {
 
     @DeleteMapping("/api/mates/{id}")
     public ResponseEntity delete(@PathVariable Long id) {
+        log.info("메이트 모집글 삭제");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
         mateService.delete(id, memberId);
@@ -82,6 +83,7 @@ public class MateController {
             @Positive @RequestParam int page,
             @RequestParam(value = "status", required = false) String status) {
         int size = 4;
+        log.info("메이트 모집글 상태 필터 목록 조회 ");
         Page<Mate> mates = mateService.readPageAll(status, page, size);
        List<MateSimpleResponse> response = mates
                .stream()
@@ -97,6 +99,7 @@ public class MateController {
     //본인이 작성한 글 조회
     @GetMapping("/api/mates/me")
     public ResponseEntity getMatesAll(@Positive @RequestParam("page") int page) {
+        log.info("본인이 작성한 메이트 모집글 목록 조회");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
         int size = 8;
@@ -116,11 +119,12 @@ public class MateController {
     public ResponseEntity getMatesByExhibition(@Positive @RequestParam("page") int page,
                                                @PathVariable Long id) {
         int size = 4;
+        log.info("상세페이지 메이트 모집글 목록 조회");
 
         Page<Mate> mates = mateService.findExhibitionMates(id, page, size);
-        List<MateSimpleResponse> response = mates
+        List<MateExhibitionResponse> response = mates
                 .stream()
-                .map(MateSimpleResponse::of)
+                .map(MateExhibitionResponse::of)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(
@@ -133,7 +137,9 @@ public class MateController {
     public ResponseEntity findInfoByTitle( @Positive @RequestParam int page,
                                            @RequestParam(value = "keyword", required = false) String keyword) {
         int size = 8;
-        Page<Mate> pageMate = mateService.findTitleOrContent(keyword, page, size);
+
+        log.info("메이트 모집글 서치바 제목 검색");
+        Page<Mate> pageMate = mateService.findTitle(keyword, page, size);
         List<MateSimpleResponse> mates = pageMate
                 .stream()
                 .map(MateSimpleResponse::of)
