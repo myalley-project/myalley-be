@@ -1,5 +1,7 @@
 package com.myalley.mate.controller;
 
+import com.myalley.exception.CustomException;
+import com.myalley.exception.MateExceptionType;
 import com.myalley.mate.domain.Mate;
 import com.myalley.mate.dto.*;
 import com.myalley.mate.service.MateService;
@@ -53,9 +55,13 @@ public class MateController {
 
     //메이트글 상세페이지 조회 (회원/비회원)
     @GetMapping("/mates/{id}")
-    public ResponseEntity showMateDetail(@PathVariable Long id, @RequestHeader("memberId") Long data) {
+    public ResponseEntity showMateDetail(@PathVariable Long id, @RequestHeader(value = "memberId") Long memberId) {
         log.info("메이트 모집글 상세페이지 조회");
-        Long memberId =  data;
+        if (memberId == null) {
+            throw new CustomException(MateExceptionType.MEMBER_ID_IS_MANDATORY);
+        }
+
+//        Long memberId =  data;
         mateService.updateViewCount(id);
 
         if (memberId == 0) {

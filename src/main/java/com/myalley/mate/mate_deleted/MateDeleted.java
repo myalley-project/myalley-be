@@ -13,6 +13,7 @@ import javax.persistence.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Table(name = "mate_deleted")
 @Entity
 public class MateDeleted extends BaseTime {
     @Id
