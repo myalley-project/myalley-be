@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,12 +29,14 @@ public class SimpleReviewService {
         simpleRepository.save(simpleReview);
     }
 
+    @Transactional
     public void updateSimpleReview(Long simpleId, SimpleReview simpleReview, Member member){
         SimpleReview pre = verifySimpleReview(simpleId, member);
         pre.updateSimpleReview(simpleReview);
         simpleRepository.save(pre);
     }
 
+    @Transactional
     public void removeSimpleReview(Long simpleId, Member member){
         SimpleReview target = verifySimpleReview(simpleId, member);
         simpleDeletedService.createdSimpleDeleted(target);

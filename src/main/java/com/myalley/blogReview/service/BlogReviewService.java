@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ public class BlogReviewService {
     private final BlogBookmarkService bookmarkService;
     private final BlogLikesService likesService;
 
+    @Transactional
     public void createBlog(BlogReview blogReview, Member member, Long exhibitionId,
                                  List<MultipartFile> images) throws IOException {
         blogReview.setMember(member);
@@ -75,12 +77,14 @@ public class BlogReviewService {
         return myBlogReviewList;
     }
 
+    @Transactional
     public void updateBlogReview(BlogReview postBlogReview, Long blogId, Member member) {
         BlogReview preBlogReview = verifyRequester(blogId,member.getMemberId());
         preBlogReview.updateReview(postBlogReview);
         blogReviewRepository.save(preBlogReview);
     }
 
+    @Transactional
     public void removeBlogReview(Long blogId, Member member){
         BlogReview pre = verifyRequester(blogId,member.getMemberId());
         blogImageService.removeBlogAllImages(pre);
