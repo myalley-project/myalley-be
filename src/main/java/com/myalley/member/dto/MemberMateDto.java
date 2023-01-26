@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class MemberMateDto {
     private Long memberId;
 
-    private String memberNickName;
+    private String memberNickname;
 
     private String memberProfileImg;
 

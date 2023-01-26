@@ -9,6 +9,7 @@ import javax.persistence.*;
 
 @NoArgsConstructor
 @Getter
+@Table(name = "exhibition_bookmark")
 @Entity
 public class ExhibitionBookmark {
 
