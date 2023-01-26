@@ -13,11 +13,10 @@ public interface ExhibitionRepository extends JpaRepository<Exhibition,Long> {
     @Query("update Exhibition e set e.viewCount = e.viewCount + 1 where e.id = :id")
     Integer updateViewCount(Long id);
 
-    Page<Exhibition> findByStatusOrType(
-            String status, String type, Pageable pageable);
+    Page<Exhibition> findByTypeOrStatus(@Param("type") String type, @Param("status") String status, Pageable pageable);
 
     @Query("select e from Exhibition e where e.status like %:status% order by e.id desc")
-    Page<Exhibition> findAllByStatus(@Param("status") String status, Pageable pageable);
+    Page<Exhibition> findByStatusContaining(@Param("status") String status, Pageable pageable);
 
-
+    Page<Exhibition> findByStatusContainingAndTitleContaining(String status, String keyword, Pageable pageable);
 }

@@ -1,5 +1,6 @@
 package com.myalley.mate.repository;
 
+import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.mate.domain.Mate;
 import com.myalley.member.domain.Member;
 import org.springframework.data.domain.Page;
@@ -18,4 +19,7 @@ public interface MateRepository extends JpaRepository<Mate, Long> {
     Page<Mate> findAllByStatus(@Param("status") String status, Pageable pageable);
 
     Page<Mate> findByMember(Member member, Pageable pageable);
+    Page<Mate> findByExhibition(Exhibition exhibition, Pageable pageable);
+
+    Page<Mate> findByTitleContaining(String title, Pageable pageable);
 }
