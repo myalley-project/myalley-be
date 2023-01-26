@@ -21,6 +21,6 @@ public class ReplyResponse {
 
     public static ReplyResponse of(Comment reply) {
         return new ReplyResponse(reply.getId(), reply.getMember().getNickname(),
-                reply.getMember().getUserImage(), reply.getMessage(), reply.getCreatedAt());
+                reply.getMember().getMemberImage(), reply.getMessage(), reply.getCreatedAt());
     }
 }

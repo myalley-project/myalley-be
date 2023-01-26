@@ -23,7 +23,7 @@ public class CommentResponse {
 
     public static CommentResponse of(Comment comment, List<ReplyResponse> replyResponses) {
         return new CommentResponse(comment.getId(), comment.getMember().getNickname(),
-                comment.getMember().getUserImage(), comment.getMessage(), comment.getCreatedAt(),
+                comment.getMember().getMemberImage(), comment.getMessage(), comment.getCreatedAt(),
                 replyResponses);
     }
 
