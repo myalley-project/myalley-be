@@ -55,13 +55,14 @@ public class MateController {
 
     //메이트글 상세페이지 조회 (회원/비회원)
     @GetMapping("/mates/{id}")
-    public ResponseEntity showMateDetail(@PathVariable Long id, @RequestHeader("memberId") Long memberId) {
+    public ResponseEntity showMateDetail(@PathVariable Long id, @RequestHeader("memberId") Long data) {
         log.info("메이트 모집글 상세페이지 조회");
-        if (memberId == null) {
+
+        if (data == null) {
             throw new CustomException(MateExceptionType.MEMBER_ID_IS_MANDATORY);
         }
 
-//        Long memberId =  data;
+        Long memberId =  data;
         mateService.updateViewCount(id);
 
         if (memberId == 0) {
