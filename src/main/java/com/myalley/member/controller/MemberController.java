@@ -43,14 +43,14 @@ public class MemberController {
 
 
     @PutMapping("/api/me")
-    public ResponseEntity updateMember(
-            @Valid @RequestPart(name = "data") MemberUpdateDto memberUpdateDto, @RequestPart(name="imageFile",required =false) MultipartFile multipartFile
-            ) throws IOException {
+    public ResponseEntity updateMember(@Valid @RequestPart(value = "data") MemberUpdateDto memberUpdateDto,
+            @RequestPart(value="imageFile",required =false) MultipartFile multipartFile//
+            ) throws IOException {//
         Member member = (Member)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String url=member.getMemberImage();
         log.info("유저 본인정보 수정");
 
-        if(!multipartFile.isEmpty()){//프로필 수정시 이미지 삭제 및 저장
+        if(multipartFile!=null){//프로필 수정시 이미지 삭제 및 저장
             profileS3Service.deleteImage(url);
             url=profileS3Service.uploadImage(multipartFile);
         }

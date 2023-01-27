@@ -38,7 +38,7 @@ public class ProfileS3Service {
 
     public String uploadImage(MultipartFile multipartFile) throws IOException {
         verifyFileType(multipartFile.getContentType());
-
+        log.info(multipartFile.getOriginalFilename());
         String fileName = createFileName(multipartFile.getOriginalFilename());
 
         ObjectMetadata objectMetaData = new ObjectMetadata();
