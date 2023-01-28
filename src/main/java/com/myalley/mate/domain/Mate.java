@@ -14,6 +14,7 @@ import javax.persistence.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Table(name = "mate")
 @Entity
 public class Mate extends BaseTime {
     @Id

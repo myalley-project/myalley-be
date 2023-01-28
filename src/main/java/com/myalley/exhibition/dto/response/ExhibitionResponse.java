@@ -14,7 +14,7 @@ public class ExhibitionResponse {
     private String exhibitionTitle;
     private String exhibitionSpace;
     private String posterUrl;
-    private String duration;
+    private String exhibitionDuration;
     private String status;
 
     public static ExhibitionResponse of(Exhibition exhibition) {
