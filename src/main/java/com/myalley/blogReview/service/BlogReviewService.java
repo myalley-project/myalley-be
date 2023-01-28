@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -33,6 +34,8 @@ public class BlogReviewService {
     @Transactional
     public void createBlog(BlogReview blogReview, Member member, Long exhibitionId,
                                  List<MultipartFile> images) throws IOException {
+        if(images.size()>3)
+            throw new CustomException(BlogReviewExceptionType.IMAGE_BAD_REQUEST_OVER);
         blogReview.setMember(member);
         blogReview.setExhibition(exhibitionService.verifyExhibition(exhibitionId));
         BlogReview newBlog = blogReviewRepository.save(blogReview);
