@@ -58,7 +58,7 @@ public class SimpleResponseDto {
     public static class SimpleMemberResponseDto{
         private Long memberId;
         private String nickname;
-        private String UserImage;
+        private String memberImage;
     }
 
     @Data
