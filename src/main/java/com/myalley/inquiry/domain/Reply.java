@@ -1,5 +1,6 @@
 package com.myalley.inquiry.domain;
 
+import com.myalley.member.domain.Member;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -18,10 +19,12 @@ public class Reply {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long reply_id;
 
-   // @ManyToOne
-    private Long member_id;
+    @ManyToOne(targetEntity= Member.class,fetch=FetchType.LAZY)
+    @JoinColumn(name="member_id")
+    private Member member;
 
-    private Long inquiry_id;
+    @OneToOne
+    private Inquiry inquiry;
 
     private String reply;
 
