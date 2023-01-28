@@ -30,6 +30,7 @@ public class BlogReviewController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview target = BlogReviewMapper.INSTANCE.postBlogDtoToBlogReview(blogRequestDto);
         blogReviewService.createBlog(target, member,exhibitionId,images);
+
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json;charset=UTF-8");
         return new ResponseEntity<>("블로그 글이 등록되었습니다",headers,HttpStatus.CREATED);
@@ -41,6 +42,7 @@ public class BlogReviewController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview target = BlogReviewMapper.INSTANCE.putBlogDtoToBlogReview(blogRequestDto);
         blogReviewService.updateBlogReview(target,blogId,member);
+
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json;charset=UTF-8");
         return new ResponseEntity("블로그 글이 수정되었습니다.",headers,HttpStatus.OK);
@@ -50,6 +52,7 @@ public class BlogReviewController {
     public ResponseEntity deleteBlogReview(@PathVariable("blog-id") Long blogId){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         blogReviewService.removeBlogReview(blogId,member);
+
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json;charset=UTF-8");
         return new ResponseEntity<>("블로그 글이 삭제되었습니다.",headers,HttpStatus.OK);

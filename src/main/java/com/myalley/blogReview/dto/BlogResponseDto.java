@@ -77,7 +77,7 @@ public class BlogResponseDto {
     public static class SimpleMemberDto {
         private Long memberId;
         private String nickname;
-        private String UserImage;
+        private String memberImage;
     }
 
     @Data

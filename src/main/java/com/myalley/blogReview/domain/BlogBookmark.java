@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(name="blog_bookmark")
 @Getter
 @NoArgsConstructor
 public class BlogBookmark {
