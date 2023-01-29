@@ -100,8 +100,9 @@ public class MemberService {
 
         LocalDate now=LocalDate.now(ZoneId.of("Asia/Seoul"));
 
-        int age=member.getBirth().getYear()-now.getYear()-1;
-        if(member.getBirth().getDayOfYear()-now.getDayOfYear()<=0)
+        int age=now.getYear()-member.getBirth().getYear()-1;
+
+        if(now.getDayOfYear()-member.getBirth().getDayOfYear()<=0)
             age++;
         return MemberInfoDto.builder()
                 .memberId(member.getMemberId())
