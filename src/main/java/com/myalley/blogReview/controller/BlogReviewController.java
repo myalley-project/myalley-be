@@ -24,7 +24,7 @@ public class BlogReviewController {
     private final BlogReviewService blogReviewService;
 
     @PostMapping("/api/blogs")
-    public ResponseEntity postBlogReview(@RequestPart(value = "blogInfo") BlogRequestDto.PostBlogDto blogRequestDto,
+    public ResponseEntity postBlogReview(@Valid @RequestPart(value = "blogInfo") BlogRequestDto.PostBlogDto blogRequestDto,
                                          @RequestPart(value = "images") List<MultipartFile> images,
                                          @RequestPart(value = "exhibitionId")Long exhibitionId) throws Exception {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -66,7 +66,7 @@ public class BlogReviewController {
     }
 
     @GetMapping("/blogs")
-    public ResponseEntity getBlogReviews(@RequestParam(required = false, value = "page") int pageNo,
+    public ResponseEntity getBlogReviews(@RequestParam(required = false, value = "page") Integer pageNo,
                                          @RequestParam(required = false, value = "order") String orderType){
         Page<BlogReview> blogReviewPage = blogReviewService.retrieveBlogReviewList(pageNo,orderType);
         return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
@@ -77,5 +77,14 @@ public class BlogReviewController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Page<BlogReview> blogReviewPage = blogReviewService.retrieveMyBlogReviewList(member,pageNo);
         return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToUserBlogListDto(blogReviewPage),HttpStatus.OK);
+    }
+
+    @GetMapping("/blogs/exhibitions/{exhibition-id}")
+    public ResponseEntity getExhibitionBlogReviewList(@PathVariable("exhibition-id") Long exhibitionId,
+                                                      @RequestParam(value = "page",required = false) Integer pageNo,
+                                                      @RequestParam(value = "order",required = false) String orderType){
+        Page<BlogReview> blogReviewPage =
+                blogReviewService.retrieveExhibitionBlogReviewList(exhibitionId,pageNo,orderType);
+        return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
     }
 }

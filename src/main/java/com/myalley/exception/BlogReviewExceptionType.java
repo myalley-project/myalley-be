@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum BlogReviewExceptionType implements BaseExceptionType{
+    BLOG_BAD_REQUEST(400,"올바르지 않은 요청입니다."),
     BLOG_NOT_FOUND(404,"요청에 맞는 블로그 리뷰가 존재하지 않습니다."),
     BLOG_FORBIDDEN(403,"작성자만 이용할 수 있습니다."),
     LIKES_BAD_REQUEST(400,"올바르지 않은 요청입니다."),

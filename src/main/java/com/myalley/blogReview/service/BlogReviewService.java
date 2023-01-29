@@ -3,6 +3,7 @@ package com.myalley.blogReview.service;
 import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview.domain.DetailBlogReview;
 import com.myalley.blogReview_deleted.service.BlogReviewDeletedService;
+import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.exhibition.service.ExhibitionService;
 import com.myalley.member.domain.Member;
 
@@ -63,9 +64,8 @@ public class BlogReviewService {
         } else if(orderType==null || orderType.equals("Recent")){
             PageRequest pageRequest = PageRequest.of(pageNo, 9, Sort.by("id").descending());
             blogReviewList = blogReviewRepository.findAll(pageRequest);
-            System.out.println(blogReviewList.getTotalElements());
         } else{
-            throw new CustomException(BlogReviewExceptionType.BLOG_NOT_FOUND);
+            throw new CustomException(BlogReviewExceptionType.BLOG_BAD_REQUEST);
         }
         return blogReviewList;
     }
@@ -77,6 +77,22 @@ public class BlogReviewService {
         else
             pageRequest = PageRequest.of(pageNo, 6, Sort.by("id").descending());
         Page<BlogReview> myBlogReviewList = blogReviewRepository.findAllByMember(member,pageRequest);
+        return myBlogReviewList;
+    }
+
+    public Page<BlogReview> retrieveExhibitionBlogReviewList(Long exhibitionId, Integer pageNo, String orderType) {
+        PageRequest pageRequest;
+        Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
+        if(pageNo == null)
+            pageNo = 0;
+        if(orderType!=null && orderType.equals("ViewCount"))
+            pageRequest = PageRequest.of(pageNo, 9, Sort.by("viewCount").descending()
+                    .and(Sort.by("id")).descending());
+        else if(orderType == null || orderType.equals("Recent"))
+            pageRequest = PageRequest.of(pageNo, 9, Sort.by("id").descending());
+        else
+            throw new CustomException(BlogReviewExceptionType.BLOG_BAD_REQUEST);
+        Page<BlogReview> myBlogReviewList = blogReviewRepository.findAllByExhibition(exhibition,pageRequest);
         return myBlogReviewList;
     }
 
