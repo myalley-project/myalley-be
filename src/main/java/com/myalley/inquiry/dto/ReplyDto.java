@@ -7,9 +7,8 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberDetailDto {
+public class ReplyDto {
+    private Long inquiryId;
 
-    private Long memberId;
-
-    private String nickname;
+    private String reply;
 }

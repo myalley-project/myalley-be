@@ -1,12 +1,12 @@
 package com.myalley.inquiry.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Builder
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class InquiryDto {
     private String title;
 

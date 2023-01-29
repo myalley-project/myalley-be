@@ -1,13 +1,13 @@
 package com.myalley.inquiry.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 @Getter
 @Builder
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class InquiryDetailDto {
     private Long inquiryId;
 
