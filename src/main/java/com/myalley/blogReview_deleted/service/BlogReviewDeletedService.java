@@ -3,13 +3,10 @@ package com.myalley.blogReview_deleted.service;
 import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview_deleted.domain.BlogReviewDeleted;
 import com.myalley.blogReview_deleted.repository.BlogReviewDeletedRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Service
 @RequiredArgsConstructor
@@ -21,15 +18,15 @@ public class BlogReviewDeletedService {
                 .title(target.getTitle())
                 .content(target.getContent())
                 .viewDate(target.getViewDate())
+                .time(target.getTime())
                 .congestion(target.getCongestion())
                 .transportation(target.getTransportation())
                 .revisit(target.getRevisit())
                 .createdAt(target.getCreatedAt())
                 .deletedAt(LocalDateTime.now())
-                .likeCount(target.getLikeCount())
                 .viewCount(target.getViewCount())
                 .member(target.getMember().getMemberId())
-                .exhibition(target.getExhibition())
+                .exhibition(target.getExhibition().getId())
                 .build();
         repository.save(deletedBlog);
     }

@@ -7,8 +7,6 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 @Getter
@@ -35,7 +33,7 @@ public class MemberRegisterDto {
     @Length(min=2,max=10,message="닉네임 형식 오류")
     private String nickname;
 
-    private Integer adminNo;
+    private Long adminNo;
 
 
 

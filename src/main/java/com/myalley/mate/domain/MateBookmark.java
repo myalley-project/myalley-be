@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Getter
+@Table(name = "mate_bookmark")
 @Entity
 @NoArgsConstructor
 public class MateBookmark {

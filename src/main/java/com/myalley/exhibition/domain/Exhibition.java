@@ -11,6 +11,7 @@ import javax.persistence.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Table(name = "exhibition")
 @Entity
 public class Exhibition extends BaseTime {
 

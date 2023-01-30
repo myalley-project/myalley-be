@@ -1,73 +1,122 @@
 package com.myalley.blogReview.service;
 
 import com.myalley.blogReview.domain.BlogReview;
-import com.myalley.blogReview.dto.BlogRequestDto;
+import com.myalley.blogReview.domain.DetailBlogReview;
+import com.myalley.blogReview_deleted.service.BlogReviewDeletedService;
+import com.myalley.exhibition.domain.Exhibition;
+import com.myalley.exhibition.service.ExhibitionService;
 import com.myalley.member.domain.Member;
-import com.myalley.member.repository.MemberRepository;
+
 import com.myalley.blogReview.repository.BlogReviewRepository;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
+import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class BlogReviewService {
+    private final BlogReviewRepository blogReviewRepository;
+    private final BlogReviewDeletedService blogReviewDeletedService;
+    private final ExhibitionService exhibitionService;
+    private final BlogImageService blogImageService;
+    private final BlogBookmarkService bookmarkService;
+    private final BlogLikesService likesService;
 
-    private final BlogReviewRepository repository;
-    private final MemberRepository mRepository;
-
-    public BlogReview createBlog(BlogRequestDto blogRequestDto, Long memberId){
-        //멤버를 id로 받아오는 경우만 해당 됨. 전시회는 id로 받아올 것이기 때문에 전시회 부분도 추가로 해주기!
-        Member writer = mRepository.findById(memberId).orElseThrow(() ->{
-            throw new CustomException(BlogReviewExceptionType.BLOG_BAD_REQUEST);
-        });
-        //중복 허용하기로함 1.18
-        //duplicateCheckBlogReview(memberId,blogRequestDto.getExhibitionId());
-        BlogReview newReview = BlogReview.builder()
-                .title(blogRequestDto.getTitle())
-                .content(blogRequestDto.getContent())
-                .viewDate(LocalDate.parse(blogRequestDto.getViewDate()))
-                .transportation(blogRequestDto.getTransportation())
-                .revisit(blogRequestDto.getRevisit())
-                .congestion(blogRequestDto.getCongestion())
-                .viewCount(0)
-                .likeCount(0)
-                .member(writer)
-                .exhibition(blogRequestDto.getExhibitionId()) //여기도 나중엔 객체로 넣어 주어야 합니둥
-                .build();
-        return repository.save(newReview);
+    @Transactional
+    public void createBlog(BlogReview blogReview, Member member, Long exhibitionId,
+                                 List<MultipartFile> images) throws IOException {
+        if(images.size()>3)
+            throw new CustomException(BlogReviewExceptionType.IMAGE_BAD_REQUEST_OVER);
+        blogReview.setMember(member);
+        blogReview.setExhibition(exhibitionService.verifyExhibition(exhibitionId));
+        BlogReview newBlog = blogReviewRepository.save(blogReview);
+        blogImageService.addBlogImageList(images, newBlog);
     }
 
-    public BlogReview retrieveBlogReview(Long blogId){
+    public DetailBlogReview retrieveBlogReview(Long blogId, Long memberId){
+        DetailBlogReview detail = new DetailBlogReview();
         BlogReview blog = findBlogReview(blogId);
         blog.updateViewCount();
-        BlogReview updateBlog = repository.save(blog);
-        return updateBlog;
+        detail.setLikesStatus(likesService.retrieveBlogLikes(blog,memberId));
+        detail.setBookmarkStatus(bookmarkService.retrieveBlogBookmark(blog,memberId));
+        detail.setBlogReview(blogReviewRepository.save(blog));
+        return detail;
     }
 
-    public void updateBlogReview(BlogRequestDto blogRequestDto, Long blogId, Long memberId) {
-        BlogReview preBlogReview = verifyRequester(blogId,memberId);
-        preBlogReview.updateReview(blogRequestDto);
-        repository.save(preBlogReview);
+    public Page<BlogReview> retrieveBlogReviewList(Integer pageNo,String orderType){
+        Page<BlogReview> blogReviewList;
+        if(pageNo == null)
+            pageNo = 0;
+        if(orderType!=null && orderType.equals("ViewCount")) {
+            PageRequest pageRequest = PageRequest.of(pageNo, 9, Sort.by("viewCount").descending()
+                    .and(Sort.by("id").descending()));
+            blogReviewList = blogReviewRepository.findAll(pageRequest);
+        } else if(orderType==null || orderType.equals("Recent")){
+            PageRequest pageRequest = PageRequest.of(pageNo, 9, Sort.by("id").descending());
+            blogReviewList = blogReviewRepository.findAll(pageRequest);
+        } else{
+            throw new CustomException(BlogReviewExceptionType.BLOG_BAD_REQUEST);
+        }
+        return blogReviewList;
     }
 
-    //삭제 전 올바른 요청인지 확인 (작성자가 보낸 요청인지)
-    public BlogReview preVerifyBlogReview(Long blogId,Long memberId){
-        BlogReview target = verifyRequester(blogId, memberId);
-        return target;
+    public Page<BlogReview> retrieveMyBlogReviewList(Member member, Integer pageNo) {
+        PageRequest pageRequest;
+        if(pageNo == null)
+            pageRequest = PageRequest.of(0, 6, Sort.by("id").descending());
+        else
+            pageRequest = PageRequest.of(pageNo, 6, Sort.by("id").descending());
+        Page<BlogReview> myBlogReviewList = blogReviewRepository.findAllByMember(member,pageRequest);
+        return myBlogReviewList;
     }
 
-    public void deleteBlogReview(BlogReview target){
-        repository.delete(target);
+    public Page<BlogReview> retrieveExhibitionBlogReviewList(Long exhibitionId, Integer pageNo, String orderType) {
+        PageRequest pageRequest;
+        Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
+        if(pageNo == null)
+            pageNo = 0;
+        if(orderType!=null && orderType.equals("ViewCount"))
+            pageRequest = PageRequest.of(pageNo, 9, Sort.by("viewCount").descending()
+                    .and(Sort.by("id")).descending());
+        else if(orderType == null || orderType.equals("Recent"))
+            pageRequest = PageRequest.of(pageNo, 9, Sort.by("id").descending());
+        else
+            throw new CustomException(BlogReviewExceptionType.BLOG_BAD_REQUEST);
+        Page<BlogReview> myBlogReviewList = blogReviewRepository.findAllByExhibition(exhibition,pageRequest);
+        return myBlogReviewList;
     }
 
-    
+    @Transactional
+    public void updateBlogReview(BlogReview postBlogReview, Long blogId, Member member) {
+        BlogReview preBlogReview = verifyRequester(blogId,member.getMemberId());
+        preBlogReview.updateReview(postBlogReview);
+        blogReviewRepository.save(preBlogReview);
+    }
+
+    @Transactional
+    public void removeBlogReview(Long blogId, Member member){
+        BlogReview pre = verifyRequester(blogId,member.getMemberId());
+        blogImageService.removeBlogAllImages(pre);
+        bookmarkService.removeBlogAllBookmark(pre);
+        likesService.removeBlogAllLikes(pre);
+        blogReviewDeletedService.addDeletedBlogReview(pre);
+        blogReviewRepository.delete(pre);
+    }
+
+
     //1. 존재하는 글인지 확인
-    private BlogReview findBlogReview(Long blogId){
-        BlogReview blog = repository.findById(blogId).orElseThrow(() -> { //404 : 존재 하지 않는 글
+    public BlogReview findBlogReview(Long blogId){
+        BlogReview blog = blogReviewRepository.findById(blogId).orElseThrow(() -> {
             throw new CustomException(BlogReviewExceptionType.BLOG_NOT_FOUND);
         });
         return blog;
@@ -75,10 +124,10 @@ public class BlogReviewService {
     
     //2. 작성자인지 확인
     private BlogReview verifyRequester(Long blogId,Long memberId){
-        BlogReview review = repository.findById(blogId).orElseThrow(() -> { //404 : 블로그 글이 조회 되지 않는 경우
+        BlogReview review = blogReviewRepository.findById(blogId).orElseThrow(() -> {
            throw new CustomException(BlogReviewExceptionType.BLOG_NOT_FOUND);
         });
-        if(!review.getMember().equals(memberId)){ //403 : 권한이 없는 글에 접근하는 경우
+        if(!review.getMember().getMemberId().equals(memberId)){
             throw new CustomException(BlogReviewExceptionType.BLOG_FORBIDDEN);
         }
         return review;
