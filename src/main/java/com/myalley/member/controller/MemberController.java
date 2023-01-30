@@ -28,7 +28,7 @@ import java.util.HashMap;
 public class MemberController {
     private final MemberService memberService;
     private final ProfileS3Service profileS3Service;
-    private final PasswordEncoder passwordEncoder;
+
     @PostMapping("/signup")
     public ResponseEntity signUp(
            @Valid @RequestBody MemberRegisterDto memberRegisterDto
@@ -55,11 +55,9 @@ public class MemberController {
             url=profileS3Service.uploadImage(multipartFile);
         }
 
-        member.update(memberUpdateDto,url);
-        if(memberUpdateDto.getPassword()!=null)
-        member.setPassword(passwordEncoder.encode(memberUpdateDto.getPassword()));
 
-        return memberService.update(member);
+
+        return memberService.update(memberUpdateDto,url);
     }
 
 
