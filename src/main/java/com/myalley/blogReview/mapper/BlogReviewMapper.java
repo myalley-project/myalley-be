@@ -8,6 +8,7 @@ import com.myalley.common.dto.pagingDto;
 import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.member.domain.Member;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.util.CollectionUtils;
@@ -22,8 +23,14 @@ public interface BlogReviewMapper {
 
     //** REQUEST **
     //1. 블로그 등록
+    @Mapping(target="revisit",constant="모르겠음")
+    @Mapping(target="congestion",constant="기억나지않음")
+    @Mapping(target="transportation",constant="기억나지않음")
     BlogReview postBlogDtoToBlogReview(BlogRequestDto.PostBlogDto requestDto);
     //2. 블로그 수정
+    @Mapping(target="revisit",constant="모르겠음")
+    @Mapping(target="congestion",constant="기억나지않음")
+    @Mapping(target="transportation",constant="기억나지않음")
     BlogReview putBlogDtoToBlogReview(BlogRequestDto.PutBlogDto requestDto);
     
     //** RESPONSE **
