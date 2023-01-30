@@ -1,8 +1,6 @@
 package com.myalley.blogReview.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.myalley.exception.BlogReviewExceptionType;
-import com.myalley.exception.CustomException;
 import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.common.domain.BaseTime;
 import com.myalley.member.domain.Member;
@@ -13,7 +11,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity(name="blog_review")
 @NoArgsConstructor
 @Getter
 public class BlogReview extends BaseTime {

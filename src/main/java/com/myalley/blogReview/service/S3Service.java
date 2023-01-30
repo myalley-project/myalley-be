@@ -62,6 +62,6 @@ public class S3Service {
         String[] typeList = {"image/jpeg","image/jpg","image/png"};
         List<String> strList = new ArrayList<>(Arrays.asList(typeList));
         if(!strList.contains(type))
-            throw new CustomException(BlogReviewExceptionType.IMAGE_BAD_REQUEST);
+            throw new CustomException(BlogReviewExceptionType.IMAGE_BAD_REQUEST_INCORRECT);
     }
 }

@@ -24,12 +24,13 @@ public class BlogReviewController {
     private final BlogReviewService blogReviewService;
 
     @PostMapping("/api/blogs")
-    public ResponseEntity postBlogReview(@RequestPart(value = "blogInfo") BlogRequestDto.PostBlogDto blogRequestDto,
-                                         @RequestPart(value = "images",required = false) List<MultipartFile> images,
+    public ResponseEntity postBlogReview(@Valid @RequestPart(value = "blogInfo") BlogRequestDto.PostBlogDto blogRequestDto,
+                                         @RequestPart(value = "images") List<MultipartFile> images,
                                          @RequestPart(value = "exhibitionId")Long exhibitionId) throws Exception {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview target = BlogReviewMapper.INSTANCE.postBlogDtoToBlogReview(blogRequestDto);
         blogReviewService.createBlog(target, member,exhibitionId,images);
+
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json;charset=UTF-8");
         return new ResponseEntity<>("블로그 글이 등록되었습니다",headers,HttpStatus.CREATED);
@@ -41,6 +42,7 @@ public class BlogReviewController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview target = BlogReviewMapper.INSTANCE.putBlogDtoToBlogReview(blogRequestDto);
         blogReviewService.updateBlogReview(target,blogId,member);
+
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json;charset=UTF-8");
         return new ResponseEntity("블로그 글이 수정되었습니다.",headers,HttpStatus.OK);
@@ -50,6 +52,7 @@ public class BlogReviewController {
     public ResponseEntity deleteBlogReview(@PathVariable("blog-id") Long blogId){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         blogReviewService.removeBlogReview(blogId,member);
+
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json;charset=UTF-8");
         return new ResponseEntity<>("블로그 글이 삭제되었습니다.",headers,HttpStatus.OK);
@@ -63,7 +66,7 @@ public class BlogReviewController {
     }
 
     @GetMapping("/blogs")
-    public ResponseEntity getBlogReviews(@RequestParam(required = false, value = "page") int pageNo,
+    public ResponseEntity getBlogReviews(@RequestParam(required = false, value = "page") Integer pageNo,
                                          @RequestParam(required = false, value = "order") String orderType){
         Page<BlogReview> blogReviewPage = blogReviewService.retrieveBlogReviewList(pageNo,orderType);
         return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
@@ -74,5 +77,14 @@ public class BlogReviewController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Page<BlogReview> blogReviewPage = blogReviewService.retrieveMyBlogReviewList(member,pageNo);
         return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToUserBlogListDto(blogReviewPage),HttpStatus.OK);
+    }
+
+    @GetMapping("/blogs/exhibitions/{exhibition-id}")
+    public ResponseEntity getExhibitionBlogReviewList(@PathVariable("exhibition-id") Long exhibitionId,
+                                                      @RequestParam(value = "page",required = false) Integer pageNo,
+                                                      @RequestParam(value = "order",required = false) String orderType){
+        Page<BlogReview> blogReviewPage =
+                blogReviewService.retrieveExhibitionBlogReviewList(exhibitionId,pageNo,orderType);
+        return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
     }
 }

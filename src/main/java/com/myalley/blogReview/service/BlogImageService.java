@@ -21,7 +21,7 @@ public class BlogImageService {
     private final S3Service s3Service;
 
     public void addBlogImageList(List<MultipartFile> images, BlogReview blogReview) throws IOException {
-        if (!CollectionUtils.isEmpty(images)) {
+        if (!images.get(0).isEmpty()) {
             for (MultipartFile imageFile : images) {
                 String[] imageInformation = s3Service.uploadBlogImage(imageFile);
                 addBlogImage(imageInformation[0],imageInformation[1],blogReview);
@@ -32,6 +32,8 @@ public class BlogImageService {
     public void createNewBlogImage(BlogReview blogReview, Member member, MultipartFile image) throws IOException {
         if(blogReview.getMember().getMemberId()!= member.getMemberId())
             throw new CustomException(BlogReviewExceptionType.IMAGE_FORBIDDEN);
+        if(image.isEmpty())
+            throw new CustomException(BlogReviewExceptionType.IMAGE_BAD_REQUEST_EMPTY);
         String[] information = s3Service.uploadBlogImage(image);
         addBlogImage(information[0],information[1],blogReview);
     }

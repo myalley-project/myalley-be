@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Entity(name="blog_image")
 @Getter
 @NoArgsConstructor
 public class BlogImage {
