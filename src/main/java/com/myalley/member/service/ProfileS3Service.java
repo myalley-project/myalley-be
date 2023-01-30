@@ -48,7 +48,7 @@ public class ProfileS3Service {
         try{
             amazonS3Client.putObject(
                     new PutObjectRequest(S3Bucket, fileName, multipartFile.getInputStream(), objectMetaData)
-                            .withCannedAcl(CannedAccessControlList.PublicRead)
+                          //  .withCannedAcl(CannedAccessControlList.PublicRead)
             );
         }catch (IOException e){
             throw new IOException();
