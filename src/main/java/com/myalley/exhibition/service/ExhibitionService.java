@@ -137,19 +137,22 @@ public class ExhibitionService {
 
     //전시회 상태와 유형 같이 검색
     public Page<Exhibition> readPageAllSearch(String status, String type, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("id").descending());
-        return exhibitionRepository.findByStatusOrType(
-                                status,
-                                type,
-                                pageRequest);
+        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("createdAt").descending());
+        return exhibitionRepository.findByTypeOrStatus(type, status, pageRequest);
 
     }
 
     //전시회 관람여부만으로 목록 조회
     public Page<Exhibition> readPageAll(String status, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("id").descending());
-        return exhibitionRepository.findAllByStatus(status, pageRequest);
+        return exhibitionRepository.findByStatusContaining(status, pageRequest);
 
+    }
+
+    //전시글 목록 조회 검색바 (status&title)
+    public Page<Exhibition> findTitle(String status, String keyword, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("id").descending());
+        return exhibitionRepository.findByStatusContainingAndTitleContaining(status, keyword, pageRequest);
     }
 
     //전시글 존재여부 확인

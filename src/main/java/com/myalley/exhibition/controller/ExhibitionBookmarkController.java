@@ -7,6 +7,7 @@ import com.myalley.exhibition.dto.response.ExhibitionPageResponse;
 import com.myalley.exhibition.service.BookmarkService;
 import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping
+@Log
 public class ExhibitionBookmarkController {
 
     private final BookmarkService bookmarkService;
@@ -28,6 +30,7 @@ public class ExhibitionBookmarkController {
     public ResponseEntity addBookmark(@PathVariable Long id) {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
+        log.info("전시글 북마크 추가/삭제");
 
         return ResponseEntity.ok(bookmarkService.addNewBookmark(memberId, id));
     }
@@ -36,7 +39,7 @@ public class ExhibitionBookmarkController {
     public ResponseEntity getExhibitionsAll(@Positive @RequestParam("page") int page) {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
-
+        log.info("본인의 전시글 북마크 목록 조회");
         int size = 8;
         Page<ExhibitionBookmark> exhibitionBookmarks = bookmarkService.findBookmarkedExhibitions(memberId, page, size);
         List<ExhibitionBasicResponse> exhibitions = exhibitionBookmarks

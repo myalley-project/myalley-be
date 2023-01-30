@@ -61,8 +61,8 @@ public class MemberService {
     {
         if (memberRepository.findByEmail(memberRegisterDto.getEmail()) != null) {
             throw new CustomException(MemberExceptionType.ALREADY_EXIST_USERNAME);
-        }else if(memberRepository.findByNickname(memberRegisterDto.getNickname())!=null){
-            throw new CustomException(MemberExceptionType.ALREADY_EXIST_NICKNAME);
+        }else if(memberRepository.findByAdminNo(memberRegisterDto.getAdminNo())!=null){
+            throw new CustomException(MemberExceptionType.WRONG_ADMINNO);
         }
 
         memberRepository.save(Member.builder()

@@ -38,6 +38,11 @@ public class MateBookmarkService {
 
         Optional<MateBookmark> bookmark = bookmarkRepository.findByMateAndMember(mate, member);
 
+        //본인이 작성한 글에 북마크 추가하려는 경우
+        if (mate.getMember().equals(member)) {
+            throw new CustomException(MateExceptionType.CANNOT_BOOKMARK_MY_POST);
+        }
+
         if (bookmark.isPresent()) {
             deleteBookmark(bookmark.get().getId());
             mateService.bookmarkCountDown(mateId);

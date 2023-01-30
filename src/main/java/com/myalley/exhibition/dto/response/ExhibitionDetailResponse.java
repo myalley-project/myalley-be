@@ -19,6 +19,7 @@ public class ExhibitionDetailResponse {
     private String type;
     private String space;
     private Integer adultPrice;
+    private String fileName;
     private String posterUrl;
     private String duration;
     private String webLink;
@@ -34,7 +35,7 @@ public class ExhibitionDetailResponse {
 
     public static ExhibitionDetailResponse of (Exhibition exhibition, boolean bookmarked) {
         return new ExhibitionDetailResponse(exhibition.getId(), exhibition.getTitle(), exhibition.getStatus(),
-                exhibition.getType(), exhibition.getSpace(), exhibition.getAdultPrice(),
+                exhibition.getType(), exhibition.getSpace(), exhibition.getAdultPrice(), exhibition.getFileName(),
                  exhibition.getPosterUrl(), exhibition.getDuration(), exhibition.getWebLink(),
                 exhibition.getContent(), exhibition.getAuthor(), exhibition.getViewCount(),
                 exhibition.getCreatedAt(), exhibition.getBookmarkCount(), bookmarked);
@@ -42,7 +43,7 @@ public class ExhibitionDetailResponse {
 
     public static ExhibitionDetailResponse of (Exhibition exhibition) {
         return new ExhibitionDetailResponse(exhibition.getId(), exhibition.getTitle(), exhibition.getStatus(),
-                exhibition.getType(), exhibition.getSpace(), exhibition.getAdultPrice(),
+                exhibition.getType(), exhibition.getSpace(), exhibition.getAdultPrice(), exhibition.getFileName(),
                 exhibition.getPosterUrl(), exhibition.getDuration(), exhibition.getWebLink(),
                 exhibition.getContent(), exhibition.getAuthor(), exhibition.getViewCount(),
                 exhibition.getCreatedAt(), exhibition.getBookmarkCount(), false);

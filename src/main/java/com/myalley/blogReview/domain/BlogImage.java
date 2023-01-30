@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Entity(name="blog_image")
 @Getter
 @NoArgsConstructor
 public class BlogImage {
@@ -17,7 +17,7 @@ public class BlogImage {
     private Long id;
     private String fileName;
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "blog_id")
     private BlogReview blog;
     private String url;
@@ -29,7 +29,7 @@ public class BlogImage {
     }
 
     public void setBlog(BlogReview blog){
-        //blog.updateImages(this);
+        blog.setImage(this);
         this.blog=blog;
     }
 }
