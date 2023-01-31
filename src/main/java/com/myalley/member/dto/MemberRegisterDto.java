@@ -1,5 +1,6 @@
 package com.myalley.member.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.myalley.member.options.Gender;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
@@ -26,7 +27,7 @@ public class MemberRegisterDto {
     @Enumerated(value= EnumType.STRING)
     private Gender gender;
 
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate birth;
 
 

@@ -68,7 +68,7 @@ public class MemberController {
         log.info("본인정보 조회");
         Member member = (Member)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return new ResponseEntity<MemberInfoDto>(memberService.memberInfo(member.getEmail()), HttpStatus.ACCEPTED);
+        return new ResponseEntity<MemberInfoDto>(memberService.memberInfo(member.getEmail()), HttpStatus.OK);
     }
 
     @DeleteMapping("api/me/withdrawals")
