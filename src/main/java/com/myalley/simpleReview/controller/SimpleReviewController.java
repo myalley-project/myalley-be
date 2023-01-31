@@ -24,8 +24,10 @@ public class SimpleReviewController {
     @PostMapping("/api/simple-reviews")
     public ResponseEntity postSimpleReview(@Valid @RequestBody SimpleRequestDto.PostSimpleDto simpleDto){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        SimpleReview newSimpleReview = SimpleReviewMapper.INSTANCE.postSimpleDtoToSimpleReview(simpleDto);
-        simpleService.createSimpleReview(newSimpleReview,member, simpleDto.getExhibitionId());
+        SimpleReview newSimpleReviewInfo =
+                SimpleReviewMapper.INSTANCE.postSimpleDtoToSimpleReview(simpleDto);
+        simpleService.createSimpleReview(newSimpleReviewInfo,member, simpleDto.getExhibitionId());
+
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json;charset=UTF-8");
         return new ResponseEntity<>("한 줄 리뷰가 등록되었습니다",headers,HttpStatus.CREATED);
@@ -37,6 +39,7 @@ public class SimpleReviewController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         SimpleReview post = SimpleReviewMapper.INSTANCE.patchSimpleDtoToSimpleReview(simpleDto);
         simpleService.updateSimpleReview(simpleId,post, member);
+
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json;charset=UTF-8");
         return new ResponseEntity<>("한 줄 리뷰가 수정되었습니다",headers,HttpStatus.OK);
@@ -46,6 +49,7 @@ public class SimpleReviewController {
     public ResponseEntity deleteSimpleReview(@PathVariable("simple-id") Long simpleId){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         simpleService.removeSimpleReview(simpleId,member);
+
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json;charset=UTF-8");
         return new ResponseEntity<>("한 줄 리뷰가 삭제되었습니다",headers,HttpStatus.OK);

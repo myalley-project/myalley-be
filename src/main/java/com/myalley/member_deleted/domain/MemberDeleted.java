@@ -40,7 +40,7 @@ public class MemberDeleted {
     private LocalDate birth;
 
     @Column(name="admin_no")
-    private int adminNo;
+    private Long adminNo;
 
     @Enumerated(value= EnumType.STRING)
     @Column(name="authority")

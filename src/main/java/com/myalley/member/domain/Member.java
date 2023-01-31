@@ -42,7 +42,7 @@ public class Member extends BaseTime implements UserDetails {
     private LocalDate birth;
 
     @Column(name="admin_no")
-    private int adminNo;
+    private Long adminNo;
 
     @Enumerated(value= EnumType.STRING)
     @Column(name="authority")

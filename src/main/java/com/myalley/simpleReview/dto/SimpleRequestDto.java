@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 public class SimpleRequestDto {
@@ -18,6 +19,7 @@ public class SimpleRequestDto {
         @NotNull
         private Integer rate;
         @NotNull
+        @Size(min=10,max=60)
         private String content;
         private String time;
         private String congestion;
@@ -31,6 +33,7 @@ public class SimpleRequestDto {
         @NotNull
         private Integer rate;
         @NotNull
+        @Size(min=10,max=60)
         private String content;
         private String time;
         private String congestion;

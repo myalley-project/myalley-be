@@ -70,7 +70,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             Map<String, Object> body = new LinkedHashMap<>();
             body.put("errorCode", 403);
-            body.put("errorMsg", "Acess토큰 만료");
+            body.put("errorMsg", "ACCESS토큰 만료");
             new ObjectMapper().writeValue(response.getWriter(), body);
 
         } catch (Exception e) {

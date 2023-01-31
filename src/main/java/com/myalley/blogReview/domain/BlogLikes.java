@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(name="blog_likes")
 @Getter
 @NoArgsConstructor
 public class BlogLikes extends BaseTime {

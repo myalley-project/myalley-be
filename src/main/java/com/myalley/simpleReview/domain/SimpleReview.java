@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@Entity
+@Entity(name="simple_review")
 @Getter
 @NoArgsConstructor
 public class SimpleReview extends BaseTime {

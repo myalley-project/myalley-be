@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(name="simple_review_deleted")
 @NoArgsConstructor
 public class SimpleReviewDeleted {
     @Id

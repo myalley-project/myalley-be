@@ -1,6 +1,7 @@
 package com.myalley.member.service;
 
 import com.myalley.member.dto.MemberInfoDto;
+import com.myalley.member.dto.MemberUpdateDto;
 import com.myalley.member.options.Authority;
 import com.myalley.member.options.Level;
 import com.myalley.member.options.Status;
@@ -14,6 +15,7 @@ import com.myalley.member_deleted.repository.MemberDeletedRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,8 +63,8 @@ public class MemberService {
     {
         if (memberRepository.findByEmail(memberRegisterDto.getEmail()) != null) {
             throw new CustomException(MemberExceptionType.ALREADY_EXIST_USERNAME);
-        }else if(memberRepository.findByNickname(memberRegisterDto.getNickname())!=null){
-            throw new CustomException(MemberExceptionType.ALREADY_EXIST_NICKNAME);
+        }else if(memberRepository.findByAdminNo(memberRegisterDto.getAdminNo())!=null){
+            throw new CustomException(MemberExceptionType.WRONG_ADMINNO);
         }
 
         memberRepository.save(Member.builder()
@@ -100,8 +102,9 @@ public class MemberService {
 
         LocalDate now=LocalDate.now(ZoneId.of("Asia/Seoul"));
 
-        int age=member.getBirth().getYear()-now.getYear()-1;
-        if(member.getBirth().getDayOfYear()-now.getDayOfYear()<=0)
+        int age=now.getYear()-member.getBirth().getYear()-1;
+
+        if(now.getDayOfYear()-member.getBirth().getDayOfYear()<=0)
             age++;
         return MemberInfoDto.builder()
                 .memberId(member.getMemberId())
@@ -116,10 +119,19 @@ public class MemberService {
                 .build();
     }
 
-    public ResponseEntity update(Member member){
-        if(memberRepository.findByNickname(member.getNickname())!=null){
+    public ResponseEntity update(MemberUpdateDto memberUpdateDto,String url){
+        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(memberRepository.findByNickname(memberUpdateDto.getNickname())!=null&&!memberUpdateDto.getNickname().equals(member.getNickname())){
             throw new CustomException(MemberExceptionType.ALREADY_EXIST_NICKNAME);
         }
+
+        member.update(memberUpdateDto,url);
+
+        if(memberUpdateDto.getPassword()!=null)
+            member.setPassword(passwordEncoder.encode(memberUpdateDto.getPassword()));
+
+
         memberRepository.save(member);
 
         HashMap<String,Integer> map=new HashMap<>();

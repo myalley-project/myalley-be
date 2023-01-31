@@ -7,6 +7,7 @@ import com.myalley.simpleReview.domain.SimpleReview;
 import com.myalley.simpleReview.dto.SimpleRequestDto;
 import com.myalley.simpleReview.dto.SimpleResponseDto;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 
@@ -16,7 +17,11 @@ import java.util.stream.Collectors;
 public interface SimpleReviewMapper {
     SimpleReviewMapper INSTANCE = Mappers.getMapper(SimpleReviewMapper.class);
 
+    @Mapping(target = "congestion", constant = "모르겠음")
+    @Mapping(target = "time", constant = "모르겠음")
     SimpleReview postSimpleDtoToSimpleReview(SimpleRequestDto.PostSimpleDto requestDto);
+    @Mapping(target = "congestion", constant = "모르겠음")
+    @Mapping(target = "time", constant = "모르겠음")
     SimpleReview patchSimpleDtoToSimpleReview(SimpleRequestDto.PatchSimpleDto requestDto);
 
     SimpleResponseDto.SimpleExhibitionResponseDto simpleExhibitionDtoToExhibition(Exhibition exhibition);
@@ -31,10 +36,10 @@ public interface SimpleReviewMapper {
                             = new SimpleResponseDto.ExhibitionSimpleReviewResponseDto();
                     oneDto.setId(s.getId());
                     oneDto.setRate(s.getRate());
-                    oneDto.setTime(s.getTime());
                     oneDto.setViewDate(s.getViewDate());
-                    oneDto.setCongestion(s.getCongestion());
                     oneDto.setContent(s.getContent());
+                    oneDto.setTime(s.getTime());
+                    oneDto.setCongestion(s.getCongestion());
                     oneDto.setMemberInfo(simpleMemberDtoToMember(s.getMember()));
                     return oneDto;
                 }).collect(Collectors.toList()));
