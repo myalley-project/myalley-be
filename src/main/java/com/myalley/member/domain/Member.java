@@ -1,5 +1,6 @@
 package com.myalley.member.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.myalley.common.domain.BaseTime;
 import com.myalley.member.dto.MemberUpdateDto;
 import com.myalley.member.options.*;
@@ -39,6 +40,7 @@ public class Member extends BaseTime implements UserDetails {
     private Gender gender;
 
     @Column(name="birth")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate birth;
 
     @Column(name="admin_no")
