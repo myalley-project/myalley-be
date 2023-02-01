@@ -2,6 +2,7 @@ package com.myalley.exhibition.repository;
 
 import com.myalley.exhibition.domain.Exhibition;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,4 +20,6 @@ public interface ExhibitionRepository extends JpaRepository<Exhibition,Long> {
     Page<Exhibition> findByStatusContaining(@Param("status") String status, Pageable pageable);
 
     Page<Exhibition> findByStatusContainingAndTitleContaining(String status, String keyword, Pageable pageable);
+
+    Page<Exhibition> findByTypeContainingAndStatusContaining(String type, String keyword, PageRequest pageRequest);
 }
