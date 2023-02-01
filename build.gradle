@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.6.11'
 	id 'io.spring.dependency-management' version '1.1.0'
+	id "org.asciidoctor.jvm.convert" version "3.3.2"
 }
 
 group = 'com'
@@ -9,6 +10,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
+	asciidoctorExtensions
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -18,6 +20,11 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	// 사용할 변수 선언
+	set('snippetsDir', file("build/generated-snippets"))
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -25,6 +32,9 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 	implementation 'org.apache.tika:tika-core:2.6.0'
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final' //mapstruct 추가
+
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'mysql:mysql-connector-java'
@@ -41,20 +51,74 @@ dependencies {
 	runtimeOnly 'mysql:mysql-connector-java'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.5.2'
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+	testImplementation 'io.rest-assured:rest-assured:4.4.0'
+	testImplementation 'io.rest-assured:spring-mock-mvc:4.4.0'
+	testImplementation 'org.mockito:mockito-inline:3.8.0'
+
+	implementation 'com.google.code.gson:gson:2.8.7'
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
-}
+//tasks.named('test') {
+//	useJUnitPlatform()
+//}
 
 jar {
 	enabled = false
+}
+
+test {
+	// 위에서 작성한 snippetsDir 디렉토리를 test의 output으로 구성하는 설정
+	// -> 스니펫 조각들이 build/generated-snippets로 출력
+	outputs.dir snippetsDir
+
+	// 테스트 실행
+	useJUnitPlatform()
+}
+
+// asciidoctor 작업 구성
+asciidoctor {
+	// 위에서 작성한 configuration 적용
+	configurations 'asciidoctorExtensions'
+
+	// source가 없으면 .adoc파일을 전부 html로 만들어버림
+	// source 지정시 특정 adoc만 HTML로 만든다.
+	sources{
+		include("**/index.adoc","**/common/*.adoc")
+	}
+
+	// 특정 .adoc에 다른 adoc 파일을 가져와서(include) 사용하고 싶을 경우 경로를 baseDir로 맞춰주는 설정
+	// (개별 adoc으로 운영한다면 필요 없는 옵션)
+	baseDirFollowsSourceFile()
+
+	// snippetsDir 를 입력으로 구성
+	inputs.dir snippetsDir
+
+	// asciidoctor 전 test 실행!
+	dependsOn test
+}
+
+// static/docs 폴더 비우기
+asciidoctor.doFirst {
+	delete file('src/main/resources/static/docs')
+}
+
+// asccidoctor 작업 이후 생성된 HTML 파일을 static/docs 로 copy
+task createDocument(type: Copy) {
+	dependsOn asciidoctor
+
+	from file("build/docs/asciidoc")
+	into file("src/main/resources/static/docs")
+}
+
+// build 전 createDocument(REST Docs 문서화) 실행!
+build {
+	dependsOn createDocument
 }
 
 bootJar {
