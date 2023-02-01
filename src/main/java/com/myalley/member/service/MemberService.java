@@ -73,6 +73,7 @@ public class MemberService {
                 .nickname(memberRegisterDto.getNickname()+ "."+  UUID.randomUUID().toString())
                 .authority(Authority.ROLE_ADMIN)//Authority.ROLE_ADMIN
                 .status(Status.활동중)
+                .birth(LocalDate.parse("0000-01-01"))
                 .memberImage("")
                 .adminNo(memberRegisterDto.getAdminNo())
                 .build());
@@ -92,7 +93,7 @@ public class MemberService {
                     .email(member.getEmail())
                     .nickname(nickname)
                     .gender("관리자")
-                    .birth(null)
+                    .birth(LocalDate.parse("0000-01-01"))
                     .level("관리자")
                     .memberImage(member.getMemberImage())
                     .authority(member.getAuthority().name())

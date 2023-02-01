@@ -77,7 +77,7 @@ public class RefreshService {
 
             } else {
 
-                token.put("acessToken", JwtUtils.createToken(member));
+                token.put("accessToken", JwtUtils.createToken(member));
                 token.put("refreshToken", refreshToken);
 
             }
