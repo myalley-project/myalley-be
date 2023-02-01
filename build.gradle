@@ -2,7 +2,6 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.6.11'
 	id 'io.spring.dependency-management' version '1.1.0'
-	id "org.asciidoctor.jvm.convert" version "3.3.2"
 }
 
 group = 'com'
@@ -10,7 +9,6 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
-	asciidoctorExtensions
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -20,11 +18,6 @@ repositories {
 	mavenCentral()
 }
 
-ext {
-	// 사용할 변수 선언
-	set('snippetsDir', file("build/generated-snippets"))
-}
-
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -32,9 +25,6 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 	implementation 'org.apache.tika:tika-core:2.6.0'
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final' //mapstruct 추가
-
-	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-	asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'mysql:mysql-connector-java'
@@ -51,52 +41,22 @@ dependencies {
 	runtimeOnly 'mysql:mysql-connector-java'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.5.2'
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
-	testImplementation 'io.rest-assured:rest-assured:4.4.0'
-	testImplementation 'io.rest-assured:spring-mock-mvc:4.4.0'
-	testImplementation 'org.mockito:mockito-inline:3.8.0'
-
 	implementation 'com.google.code.gson:gson:2.8.7'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
 }
 
 jar {
 	enabled = false
-}
-
-test {
-	outputs.dir snippetsDir
-	useJUnitPlatform()
-}
-
-asciidoctor {
-	configurations 'asciidoctorExtensions'
-	sources{
-		include("**/index.adoc","**/common/*.adoc")
-	}
-
-	baseDirFollowsSourceFile()
-	inputs.dir snippetsDir
-	dependsOn test
-}
-
-asciidoctor.doFirst {
-	delete file('src/main/resources/static/docs')
-}
-
-task createDocument(type: Copy) {
-	dependsOn asciidoctor
-
-	from file("build/docs/asciidoc")
-	into file("src/main/resources/static/docs")
-}
-
-build {
-	dependsOn createDocument
 }
 
 bootJar {
