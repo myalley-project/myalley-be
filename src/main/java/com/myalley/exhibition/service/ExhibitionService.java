@@ -135,10 +135,17 @@ public class ExhibitionService {
         exhibitionRepository.updateViewCount(id);
     }
 
+//    //전시회 상태와 유형 같이 검색
+//    public Page<Exhibition> readPageAllSearch(String status, String type, int page, int size) {
+//        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("createdAt").descending());
+//        return exhibitionRepository.findByTypeOrStatus(type, status, pageRequest);
+//
+//    }
+
     //전시회 상태와 유형 같이 검색
-    public Page<Exhibition> readPageAllSearch(String status, String type, int page, int size) {
+    public Page<Exhibition> findStatusAndType(String status, String type, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("createdAt").descending());
-        return exhibitionRepository.findByTypeOrStatus(type, status, pageRequest);
+        return exhibitionRepository.findByTypeContainingAndStatusContaining(type, status, pageRequest);
 
     }
 
