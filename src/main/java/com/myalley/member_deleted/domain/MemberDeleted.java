@@ -23,13 +23,13 @@ public class MemberDeleted {
     @Column(name="member_id")
     @Id
     private Long memberId;
-    @Column(name="email",unique=true)
+    @Column(name="email")
     private String email;
 
     @Column(name="password")
     private String password;
 
-    @Column(name="nickname",unique=true)
+    @Column(name="nickname")
     private String nickname;
 
     @Enumerated(value= EnumType.STRING)
