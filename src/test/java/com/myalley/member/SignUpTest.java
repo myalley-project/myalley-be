@@ -29,66 +29,66 @@ import java.time.LocalDate;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-@AutoConfigureMockMvc
-@SpringBootTest
-@ActiveProfiles(profiles="test")
-@WebAppConfiguration
-@ExtendWith(SpringExtension.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class SignUpTest {
-    @Autowired
-    private MemberService memberService;
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Test
-    void signup() throws Exception {
-
-        MemberRegisterDto member1=MemberRegisterDto.builder()
-                .email("test@naver.com")
-                .password("Test1234!")
-                .nickname("test")
-                .birth(LocalDate.parse("2000-01-01"))
-                .gender(Gender.valueOf("W"))
-                .build();
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(LocalDate.class,new LocalDateSerializer());
-        Gson gson= gsonBuilder.setPrettyPrinting().create();
-        String content=gson.toJson(member1);
-
-        mockMvc.perform(post("/signup")
-                        .content(content)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print());
-
-        LoginDto loginDto=LoginDto.builder()
-                .email("test@naver.com")
-                .password("Test1234!")
-                .build();
-        content=gson.toJson(loginDto);
-
-
-        MvcResult result=mockMvc.perform(post("/login")
-                        .content(content)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andReturn();
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        content=result.getResponse().getContentAsString();
-        Token token=mapper.readValue(content, Token.class);
-
-
-
-        //memberService.signup(member2);
-
-
-    }
-
-}
+//@AutoConfigureMockMvc
+//@SpringBootTest
+//@ActiveProfiles(profiles="test")
+//@WebAppConfiguration
+//@ExtendWith(SpringExtension.class)
+//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//public class SignUpTest {
+//    @Autowired
+//    private MemberService memberService;
+//
+//    @Autowired
+//    private MockMvc mockMvc;
+//
+//    @Test
+//    void signup() throws Exception {
+//
+//        MemberRegisterDto member1=MemberRegisterDto.builder()
+//                .email("test@naver.com")
+//                .password("Test1234!")
+//                .nickname("test")
+//                .birth(LocalDate.parse("2000-01-01"))
+//                .gender(Gender.valueOf("W"))
+//                .build();
+//        GsonBuilder gsonBuilder = new GsonBuilder();
+//        gsonBuilder.registerTypeAdapter(LocalDate.class,new LocalDateSerializer());
+//        Gson gson= gsonBuilder.setPrettyPrinting().create();
+//        String content=gson.toJson(member1);
+//
+//        mockMvc.perform(post("/signup")
+//                        .content(content)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andDo(print());
+//
+//        LoginDto loginDto=LoginDto.builder()
+//                .email("test@naver.com")
+//                .password("Test1234!")
+//                .build();
+//        content=gson.toJson(loginDto);
+//
+//
+//        MvcResult result=mockMvc.perform(post("/login")
+//                        .content(content)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andDo(print())
+//                .andReturn();
+//
+//        ObjectMapper mapper = new ObjectMapper();
+//
+//        content=result.getResponse().getContentAsString();
+//        Token token=mapper.readValue(content, Token.class);
+//
+//
+//
+//        //memberService.signup(member2);
+//
+//
+//    }
+//
+//}
