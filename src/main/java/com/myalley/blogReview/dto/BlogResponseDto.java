@@ -35,6 +35,7 @@ public class BlogResponseDto {
         private LocalDateTime createdAt;
         private String title;
         private String content;
+        private String time;
         private Integer likeCount;
         private Integer viewCount;
         private Integer bookmarkCount;

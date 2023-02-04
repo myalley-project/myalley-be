@@ -1,5 +1,6 @@
 package com.myalley.blogReview.mapper;
 
+
 import com.myalley.blogReview.domain.*;
 import com.myalley.blogReview.dto.BlogRequestDto;
 import com.myalley.blogReview.dto.BlogResponseDto;
@@ -40,6 +41,7 @@ public interface BlogReviewMapper {
         dto.setId(blog.getBlogReview().getId());
         dto.setTitle(blog.getBlogReview().getTitle());
         dto.setContent(blog.getBlogReview().getContent());
+        dto.setTime(blog.getBlogReview().getTime());
         dto.setLikeCount(blog.getBlogReview().getLikeCount());
         dto.setBookmarkCount(blog.getBlogReview().getBookmarkCount());
         dto.setTransportation(blog.getBlogReview().getTransportation());

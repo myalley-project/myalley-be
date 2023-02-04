@@ -1,6 +1,5 @@
 package com.myalley.blogReview.service;
 
-import com.myalley.blogReview.domain.BlogBookmark;
 import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview.domain.BlogLikes;
 import com.myalley.blogReview.repository.BlogLikesRepository;
