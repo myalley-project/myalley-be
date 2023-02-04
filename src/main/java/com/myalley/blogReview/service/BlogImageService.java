@@ -21,7 +21,7 @@ public class BlogImageService {
     private final S3Service s3Service;
 
     public void addBlogImageList(List<MultipartFile> images, BlogReview blogReview) throws IOException {
-        if (!images.get(0).isEmpty()) {
+        if (images != null) {
             for (MultipartFile imageFile : images) {
                 String[] imageInformation = s3Service.uploadBlogImage(imageFile);
                 addBlogImage(imageInformation[0],imageInformation[1],blogReview);

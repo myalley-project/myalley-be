@@ -17,12 +17,25 @@ import java.util.stream.Collectors;
 public interface SimpleReviewMapper {
     SimpleReviewMapper INSTANCE = Mappers.getMapper(SimpleReviewMapper.class);
 
-    @Mapping(target = "congestion", constant = "모르겠음")
-    @Mapping(target = "time", constant = "모르겠음")
-    SimpleReview postSimpleDtoToSimpleReview(SimpleRequestDto.PostSimpleDto requestDto);
-    @Mapping(target = "congestion", constant = "모르겠음")
-    @Mapping(target = "time", constant = "모르겠음")
-    SimpleReview patchSimpleDtoToSimpleReview(SimpleRequestDto.PatchSimpleDto requestDto);
+    default SimpleReview postSimpleDtoToSimpleReview(SimpleRequestDto.PostSimpleDto requestDto){
+        SimpleReview.SimpleReviewBuilder simpleReview = SimpleReview.builder();
+
+        simpleReview.viewDate( requestDto.getViewDate() );
+        simpleReview.rate( requestDto.getRate() );
+        simpleReview.content( requestDto.getContent() );
+        if(requestDto.getCongestion() == null)
+            simpleReview.congestion( "모르겠음" );
+        else
+            simpleReview.congestion( requestDto.getCongestion() );
+        if(requestDto.getTime() == null)
+            simpleReview.time( "모르겠음" );
+        else
+            simpleReview.time( requestDto.getTime() );
+
+        return simpleReview.build();
+    }
+
+    SimpleReview putSimpleDtoToSimpleReview(SimpleRequestDto.PatchSimpleDto requestDto);
 
     SimpleResponseDto.SimpleExhibitionResponseDto simpleExhibitionDtoToExhibition(Exhibition exhibition);
     SimpleResponseDto.SimpleMemberResponseDto simpleMemberDtoToMember(Member member);

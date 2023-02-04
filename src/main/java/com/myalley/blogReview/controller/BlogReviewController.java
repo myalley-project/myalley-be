@@ -25,7 +25,7 @@ public class BlogReviewController {
 
     @PostMapping("/api/blogs")
     public ResponseEntity postBlogReview(@Valid @RequestPart(value = "blogInfo") BlogRequestDto.PostBlogDto blogRequestDto,
-                                         @RequestPart(value = "images") List<MultipartFile> images,
+                                         @RequestPart(value = "images",required = false) List<MultipartFile> images,
                                          @RequestPart(value = "exhibitionId")Long exhibitionId) throws Exception {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview target = BlogReviewMapper.INSTANCE.postBlogDtoToBlogReview(blogRequestDto);
