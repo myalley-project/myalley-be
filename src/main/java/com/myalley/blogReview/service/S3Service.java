@@ -37,7 +37,6 @@ public class S3Service {
         try{
             amazonS3Client.putObject(
                     new PutObjectRequest(S3Bucket, fileName, multipartFile.getInputStream(), objectMetaData)
-                            .withCannedAcl(CannedAccessControlList.PublicRead)
             );
         }catch (IOException e){
                         throw new IOException();
