@@ -64,8 +64,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         // authorization경로별 설정
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers( "/home","/", "/signup","/refresh","/blogs/**","/exhibitions/**","/mates/**","/logout","/main/**","/api/ping").permitAll()//"/login"
-                .antMatchers("/api/admin/**","/api/exhibitions/**").hasRole("ADMIN")
+                .antMatchers( "/home","/", "/signup","/refresh","/simple-reviews/**","/blogs/**","/exhibitions/**","/mates/**","/logout","/main/**","/api/ping").permitAll()//"/login"
+                .antMatchers("/api/admin/**","/api/exhibitions/**").hasRole("USER")
                 .antMatchers("/api/**").hasAnyRole("USER","ADMIN")
 //                .antMatchers(HttpMethod.POST, "/notice").hasRole("ADMIN")
 //                .antMatchers(HttpMethod.DELETE, "/notice").hasRole("ADMIN")
@@ -77,7 +77,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
 
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-        web.ignoring().antMatchers(  "/home","/","/signup","/refresh","/blogs/**","/mates/**","/main/**","/exhibitions/**","/api/ping");
+        web.ignoring().antMatchers(  "/home","/","/signup","/refresh","/simple-reviews/**","/blogs/**","/mates/**","/main/**","/exhibitions/**","/api/ping");
     }
 
     /**

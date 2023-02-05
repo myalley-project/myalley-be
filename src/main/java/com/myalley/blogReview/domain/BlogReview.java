@@ -25,7 +25,7 @@ public class BlogReview extends BaseTime {
     private String time;
     @Column(nullable = false)
     private String title;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 3000)
     private String content;
     private Integer likeCount = 0;
     private Integer viewCount = 0;
