@@ -20,7 +20,7 @@ public class BlogReviewDeleted {
     private String time;
     @Column(nullable = false)
     private String title;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 3000)
     private String content;
     private Integer viewCount;
     private LocalDateTime createdAt;
