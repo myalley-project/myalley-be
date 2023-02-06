@@ -56,7 +56,7 @@ public interface SimpleReviewMapper {
                     oneDto.setMemberInfo(simpleMemberDtoToMember(s.getMember()));
                     return oneDto;
                 }).collect(Collectors.toList()));
-        responseDto.setPageInfo(new pagingDto(simpleReviewPage.getNumber(),simpleReviewPage.getSize(),
+        responseDto.setPageInfo(new pagingDto(simpleReviewPage.getNumber()+1,simpleReviewPage.getSize(),
                 simpleReviewPage.getTotalElements(),simpleReviewPage.getTotalPages()));
         return responseDto;
     }
@@ -77,7 +77,7 @@ public interface SimpleReviewMapper {
                     oneDto.setExhibitionInfo(simpleExhibitionDtoToExhibition(s.getExhibition()));
                     return oneDto;
                 }).collect(Collectors.toList()));
-        responseDto.setPageInfo(new pagingDto(simpleReviewPage.getNumber(),simpleReviewPage.getSize(),
+        responseDto.setPageInfo(new pagingDto(simpleReviewPage.getNumber()+1,simpleReviewPage.getSize(),
                 simpleReviewPage.getTotalElements(),simpleReviewPage.getTotalPages()));
         return responseDto;
     }

@@ -89,7 +89,8 @@ public interface BlogReviewMapper {
             simpleBlogDto.setViewCount(blogReview.getViewCount());
             return simpleBlogDto;
         }).collect(Collectors.toList());
-        pagingDto paging = new pagingDto(pageBlogs.getNumber(), pageBlogs.getSize(), pageBlogs.getTotalElements(), pageBlogs.getTotalPages());
+        pagingDto paging = new pagingDto(pageBlogs.getNumber()+1, pageBlogs.getSize(),
+                pageBlogs.getTotalElements(), pageBlogs.getTotalPages());
         dto.setBlogInfo(simpleBlogDtoList);
         dto.setPageInfo(paging);
         return dto;
@@ -107,7 +108,8 @@ public interface BlogReviewMapper {
             userBlogDto.setViewCount(blogReview.getViewCount());
             return userBlogDto;
         }).collect(Collectors.toList());
-        pagingDto paging = new pagingDto(pageBlogs.getNumber(), pageBlogs.getSize(), pageBlogs.getTotalElements(), pageBlogs.getTotalPages());
+        pagingDto paging = new pagingDto(pageBlogs.getNumber()+1, pageBlogs.getSize(),
+                pageBlogs.getTotalElements(), pageBlogs.getTotalPages());
         dto.setBlogInfo(simpleBlogDtoList);
         dto.setPageInfo(paging);
         return dto;
@@ -126,7 +128,7 @@ public interface BlogReviewMapper {
             simpleBlogDto.setViewCount(blogLikes.getBlog().getViewCount());
             return simpleBlogDto;
         }).collect(Collectors.toList());
-        pagingDto paging = new pagingDto(pageLikes.getNumber(), pageLikes.getSize(),
+        pagingDto paging = new pagingDto(pageLikes.getNumber()+1, pageLikes.getSize(),
                 pageLikes.getTotalElements(), pageLikes.getTotalPages());
         dto.setBlogInfo(simpleBlogDtoList);
         dto.setPageInfo(paging);
@@ -146,7 +148,7 @@ public interface BlogReviewMapper {
             simpleBlogDto.setViewCount(blogBookmark.getBlog().getViewCount());
             return simpleBlogDto;
         }).collect(Collectors.toList());
-        pagingDto paging = new pagingDto(bookmarkPage.getNumber(), bookmarkPage.getSize(),
+        pagingDto paging = new pagingDto(bookmarkPage.getNumber()+1, bookmarkPage.getSize(),
                 bookmarkPage.getTotalElements(), bookmarkPage.getTotalPages());
         dto.setBlogInfo(simpleBlogDtoList);
         dto.setPageInfo(paging);
