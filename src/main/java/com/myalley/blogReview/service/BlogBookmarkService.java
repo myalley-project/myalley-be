@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class BlogBookmarkService {
     private final BlogBookmarkRepository blogBookmarkRepository;
-    private final MemberService memberService; //블로그 조회 시 등록되어있는지 확인하기 위함
+    private final MemberService memberService;
 
     public void createBookmark(BlogReview blogReview, Member member){
         if(blogReview.getMember().getMemberId() == member.getMemberId())
@@ -50,7 +50,7 @@ public class BlogBookmarkService {
         if(pageNo == null)
             pageRequest = PageRequest.of(0, 6, Sort.by("id").descending());
         else
-            pageRequest = PageRequest.of(pageNo, 6, Sort.by("id").descending());
+            pageRequest = PageRequest.of(pageNo-1, 6, Sort.by("id").descending());
         return blogBookmarkRepository.findAllByMember(member, pageRequest);
     }
 
