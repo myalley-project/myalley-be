@@ -56,6 +56,8 @@ public class BlogReviewService {
         Page<BlogReview> blogReviewList;
         if(pageNo == null)
             pageNo = 0;
+        else
+            pageNo--;
         if(orderType!=null && orderType.equals("ViewCount")) {
             PageRequest pageRequest = PageRequest.of(pageNo, 9, Sort.by("viewCount").descending()
                     .and(Sort.by("id").descending()));
@@ -74,7 +76,7 @@ public class BlogReviewService {
         if(pageNo == null)
             pageRequest = PageRequest.of(0, 6, Sort.by("id").descending());
         else
-            pageRequest = PageRequest.of(pageNo, 6, Sort.by("id").descending());
+            pageRequest = PageRequest.of(pageNo-1, 6, Sort.by("id").descending());
         Page<BlogReview> myBlogReviewList = blogReviewRepository.findAllByMember(member,pageRequest);
         return myBlogReviewList;
     }
@@ -84,6 +86,8 @@ public class BlogReviewService {
         Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
         if(pageNo == null)
             pageNo = 0;
+        else
+            pageNo--;
         if(orderType!=null && orderType.equals("ViewCount"))
             pageRequest = PageRequest.of(pageNo, 9, Sort.by("viewCount").descending()
                     .and(Sort.by("id")).descending());
