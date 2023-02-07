@@ -65,7 +65,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers( "/home","/", "/signup","/refresh","/simple-reviews/**","/blogs/**","/exhibitions/**","/mates/**","/logout","/main/**","/api/ping").permitAll()//"/login"
-                .antMatchers("/api/admin/**","/api/exhibitions/**").hasRole("USER")
+                //0207 69번째줄 권한이 USER로 되어있어서 ADMIN으로 수정했습니다! - 화담
+                .antMatchers("/api/admin/**","/api/exhibitions/**").hasRole("ADMIN")
                 .antMatchers("/api/**").hasAnyRole("USER","ADMIN")
 //                .antMatchers(HttpMethod.POST, "/notice").hasRole("ADMIN")
 //                .antMatchers(HttpMethod.DELETE, "/notice").hasRole("ADMIN")
