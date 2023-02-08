@@ -3,6 +3,7 @@ package com.myalley.mate.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.myalley.exhibition.dto.response.ExhibitionMateListResponse;
 import com.myalley.mate.domain.Mate;
+import com.myalley.mate.domain.MateBookmark;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,5 +34,15 @@ public class MateSimpleResponse {
                 mate.getMember().getMemberId(), mate.getMember().getNickname(),
                 new ExhibitionMateListResponse(mate.getExhibition().getId(), mate.getExhibition().getTitle(),
                         mate.getExhibition().getSpace(), mate.getExhibition().getPosterUrl(), mate.getExhibition().getStatus()));
+    }
+
+    public static MateSimpleResponse of(MateBookmark mateBookmark) {
+        return new MateSimpleResponse(mateBookmark.getMate().getId(), mateBookmark.getMate().getTitle(), mateBookmark.getMate().getAvailableDate(),
+                mateBookmark.getMate().getStatus(), mateBookmark.getMate().getMateGender(), mateBookmark.getMate().getMateAge(),
+                mateBookmark.getMate().getCreatedAt(), mateBookmark.getMate().getViewCount(), mateBookmark.getMate().getMember().getMemberId(),
+                mateBookmark.getMate().getMember().getNickname(),
+                new ExhibitionMateListResponse(mateBookmark.getMate().getExhibition().getId(),mateBookmark.getMate().getExhibition().getTitle(),
+                        mateBookmark.getMate().getExhibition().getSpace(), mateBookmark.getMate().getExhibition().getPosterUrl(),
+                        mateBookmark.getMate().getExhibition().getStatus()));
     }
 }
