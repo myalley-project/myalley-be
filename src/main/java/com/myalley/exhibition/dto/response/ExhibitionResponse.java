@@ -16,9 +16,10 @@ public class ExhibitionResponse {
     private String posterUrl;
     private String exhibitionDuration;
     private String status;
+    private String type;
 
     public static ExhibitionResponse of(Exhibition exhibition) {
         return new ExhibitionResponse(exhibition.getId(), exhibition.getTitle(), exhibition.getSpace(),
-                exhibition.getPosterUrl(), exhibition.getDuration(), exhibition.getStatus());
+                exhibition.getPosterUrl(), exhibition.getDuration(), exhibition.getStatus(), exhibition.getType());
     }
 }
