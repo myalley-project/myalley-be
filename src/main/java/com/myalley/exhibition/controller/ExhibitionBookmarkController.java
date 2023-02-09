@@ -26,7 +26,7 @@ public class ExhibitionBookmarkController {
 
     private final BookmarkService bookmarkService;
 
-    @PutMapping("/api/exhibitions/bookmarks/{id}")
+    @PutMapping("/api/bookmarks/exhibitions/{id}")
     public ResponseEntity addBookmark(@PathVariable Long id) {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
