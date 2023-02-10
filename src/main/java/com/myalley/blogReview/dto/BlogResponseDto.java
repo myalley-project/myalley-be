@@ -89,6 +89,7 @@ public class BlogResponseDto {
         private String posterUrl;
         private String duration;
         private String space;
+        private String type;
     }
 
 }
