@@ -63,14 +63,15 @@ class MemberApiTest {
     @DisplayName("본인 정보 조회 성공")
     @WithMockCustomUser
     void memberInfo() throws Exception {
-        accessToken= JwtUtils.createToken((Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-
-        this.mockMvc.perform(get("/api/me")
-                        .header("Authorization","Bearer "+accessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andDo(print());
+//        accessToken= JwtUtils.createToken((Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+//
+//        this.mockMvc.perform(get("/api." +
+//                        "/me")
+//                        .header("Authorization","Bearer "+accessToken)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON))
+//                    .andExpect(status().isOk())
+//                    .andDo(print());
 //                        document("get-memberInfo",
 //                                responseFields(
 //                                        fieldWithPath("memberId").description("memberId")

@@ -10,8 +10,6 @@ import com.myalley.member.dto.MemberRegisterDto;
 import com.myalley.exception.CustomException;
 import com.myalley.exception.MemberExceptionType;
 import com.myalley.member.repository.MemberRepository;
-import com.myalley.member_deleted.domain.MemberDeleted;
-import com.myalley.member_deleted.repository.MemberDeletedRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +29,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final MemberDeletedRepository memberDeletedRepository;
-
 
     public ResponseEntity signup(MemberRegisterDto memberRegisterDto) {
         if (memberRepository.findByEmail(memberRegisterDto.getEmail()) != null) {
@@ -143,8 +139,8 @@ public class MemberService {
 
     public ResponseEntity delete(Member member) {
 
-        memberDeletedRepository.save(new MemberDeleted(member));
-        memberRepository.delete(member);
+        member.setIsDeleted(true);
+        memberRepository.save(member);
 
         HashMap<String,Integer> map=new HashMap<>();
         map.put("resultCode",200);

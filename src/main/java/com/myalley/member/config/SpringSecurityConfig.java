@@ -77,7 +77,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
 
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-        web.ignoring().antMatchers(  "/home","/","/signup","/refresh","/blogs/**","/mates/**","/main/**","/exhibitions/**","/api/ping");
+        //web.ignoring().antMatchers(  "/home","/","/signup","/refresh","/blogs/**","/mates/**","/main/**","/exhibitions/**","/api/ping");
     }
 
     /**

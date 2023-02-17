@@ -50,7 +50,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             String accessToken = null;
             if (authorizationHeader != null)
                 accessToken = authorizationHeader.substring("Bearer ".length());
-
+            else{//permitall 통과
+                SecurityContextHolder.getContext().setAuthentication(null);
+                chain.doFilter(request, response);
+                return;
+            }
             // === Access Token 검증 === //
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JwtSecret.JWT_SECRET_KEY)).build();
             DecodedJWT decodedJWT = verifier.verify(accessToken);

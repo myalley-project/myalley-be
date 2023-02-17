@@ -17,6 +17,7 @@ spring:
   redis:
     port: ${REDIS_PORT}
     host: ${REDIS_HOST}
+  secret: ${JWT_SECRET_KEY}
 
 logging:
   level:
@@ -52,3 +53,4 @@ cloud:
 exhibition-path: "poster"
 blog-path: "blog"
 profile-path: "profile"
+
