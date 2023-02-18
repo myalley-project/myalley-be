@@ -11,8 +11,6 @@ import com.myalley.exhibition.dto.response.ExhibitionDetailResponse;
 import com.myalley.exhibition.exhibitionImage.service.ImageService;
 import com.myalley.exhibition.repository.ExhibitionBookmarkRepository;
 import com.myalley.exhibition.repository.ExhibitionRepository;
-import com.myalley.exhibition_deleted.domain.ExhibitionDeleted;
-import com.myalley.exhibition_deleted.repository.ExhibitionDeletedRepository;
 import com.myalley.member.domain.Member;
 import com.myalley.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +28,6 @@ public class ExhibitionService {
 
     private final ExhibitionRepository exhibitionRepository;
     private final ImageService imageService;
-    private final ExhibitionDeletedRepository deletedRepository;
     private final MemberRepository memberRepository;
     private final ExhibitionBookmarkRepository bookmarkRepository;
 
@@ -83,27 +80,9 @@ public class ExhibitionService {
        Exhibition exhibition = exhibitionRepository.findById(id)
                .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
 
-        String target = exhibition.getFileName();
-        imageService.removeFile(target);
+//        String target = exhibition.getFileName();
+//        imageService.removeFile(target);
 
-        ExhibitionDeleted deleted = ExhibitionDeleted.builder()
-                .title(exhibition.getTitle())
-                .status(exhibition.getStatus())
-                .type(exhibition.getType())
-                .space(exhibition.getSpace())
-                .adultPrice(exhibition.getAdultPrice())
-                .fileName("")
-                .posterUrl("")
-                .duration(exhibition.getDuration())
-                .webLink(exhibition.getWebLink())
-                .content(exhibition.getContent())
-                .author(exhibition.getAuthor())
-                .viewCount(exhibition.getViewCount())
-                .bookmarkCount(0)
-                .createdAt(exhibition.getCreatedAt())
-                .deletedAt(exhibition.getModifiedAt())
-                .build();
-        deletedRepository.save(deleted);
         bookmarkRepository.deleteByExhibition(exhibition); //북마크 쪽에서 먼저 북마크 삭제해줌
         exhibitionRepository.deleteById(id);
     }
