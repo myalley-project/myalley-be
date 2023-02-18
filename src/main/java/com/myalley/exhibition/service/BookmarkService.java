@@ -50,7 +50,6 @@ public class BookmarkService {
                 .exhibition(exhibition)
                 .build();
 
-        exBookmark.addBookmark();
         bookmarkRepository.save(exBookmark);
         exhibitionService.bookmarkCountUp(exhibitionId);
 
