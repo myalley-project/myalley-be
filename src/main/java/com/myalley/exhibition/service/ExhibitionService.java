@@ -122,16 +122,40 @@ public class ExhibitionService {
 //    }
 
     //전시회 상태와 유형 같이 검색
-    public Page<Exhibition> findStatusAndType(String status, String type, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("createdAt").descending());
-        return exhibitionRepository.findByTypeContainingAndStatusContaining(type, status, pageRequest);
+    public Page<Exhibition> findStatusAndType(String status, String type, int page, String sortCriteria) {
+
+        Page<Exhibition> exhibitionPages;
+        PageRequest pageRequest;
+
+        if (sortCriteria.equals("조회수순")) {
+           pageRequest = PageRequest.of(page -1, 8, Sort.by("viewCount").descending()
+                    .and(Sort.by("id").descending()));
+        } else if (sortCriteria.equals("최신순")) {
+            pageRequest = PageRequest.of(page -1, 8, Sort.by("id").descending());
+        } else {
+            throw new CustomException(ExhibitionExceptionType.EXHIBITION_SORT_CRITERIA_ERROR);
+        }
+
+        exhibitionPages = exhibitionRepository.findByTypeContainingAndStatusContaining(type, status, pageRequest);
+        return exhibitionPages;
 
     }
 
     //전시회 관람여부만으로 목록 조회
-    public Page<Exhibition> readPageAll(String status, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("id").descending());
-        return exhibitionRepository.findByStatusContaining(status, pageRequest);
+    public Page<Exhibition> readPageAll(String status, String sortCriteria, int page) {
+        Page<Exhibition> exhibitionPages;
+        PageRequest pageRequest;
+
+        if (sortCriteria.equals("조회수순")) {
+            pageRequest = PageRequest.of(page - 1, 8, Sort.by("viewCount").descending()
+                    .and(Sort.by("id").descending()));
+        } else if (sortCriteria.equals("최신순")) {
+            pageRequest = PageRequest.of(page - 1, 8, Sort.by("id").descending());
+        } else {
+            throw new CustomException(ExhibitionExceptionType.EXHIBITION_SORT_CRITERIA_ERROR);
+        }
+        exhibitionPages = exhibitionRepository.findByStatusContaining(status, pageRequest);
+        return exhibitionPages;
 
     }
 

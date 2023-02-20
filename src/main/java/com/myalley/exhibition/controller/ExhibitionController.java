@@ -126,11 +126,18 @@ public class ExhibitionController {
     public ResponseEntity getExhibitions(
             @Positive @RequestParam int page,
             @RequestParam(value = "status", required = true) String status,
-            @RequestParam(value = "type", required = true) String type) {
-        int size = 8;
+            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "sort", required = true) String sortCriteria) {
+
         log.info("전시회 목록조회 상태/유형 필터 검색");
 
-            Page<Exhibition> pageExhibitions = exhibitionService.findStatusAndType(status, type, page, size);
+        Page<Exhibition> pageExhibitions;
+
+        if (type.equals("전체") || type.isEmpty()) {
+            pageExhibitions = exhibitionService.readPageAll(status, sortCriteria, page);
+        } else {
+            pageExhibitions = exhibitionService.findStatusAndType(status, type, page, sortCriteria);
+        }
             List<ExhibitionBasicResponse> exhibitions = pageExhibitions
                     .stream()
                     .map(ExhibitionBasicResponse::of)
@@ -146,11 +153,11 @@ public class ExhibitionController {
     @GetMapping("/main/exhibitions")
     public ResponseEntity getExhibitionsAll(
             @Positive @RequestParam int page,
-            @RequestParam(value = "status", required = true) String status) {
-        int size = 8;
+            @RequestParam(value = "status", required = true) String status,
+            @RequestParam(value = "sort", required = false) String sortCriteria) {
 
         log.info("전시회 목록조회 상태 필터 검색");
-        Page<Exhibition> pageExhibitions = exhibitionService.readPageAll(status, page, size);
+        Page<Exhibition> pageExhibitions = exhibitionService.readPageAll(status, sortCriteria, page);
         List<ExhibitionBasicResponse> exhibitions = pageExhibitions
                 .stream()
                 .map(ExhibitionBasicResponse::of)
