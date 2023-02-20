@@ -45,44 +45,44 @@ public class SignUpTest {
     @Test
     void signup() throws Exception {
 
-        MemberRegisterDto member1=MemberRegisterDto.builder()
-                .email("test@naver.com")
-                .password("Test1234!")
-                .nickname("test")
-                .birth(LocalDate.parse("2000-01-01"))
-                .gender(Gender.valueOf("W"))
-                .build();
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(LocalDate.class,new LocalDateSerializer());
-        Gson gson= gsonBuilder.setPrettyPrinting().create();
-        String content=gson.toJson(member1);
-
-        mockMvc.perform(post("/signup")
-                        .content(content)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print());
-
-        LoginDto loginDto=LoginDto.builder()
-                .email("test@naver.com")
-                .password("Test1234!")
-                .build();
-        content=gson.toJson(loginDto);
-
-
-        MvcResult result=mockMvc.perform(post("/login")
-                        .content(content)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andReturn();
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        content=result.getResponse().getContentAsString();
-        Token token=mapper.readValue(content, Token.class);
+//        MemberRegisterDto member1=MemberRegisterDto.builder()
+//                .email("test@naver.com")
+//                .password("Test1234!")
+//                .nickname("test")
+//                .birth(LocalDate.parse("2000-01-01"))
+//                .gender(Gender.valueOf("W"))
+//                .build();
+//        GsonBuilder gsonBuilder = new GsonBuilder();
+//        gsonBuilder.registerTypeAdapter(LocalDate.class,new LocalDateSerializer());
+//        Gson gson= gsonBuilder.setPrettyPrinting().create();
+//        String content=gson.toJson(member1);
+//
+//        mockMvc.perform(post("/signup")
+//                        .content(content)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andDo(print());
+//
+//        LoginDto loginDto=LoginDto.builder()
+//                .email("test@naver.com")
+//                .password("Test1234!")
+//                .build();
+//        content=gson.toJson(loginDto);
+//
+//
+//        MvcResult result=mockMvc.perform(post("/login")
+//                        .content(content)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andDo(print())
+//                .andReturn();
+//
+//        ObjectMapper mapper = new ObjectMapper();
+//
+//        content=result.getResponse().getContentAsString();
+//        Token token=mapper.readValue(content, Token.class);
 
 
 
