@@ -10,6 +10,8 @@ import com.myalley.member.dto.MemberRegisterDto;
 import com.myalley.exception.CustomException;
 import com.myalley.exception.MemberExceptionType;
 import com.myalley.member.repository.MemberRepository;
+import com.myalley.member_deleted.domain.MemberDeleted;
+import com.myalley.member_deleted.repository.MemberDeletedRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,8 @@ import java.util.UUID;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+
+    private final MemberDeletedRepository memberDeletedRepository;
     private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity signup(MemberRegisterDto memberRegisterDto) {
@@ -139,8 +143,9 @@ public class MemberService {
 
     public ResponseEntity delete(Member member) {
 
-        member.setIsDeleted(true);
-        memberRepository.save(member);
+        memberDeletedRepository.save(new MemberDeleted(member));
+        memberRepository.delete(member);
+
 
         HashMap<String,Integer> map=new HashMap<>();
         map.put("resultCode",200);

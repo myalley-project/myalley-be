@@ -70,9 +70,6 @@ public class Member extends BaseTime implements UserDetails {
     @Column(name="member_image")
     private String memberImage;
 
-    @Column(name="is_deleted")
-    private Boolean isDeleted;
-
 
     public void update(MemberUpdateDto memberUpdateDto,String url){
         this.setMemberImage(url);
