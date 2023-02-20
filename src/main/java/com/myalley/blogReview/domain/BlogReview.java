@@ -34,6 +34,7 @@ public class BlogReview extends BaseTime {
     private String transportation;
     private String revisit;
     private String congestion;
+    private Boolean isDeleted=false;
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "member_id")
@@ -85,7 +86,9 @@ public class BlogReview extends BaseTime {
     public void updateViewCount(){
         this.viewCount++;
     }
-    
+
+    //삭제 요청 시 상태 변경
+    public void deleteBlogReview() { this.isDeleted=true; }
     //좋아요 관리
     public void increaseLikesCount(){ this.likeCount++; }
     public void decreaseLikesCount(){ this.likeCount--; }

@@ -2,7 +2,6 @@ package com.myalley.blogReview.service;
 
 import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview.domain.DetailBlogReview;
-import com.myalley.blogReview_deleted.service.BlogReviewDeletedService;
 import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.exhibition.service.ExhibitionService;
 import com.myalley.member.domain.Member;
@@ -25,7 +24,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BlogReviewService {
     private final BlogReviewRepository blogReviewRepository;
-    private final BlogReviewDeletedService blogReviewDeletedService;
     private final ExhibitionService exhibitionService;
     private final BlogImageService blogImageService;
     private final BlogBookmarkService bookmarkService;
@@ -112,8 +110,8 @@ public class BlogReviewService {
         blogImageService.removeBlogAllImages(pre);
         bookmarkService.removeBlogAllBookmark(pre);
         likesService.removeBlogAllLikes(pre);
-        blogReviewDeletedService.addDeletedBlogReview(pre);
-        blogReviewRepository.delete(pre);
+        pre.deleteBlogReview();
+        blogReviewRepository.save(pre);
     }
 
 
