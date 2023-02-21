@@ -3,6 +3,7 @@ package com.myalley.mate.controller;
 import com.myalley.mate.domain.MateBookmark;
 import com.myalley.mate.dto.MateMyResponse;
 import com.myalley.mate.dto.MatePageResponse;
+import com.myalley.mate.dto.MateSimpleResponse;
 import com.myalley.mate.service.MateBookmarkService;
 import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
@@ -44,9 +45,9 @@ public class MateBookmarkController {
         int size = 8;
 
         Page<MateBookmark> mateBookmarks = bookmarkService.findBookmarkedMate(memberId, page, size);
-        List<MateMyResponse> responses = mateBookmarks
+        List<MateSimpleResponse> responses = mateBookmarks
                 .stream()
-                .map(MateMyResponse::of)
+                .map(MateSimpleResponse::of)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(

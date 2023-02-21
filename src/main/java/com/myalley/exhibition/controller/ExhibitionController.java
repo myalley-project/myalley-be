@@ -130,7 +130,7 @@ public class ExhibitionController {
         int size = 8;
         log.info("전시회 목록조회 상태/유형 필터 검색");
 
-            Page<Exhibition> pageExhibitions = exhibitionService.readPageAllSearch(status, type, page, size);
+            Page<Exhibition> pageExhibitions = exhibitionService.findStatusAndType(status, type, page, size);
             List<ExhibitionBasicResponse> exhibitions = pageExhibitions
                     .stream()
                     .map(ExhibitionBasicResponse::of)
