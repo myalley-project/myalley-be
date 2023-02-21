@@ -26,12 +26,24 @@ public class BlogBookmark {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "blog_id")
     private BlogReview blog;
-    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private Boolean isDeleted;
 
     @Builder
-    public BlogBookmark(Member member, BlogReview blog, LocalDateTime createdAt){
+    public BlogBookmark(Member member, BlogReview blog){
         this.member = member;
         this.blog = blog;
-        this.createdAt = createdAt;
+    }
+
+    public void changeBookmarkStatus(){
+        if(isDeleted == null || isDeleted.equals(Boolean.TRUE)){
+            this.isDeleted = Boolean.FALSE;
+            this.blog.increaseBookmarkCount();
+        }
+        else {
+            this.isDeleted = Boolean.TRUE;
+            this.blog.decreaseBookmarkCount();
+        }
+        this.updatedAt = LocalDateTime.now();
     }
 }
