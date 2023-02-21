@@ -12,6 +12,7 @@ import com.myalley.member.domain.Member;
 import com.myalley.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -35,6 +36,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final MemberRepository memberRepository;
 
+    @Value("${spring.JWT_SECRET_KEY}")
+    public static String SECRET_KEY;
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -50,9 +54,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             String accessToken = null;
             if (authorizationHeader != null)
                 accessToken = authorizationHeader.substring("Bearer ".length());
-
+            else{//permitall 통과
+                SecurityContextHolder.getContext().setAuthentication(null);
+                chain.doFilter(request, response);
+                return;
+            }
             // === Access Token 검증 === //
-            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JwtSecret.JWT_SECRET_KEY)).build();
+            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(SECRET_KEY)).build();
             DecodedJWT decodedJWT = verifier.verify(accessToken);
 
             String username = decodedJWT.getSubject();
