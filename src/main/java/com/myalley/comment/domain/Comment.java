@@ -7,6 +7,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -16,6 +18,8 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "comment")
+@SQLDelete(sql = "UPDATE comment SET isDeleted = true WHERE comment_id = ?")
+//@Where(clause = "isDeleted = false")
 @Entity
 public class Comment extends BaseTime {
 
@@ -42,7 +46,7 @@ public class Comment extends BaseTime {
     @Column(nullable = false)
     private String message;
 
-    private boolean softRemoved = false;
+    private boolean isDeleted = Boolean.FALSE;
 
     @Builder
     public Comment(Member member, Mate mate, String message, Comment parent) {
@@ -63,11 +67,11 @@ public class Comment extends BaseTime {
     }
 
     public boolean isSoftRemoved() {
-        return softRemoved;
+        return isDeleted;
     }
 
     public void changePretendingToBeRemoved() {
-        this.softRemoved = true;
+        this.isDeleted = true;
     }
 
     public void deleteChild(Comment reply) {
