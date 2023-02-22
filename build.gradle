@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.6.11'
 	id 'io.spring.dependency-management' version '1.1.0'
+	id "org.asciidoctor.jvm.convert" version "3.3.2"
 }
 
 group = 'com'
@@ -9,6 +10,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
+	asciidoctorExtensions
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -16,6 +18,11 @@ configurations {
 
 repositories {
 	mavenCentral()
+}
+
+ext {
+	// 사용할 변수 선언
+	set('snippetsDir', file("build/generated-snippets"))
 }
 
 dependencies {
@@ -51,12 +58,39 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.8.7'
 }
 
-tasks.named('test') {
+jar {
+	enabled = false
+}
+
+test {
+	outputs.dir snippetsDir
 	useJUnitPlatform()
 }
 
-jar {
-	enabled = false
+asciidoctor {
+	configurations 'asciidoctorExtensions'
+	sources{
+		include("**/index.adoc","**/common/*.adoc")
+	}
+
+	baseDirFollowsSourceFile()
+	inputs.dir snippetsDir
+	dependsOn test
+}
+
+asciidoctor.doFirst {
+	delete file('src/main/resources/static/docs')
+}
+
+task createDocument(type: Copy) {
+	dependsOn asciidoctor
+
+	from file("build/docs/asciidoc")
+	into file("src/main/resources/static/docs")
+}
+
+build {
+	dependsOn createDocument
 }
 
 bootJar {
