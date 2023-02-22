@@ -93,9 +93,9 @@ public class CommentService {
     }
 
     private CommentResponse convertToCommentResponse(Comment comment) {
-        if (comment.isSoftRemoved()) {
-            return CommentResponse.softRemovedOf(comment, convertToReplyResponses(comment));
-        }
+//        if (comment.isSoftRemoved()) {
+//            return CommentResponse.softRemovedOf(comment, convertToReplyResponses(comment));
+//        }
         return CommentResponse.of(comment, convertToReplyResponses(comment));
     }
 
@@ -124,18 +124,18 @@ public class CommentService {
     }
 
     private void deleteCommentOrReply(Comment comment) {
-        if (comment.isParent()) {
+//        if (comment.isParent()) {
             deleteParent(comment);
-            return;
-        }
-        deleteChild(comment);
+//            return;
+//        }
+//        deleteChild(comment);
     }
 
     private void deleteParent(Comment comment) {
-        if (comment.hasNoReply()) {
-            commentRepository.delete(comment);
-            return;
-        }
+//        if (comment.hasNoReply()) {
+//            commentRepository.delete(comment);
+//            return;
+//        }
         comment.changePretendingToBeRemoved();
     }
 
