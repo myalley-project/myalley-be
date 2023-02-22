@@ -12,8 +12,6 @@ import com.myalley.mate.dto.MateDetailResponse;
 import com.myalley.mate.dto.MateRequest;
 import com.myalley.mate.dto.MateSimpleResponse;
 import com.myalley.mate.dto.MateUpdateRequest;
-import com.myalley.mate.mate_deleted.MateDeleted;
-import com.myalley.mate.mate_deleted.MateDeletedRepository;
 import com.myalley.mate.repository.MateBookmarkRepository;
 import com.myalley.mate.repository.MateRepository;
 import com.myalley.member.domain.Member;
@@ -34,7 +32,6 @@ public class MateService {
 
     private final MateRepository mateRepository;
     private final ExhibitionService exhibitionService;
-    private final MateDeletedRepository deletedRepository;
     private final MemberService memberService;
     private final MateBookmarkRepository bookmarkRepository;
     private final MemberRepository memberRepository;
@@ -110,20 +107,6 @@ public class MateService {
             throw new CustomException(MateExceptionType.UNAUTHORIZED_ACCESS);
         }
 
-        MateDeleted deleted = MateDeleted.builder()
-                .title(mate.getTitle())
-                .status(mate.getStatus())
-                .mateGender(mate.getMateGender())
-                .mateAge(mate.getMateAge())
-                .availableDate(mate.getAvailableDate())
-                .content(mate.getContent())
-                .contact(mate.getContact())
-                .viewCount(mate.getViewCount())
-                .bookmarkCount(0)
-                .exhibition(exhibitionService.verifyExhibition(mate.getExhibition().getId()))
-                .member(memberService.verifyMember(mate.getMember().getMemberId()))
-                .build();
-        deletedRepository.save(deleted);
         bookmarkRepository.deleteByMate(mate); //북마크 쪽에서 먼저 북마크 삭제해줌
         mateRepository.deleteById(id);
     }

@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,9 +30,11 @@ public class Member extends BaseTime implements UserDetails {
     @Column(name="email",unique=true)
     private String email;
 
+    @NotNull
     @Column(name="password")
     private String password;
 
+    @NotNull
     @Column(name="nickname",unique=true)
     private String nickname;
 
@@ -46,10 +49,12 @@ public class Member extends BaseTime implements UserDetails {
     @Column(name="admin_no")
     private Long adminNo;
 
+    @NotNull
     @Enumerated(value= EnumType.STRING)
     @Column(name="authority")
     private Authority authority;
 
+    @NotNull
     @Enumerated(value= EnumType.STRING)
     @Column(name="status")
     private Status status;
@@ -65,6 +70,8 @@ public class Member extends BaseTime implements UserDetails {
     @Column(name="member_image")
     private String memberImage;
 
+    @Column(name="is_deleted")
+    private Boolean isDeleted;
 
 
     public void update(MemberUpdateDto memberUpdateDto,String url){
