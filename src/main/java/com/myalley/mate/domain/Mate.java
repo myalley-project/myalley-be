@@ -9,12 +9,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "mate")
+@SQLDelete(sql = "UPDATE mate SET deleted = true WHERE mate_id = ?")
+@Where(clause = "deleted = false")
 @Entity
 public class Mate extends BaseTime {
     @Id
@@ -45,6 +49,7 @@ public class Mate extends BaseTime {
     private Integer viewCount;
 
     private Integer bookmarkCount;
+    private boolean deleted = Boolean.FALSE;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
