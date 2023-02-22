@@ -30,7 +30,6 @@ public class Inquiry {
     private Member member;
 
     @NotNull
-
     private String title;
 
     @NotNull

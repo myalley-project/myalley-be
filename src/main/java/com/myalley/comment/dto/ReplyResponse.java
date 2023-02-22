@@ -16,11 +16,12 @@ public class ReplyResponse {
     private String nickname;
     private String profileImg;
     private String content;
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt;
+    private boolean deleted;
 
     public static ReplyResponse of(Comment reply) {
         return new ReplyResponse(reply.getId(), reply.getMember().getNickname(),
-                reply.getMember().getMemberImage(), reply.getMessage(), reply.getCreatedAt());
+                reply.getMember().getMemberImage(), reply.getMessage(), reply.getCreatedAt(), reply.isDeleted());
     }
 }

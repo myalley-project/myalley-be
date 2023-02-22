@@ -6,12 +6,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "exhibition")
+@SQLDelete(sql = "UPDATE exhibition SET deleted = true WHERE exhibition_id = ?")
+@Where(clause = "deleted = false")
 @Entity
 public class Exhibition extends BaseTime {
 
@@ -48,6 +52,8 @@ public class Exhibition extends BaseTime {
     private String type;
 
     private Integer bookmarkCount;
+
+    private boolean deleted = Boolean.FALSE;
 
     @Builder
     public Exhibition(String title, Integer adultPrice, String space, String fileName, String posterUrl,
