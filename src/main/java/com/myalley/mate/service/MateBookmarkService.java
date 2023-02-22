@@ -55,7 +55,7 @@ public class MateBookmarkService {
                 .mate(mate)
                 .build();
 
-        mateBookmark.addBookmark();
+//        mateBookmark.addBookmark();
         bookmarkRepository.save(mateBookmark);
         mateService.bookmarkCountUp(mateId);
 

@@ -12,7 +12,7 @@ spring:
   jpa:
     #open-in-view: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
@@ -21,6 +21,7 @@ spring:
   redis:
     port: ${REDIS_PORT}
     host: ${REDIS_HOST}
+  secret: ${JWT_SECRET_KEY}
 
 logging:
   level:

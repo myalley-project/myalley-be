@@ -7,7 +7,8 @@ public enum ExhibitionExceptionType implements BaseExceptionType{
     FILE_NOT_UPLOADED(400, "이미지 파일이 첨부되지 않았습니다."),
     EXHIBITION_NOT_FOUND(404, "전시회 정보를 찾을 수 없습니다."),
     MATE_NOT_FOUND(404, "메이트 모집글 정보를 찾을 수 없습니다."),
-    EXHIBITION_BOOKMARK_NOT_FOUND(404, "해당 회원이 누른 북마크가 존재하지 않습니다.");
+    EXHIBITION_BOOKMARK_NOT_FOUND(404, "해당 회원이 누른 북마크가 존재하지 않습니다."),
+    EXHIBITION_SORT_CRITERIA_ERROR(404, "정렬 조건이 올바르지 않습니다.");
 
     private int errorCode;
     private String errorMsg;
