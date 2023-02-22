@@ -14,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -26,24 +25,23 @@ public class BlogLikesService {
     public Boolean findLikes(BlogReview blogReview, Member member) {
         if(blogReview.getMember().getMemberId()==member.getMemberId())
             throw new CustomException(BlogReviewExceptionType.LIKES_BAD_REQUEST);
-        BlogLikes like = likesRepository.findByMemberAndBlog(member,blogReview)
+        BlogLikes like = likesRepository.selectLike(member.getMemberId(),blogReview.getId())
                 .orElseGet(() -> BlogLikes.builder().blog(blogReview).member(member).build());
         like.changeLikesStatus();
         likesRepository.save(like);
         return !like.getIsDeleted();
     }
 
-    public boolean retrieveBlogLikes(BlogReview blogReview, Long memberId) {
-        if(memberId != null) {
+    public boolean retrieveBlogLikes(Long blogId, Long memberId) {
+        if(memberId != 0) {
             Member member = memberService.verifyMember(memberId);
-            Optional<BlogLikes> blogLikes = likesRepository.findByMemberAndBlog(member, blogReview);
+            Optional<BlogLikes> blogLikes = likesRepository.selectLike(member.getMemberId(), blogId);
             if(blogLikes.isPresent())
                 return !blogLikes.get().getIsDeleted();
         }
         return false;
     }
 
-    //isDeleted 값이 false인 것 중에 조회하기
     public Page<BlogLikes> retrieveMyBlogLikes(Member member, Integer pageNo){
         PageRequest pageRequest;
         if(pageNo == null)

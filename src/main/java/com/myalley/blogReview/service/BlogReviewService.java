@@ -44,8 +44,8 @@ public class BlogReviewService {
         DetailBlogReview detail = new DetailBlogReview();
         BlogReview blog = findBlogReview(blogId);
         blog.updateViewCount();
-        detail.setLikesStatus(likesService.retrieveBlogLikes(blog,memberId));
-        detail.setBookmarkStatus(bookmarkService.retrieveBlogBookmark(blog,memberId));
+        detail.setLikesStatus(likesService.retrieveBlogLikes(blogId,memberId));
+        detail.setBookmarkStatus(bookmarkService.retrieveBlogBookmark(blogId,memberId));
         detail.setBlogReview(blogReviewRepository.save(blog));
         return detail;
     }
@@ -110,8 +110,7 @@ public class BlogReviewService {
         blogImageService.removeBlogAllImages(pre);
         bookmarkService.removeBlogAllBookmark(pre);
         likesService.removeBlogAllLikes(pre);
-        pre.deleteBlogReview();
-        blogReviewRepository.save(pre);
+        blogReviewRepository.deleteById(pre.getId());
     }
 
 

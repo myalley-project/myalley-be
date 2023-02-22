@@ -25,17 +25,17 @@ public class BlogBookmarkService {
     public Boolean findBookmark(BlogReview blogReview, Member member) {
         if(blogReview.getMember().getMemberId() == member.getMemberId())
             throw new CustomException(BlogReviewExceptionType.BOOKMARK_FORBIDDEN);
-        BlogBookmark bookmark = blogBookmarkRepository.findByMemberAndBlog(member, blogReview)
+        BlogBookmark bookmark = blogBookmarkRepository.selectBookmark(member.getMemberId(), blogReview.getId())
                 .orElse(BlogBookmark.builder().blog(blogReview).member(member).build());
         bookmark.changeBookmarkStatus();
         blogBookmarkRepository.save(bookmark);
         return !bookmark.getIsDeleted();
     }
 
-    public boolean retrieveBlogBookmark(BlogReview blogReview, Long memberId) {
-        if(memberId != null) {
+    public boolean retrieveBlogBookmark(Long blogId, Long memberId) {
+        if(memberId != 0) {
             Member member = memberService.verifyMember(memberId);
-            Optional<BlogBookmark> blogBookmark = blogBookmarkRepository.findByMemberAndBlog(member, blogReview);
+            Optional<BlogBookmark> blogBookmark = blogBookmarkRepository.selectBookmark(member.getMemberId(), blogId);
             if (blogBookmark.isPresent())
                 return !blogBookmark.get().getIsDeleted();
         }

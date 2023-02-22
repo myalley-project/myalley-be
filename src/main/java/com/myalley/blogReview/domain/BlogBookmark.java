@@ -5,6 +5,7 @@ import com.myalley.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity(name="blog_bookmark")
 @Getter
 @NoArgsConstructor
+@Where(clause="is_deleted = 0")
 public class BlogBookmark {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
