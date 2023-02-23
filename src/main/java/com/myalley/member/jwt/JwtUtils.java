@@ -29,12 +29,12 @@ public class JwtUtils {
      * @return email
      */
 
-    public static String SECRET_KEY;
+    public static String SECRET_KEY="13LN1L2N3ONOASKNDLSKAFNL1OI341IO120LSKDNLN12";
 
-    @Value("${secret.JWT_SECRET_KEY}")
-    public void setKey(String key){
-        SECRET_KEY=key;
-    }
+//    @Value("${secret.JWT_SECRET_KEY}")
+//    public void setKey(String key){
+//        SECRET_KEY=key;
+//    }
 
 
     public static String getEmail(String token) {
