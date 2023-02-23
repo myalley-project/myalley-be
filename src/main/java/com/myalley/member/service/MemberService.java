@@ -1,5 +1,6 @@
 package com.myalley.member.service;
 
+import com.myalley.member.domain.AdminNo;
 import com.myalley.member.dto.MemberInfoDto;
 import com.myalley.member.dto.MemberUpdateDto;
 import com.myalley.member.options.Authority;
@@ -9,6 +10,7 @@ import com.myalley.member.domain.Member;
 import com.myalley.member.dto.MemberRegisterDto;
 import com.myalley.exception.CustomException;
 import com.myalley.exception.MemberExceptionType;
+import com.myalley.member.repository.AdminNoRepository;
 import com.myalley.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,7 @@ import java.util.UUID;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final AdminNoRepository adminNoRepository;
     private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity signup(MemberRegisterDto memberRegisterDto) {
@@ -59,9 +62,15 @@ public class MemberService {
     {
         if (memberRepository.findByEmail(memberRegisterDto.getEmail()) != null) {
             throw new CustomException(MemberExceptionType.ALREADY_EXIST_USERNAME);
-        }else if(memberRepository.findByAdminNo(memberRegisterDto.getAdminNo())!=null){
-            throw new CustomException(MemberExceptionType.WRONG_ADMINNO);
+        }else {
+            AdminNo id=adminNoRepository.findById(memberRegisterDto.getAdminNo()).orElseThrow(()->new CustomException(MemberExceptionType.WRONG_ADMINNO));
+            if(id==null||id.getIsRegistered()){
+                throw new CustomException(MemberExceptionType.WRONG_ADMINNO);
+            }
+            id.setIsRegistered(true);
+            adminNoRepository.save(id);
         }
+
 
         memberRepository.save(Member.builder()
                 .email(memberRegisterDto.getEmail())
