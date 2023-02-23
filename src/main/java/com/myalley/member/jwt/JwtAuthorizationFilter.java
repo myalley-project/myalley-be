@@ -36,8 +36,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final MemberRepository memberRepository;
 
-    @Value("${spring.JWT_SECRET_KEY}")
-    public static String SECRET_KEY;
 
     @Override
     protected void doFilterInternal(
@@ -60,7 +58,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 return;
             }
             // === Access Token 검증 === //
-            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(SECRET_KEY)).build();
+            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JwtUtils.SECRET_KEY)).build();
             DecodedJWT decodedJWT = verifier.verify(accessToken);
 
             String username = decodedJWT.getSubject();

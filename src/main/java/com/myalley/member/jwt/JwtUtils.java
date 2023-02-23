@@ -9,18 +9,20 @@ import io.jsonwebtoken.*;
 
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Component
 public class JwtUtils {
     /**
      * 토큰에서 username 찾기
@@ -28,13 +30,19 @@ public class JwtUtils {
      * @param token 토큰
      * @return email
      */
-//    @Autowired
-   TokenRedisRepository tokenRedisRepository;
 
-    @Value("${spring.JWT_SECRET_KEY}")
+
     public static String SECRET_KEY;
 
+    @Value("${secret.JWT_SECRET_KEY}")
+    public void setKey(String key){
+        SECRET_KEY=key;
+    }
+
+
+
     public static String getEmail(String token) {
+
         // jwtToken에서 email을 찾습니다.
         return Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY.getBytes())
@@ -73,11 +81,11 @@ public class JwtUtils {
     //refresh,acess모두 생성
     public static Map<String,String> createTokenSet(Member member) {
         Map<String,String> tokens=new HashMap<String,String>();
-
         Claims claims = Jwts.claims().setSubject(member.getUsername()); // subject
         Date now = new Date(); // 현재 시간
        // Pair<String, Key> key = JwtKey.getRandomKey();
         // JWT Token 생성
+        System.out.println(SECRET_KEY);
         tokens.put("accessToken",Jwts.builder()
                 .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 토큰 발행 시간 정보

@@ -14,10 +14,11 @@ spring:
       hibernate:
         format_sql: true
       #show-sql: true
-  redis:
-    port: ${REDIS_PORT}
-    host: ${REDIS_HOST}
-  secret: ${JWT_SECRET_KEY}
+    redis:
+            port: ${REDIS_PORT}
+            host: ${REDIS_HOST}
+secret:
+  JWT_SECRET_KEY: ${JWT_SECRET_KEY}
 
 logging:
   level:
