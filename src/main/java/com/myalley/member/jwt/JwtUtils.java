@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Component
 public class JwtUtils {
     /**
      * 토큰에서 username 찾기
@@ -31,8 +31,13 @@ public class JwtUtils {
 //    @Autowired
    TokenRedisRepository tokenRedisRepository;
 
-    @Value("${spring.JWT_SECRET_KEY}")
     public static String SECRET_KEY;
+
+    @Value("${secret.JWT_SECRET_KEY}")
+    public void setKey(String key){
+        SECRET_KEY=key;
+    }
+
 
     public static String getEmail(String token) {
         // jwtToken에서 email을 찾습니다.
