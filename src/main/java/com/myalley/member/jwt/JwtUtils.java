@@ -28,8 +28,6 @@ public class JwtUtils {
      * @param token 토큰
      * @return email
      */
-//    @Autowired
-   TokenRedisRepository tokenRedisRepository;
 
     public static String SECRET_KEY;
 
@@ -96,8 +94,6 @@ public class JwtUtils {
                 .setHeaderParam(JwsHeader.KEY_ID, "JWT") // kid
                 .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()),SignatureAlgorithm.HS256) // signature
                 .compact());
-
-      //  tokenRedisRepository.save(new RefreshToken(member.getEmail(),token.get("refreshToken")));
 
         return tokens;
     }
