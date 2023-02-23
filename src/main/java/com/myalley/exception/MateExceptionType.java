@@ -8,7 +8,8 @@ public enum MateExceptionType implements BaseExceptionType{
     COMMENT_NOT_FOUND(400, "댓글 정보를 찾을 수 없습니다."),
     NOT_EXIST_REPLIES(400, "답글이 존재하지 않습니다."),
     CANNOT_WRITE_REPLY(404, "대댓글에 답글을 작성할 수 없습니다."),
-    MEMBER_ID_IS_MANDATORY(404, "memberId는 헤더에 반드시 포함되어야 합니다.");
+    MEMBER_ID_IS_MANDATORY(404, "memberId는 헤더에 반드시 포함되어야 합니다."),
+    UNAUTHORIZED_MATE_SEARCH_KEYWORD(400, "올바르지 않은 검색 조건입니다.");
 
     private int errorCode;
     private String errorMsg;

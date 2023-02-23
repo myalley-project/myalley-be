@@ -30,15 +30,12 @@ public class RefreshService {
 
     private final MemberRepository memberRepository;
 
-    @Value("${spring.JWT_SECRET_KEY}")
-    public static String SECRET_KEY;
-
 
     public Map<String, String> refresh(String refreshToken) {
 
         // === Refresh Token 유효성 검사 === //
         try {
-            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(SECRET_KEY)).build();
+            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JwtUtils.SECRET_KEY)).build();
             DecodedJWT decodedJWT = verifier.verify(refreshToken);
 
             // === Access Token 재발급 === //

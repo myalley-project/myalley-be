@@ -133,7 +133,7 @@ public class ExhibitionController {
 
         Page<Exhibition> pageExhibitions;
 
-        if (type.equals("전체") || type.isEmpty()) {
+        if (type.equals("전체 전시") || type.isEmpty()) {
             pageExhibitions = exhibitionService.readPageAll(status, sortCriteria, page);
         } else {
             pageExhibitions = exhibitionService.findStatusAndType(status, type, page, sortCriteria);

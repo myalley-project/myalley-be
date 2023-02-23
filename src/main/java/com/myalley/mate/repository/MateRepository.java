@@ -1,5 +1,6 @@
 package com.myalley.mate.repository;
 
+import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.mate.domain.Mate;
 import com.myalley.member.domain.Member;
@@ -22,4 +23,6 @@ public interface MateRepository extends JpaRepository<Mate, Long> {
     Page<Mate> findByExhibition(Exhibition exhibition, Pageable pageable);
 
     Page<Mate> findByTitleContaining(String title, Pageable pageable);
+
+    Page<Mate> findAll(Pageable pageable);
 }
