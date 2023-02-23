@@ -1,5 +1,6 @@
 package com.myalley.blogReview.mapper;
 
+
 import com.myalley.blogReview.domain.*;
 import com.myalley.blogReview.dto.BlogRequestDto;
 import com.myalley.blogReview.dto.BlogResponseDto;
@@ -13,6 +14,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,14 +25,30 @@ public interface BlogReviewMapper {
 
     //** REQUEST **
     //1. 블로그 등록
-    @Mapping(target="revisit",constant="모르겠음")
-    @Mapping(target="congestion",constant="기억나지않음")
-    @Mapping(target="transportation",constant="기억나지않음")
-    BlogReview postBlogDtoToBlogReview(BlogRequestDto.PostBlogDto requestDto);
+    default BlogReview postBlogDtoToBlogReview(BlogRequestDto.PostBlogDto requestDto){
+        BlogReview.BlogReviewBuilder blogReview = BlogReview.builder();
+
+        blogReview.title( requestDto.getTitle() );
+        blogReview.content( requestDto.getContent() );
+        blogReview.viewDate( LocalDate.parse( requestDto.getViewDate() ) );
+        blogReview.time( requestDto.getTime() );
+
+        if(requestDto.getRevisit() == null)
+            blogReview.revisit( "모르겠음" );
+        else
+            blogReview.revisit( requestDto.getRevisit() );
+        if(requestDto.getCongestion() == null)
+            blogReview.congestion( "기억나지않음" );
+        else
+            blogReview.congestion( requestDto.getCongestion() );
+        if(requestDto.getTransportation() == null)
+            blogReview.transportation( "기억나지않음" );
+        else
+            blogReview.transportation( requestDto.getTransportation() );
+
+        return blogReview.build();
+    }
     //2. 블로그 수정
-    @Mapping(target="revisit",constant="모르겠음")
-    @Mapping(target="congestion",constant="기억나지않음")
-    @Mapping(target="transportation",constant="기억나지않음")
     BlogReview putBlogDtoToBlogReview(BlogRequestDto.PutBlogDto requestDto);
     
     //** RESPONSE **
@@ -40,6 +58,7 @@ public interface BlogReviewMapper {
         dto.setId(blog.getBlogReview().getId());
         dto.setTitle(blog.getBlogReview().getTitle());
         dto.setContent(blog.getBlogReview().getContent());
+        dto.setTime(blog.getBlogReview().getTime());
         dto.setLikeCount(blog.getBlogReview().getLikeCount());
         dto.setBookmarkCount(blog.getBlogReview().getBookmarkCount());
         dto.setTransportation(blog.getBlogReview().getTransportation());
@@ -70,7 +89,8 @@ public interface BlogReviewMapper {
             simpleBlogDto.setViewCount(blogReview.getViewCount());
             return simpleBlogDto;
         }).collect(Collectors.toList());
-        pagingDto paging = new pagingDto(pageBlogs.getNumber(), pageBlogs.getSize(), pageBlogs.getTotalElements(), pageBlogs.getTotalPages());
+        pagingDto paging = new pagingDto(pageBlogs.getNumber()+1, pageBlogs.getSize(),
+                pageBlogs.getTotalElements(), pageBlogs.getTotalPages());
         dto.setBlogInfo(simpleBlogDtoList);
         dto.setPageInfo(paging);
         return dto;
@@ -88,7 +108,8 @@ public interface BlogReviewMapper {
             userBlogDto.setViewCount(blogReview.getViewCount());
             return userBlogDto;
         }).collect(Collectors.toList());
-        pagingDto paging = new pagingDto(pageBlogs.getNumber(), pageBlogs.getSize(), pageBlogs.getTotalElements(), pageBlogs.getTotalPages());
+        pagingDto paging = new pagingDto(pageBlogs.getNumber()+1, pageBlogs.getSize(),
+                pageBlogs.getTotalElements(), pageBlogs.getTotalPages());
         dto.setBlogInfo(simpleBlogDtoList);
         dto.setPageInfo(paging);
         return dto;
@@ -107,7 +128,7 @@ public interface BlogReviewMapper {
             simpleBlogDto.setViewCount(blogLikes.getBlog().getViewCount());
             return simpleBlogDto;
         }).collect(Collectors.toList());
-        pagingDto paging = new pagingDto(pageLikes.getNumber(), pageLikes.getSize(),
+        pagingDto paging = new pagingDto(pageLikes.getNumber()+1, pageLikes.getSize(),
                 pageLikes.getTotalElements(), pageLikes.getTotalPages());
         dto.setBlogInfo(simpleBlogDtoList);
         dto.setPageInfo(paging);
@@ -127,7 +148,7 @@ public interface BlogReviewMapper {
             simpleBlogDto.setViewCount(blogBookmark.getBlog().getViewCount());
             return simpleBlogDto;
         }).collect(Collectors.toList());
-        pagingDto paging = new pagingDto(bookmarkPage.getNumber(), bookmarkPage.getSize(),
+        pagingDto paging = new pagingDto(bookmarkPage.getNumber()+1, bookmarkPage.getSize(),
                 bookmarkPage.getTotalElements(), bookmarkPage.getTotalPages());
         dto.setBlogInfo(simpleBlogDtoList);
         dto.setPageInfo(paging);

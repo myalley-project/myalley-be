@@ -34,7 +34,7 @@ public class ImageService {
         validateFileExists(multipartFile);
 
       try (InputStream inputStream = multipartFile.getInputStream()) {
-          System.out.println("Content Type : " + multipartFile.getContentType());
+//          System.out.println("Content Type : " + multipartFile.getContentType());
 
           //확장자 검사
           if(!multipartFile.isEmpty() && validateImgFile(inputStream)) {

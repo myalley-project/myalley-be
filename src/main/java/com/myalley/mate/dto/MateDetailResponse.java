@@ -39,7 +39,7 @@ public class MateDetailResponse {
                 mate.getViewCount(), mate.getCreatedAt(), mate.getBookmarkCount(), bookmarked,
                 new ExhibitionResponse(mate.getExhibition().getId(),
                 mate.getExhibition().getTitle(), mate.getExhibition().getSpace(),
-                mate.getExhibition().getPosterUrl(), mate.getExhibition().getDuration(), mate.getExhibition().getStatus()),
+                mate.getExhibition().getPosterUrl(), mate.getExhibition().getDuration(), mate.getExhibition().getStatus(), mate.getExhibition().getType()),
                 new MemberMateDto(mate.getMember().getMemberId(), mate.getMember().getNickname(),
                         mate.getMember().getMemberImage(), mate.getMember().getGender().getKey(),
                         mate.getMember().getBirth().toString().substring(0,4)));
@@ -51,7 +51,7 @@ public class MateDetailResponse {
                 mate.getViewCount(), mate.getCreatedAt(), mate.getBookmarkCount(), false,
                 new ExhibitionResponse(mate.getExhibition().getId(),
                 mate.getExhibition().getTitle(), mate.getExhibition().getSpace(),
-                mate.getExhibition().getPosterUrl(), mate.getExhibition().getDuration(), mate.getExhibition().getStatus()),
+                mate.getExhibition().getPosterUrl(), mate.getExhibition().getDuration(), mate.getExhibition().getStatus(), mate.getExhibition().getType()),
                 new MemberMateDto(mate.getMember().getMemberId(), mate.getMember().getNickname(),
                         mate.getMember().getMemberImage(), mate.getMember().getGender().getKey(),
                         mate.getMember().getBirth().toString().substring(0,4)));

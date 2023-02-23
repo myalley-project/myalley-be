@@ -48,6 +48,8 @@ public class SimpleReviewService {
         Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
         if(pageNo==null)
             pageNo=0;
+        else
+            pageNo--;
         PageRequest pageRequest;
         if(orderType != null && orderType.equals("StarScore")) {
             pageRequest = PageRequest.of(pageNo, 10, Sort.by("rate").descending()
@@ -62,6 +64,8 @@ public class SimpleReviewService {
     public Page<SimpleReview> retrieveUserSimpleReviewList(Member member, Integer pageNo){
         if(pageNo==null)
             pageNo=0;
+        else
+            pageNo--;
         PageRequest pageRequest = PageRequest.of(pageNo,5, Sort.by("id").descending());
         return simpleRepository.findAllByMember(member,pageRequest);
     }

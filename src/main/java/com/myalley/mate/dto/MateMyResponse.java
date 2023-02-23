@@ -34,12 +34,4 @@ public class MateMyResponse {
                         mate.getExhibition().getSpace(), mate.getExhibition().getPosterUrl(), mate.getExhibition().getStatus()));
     }
 
-    public static MateMyResponse of(MateBookmark mateBookmark) {
-        return new MateMyResponse(mateBookmark.getMate().getId(), mateBookmark.getMate().getTitle(), mateBookmark.getMate().getAvailableDate(),
-                mateBookmark.getMate().getStatus(), mateBookmark.getMate().getMateGender(), mateBookmark.getMate().getMateAge(),
-                mateBookmark.getMate().getCreatedAt(), mateBookmark.getMate().getViewCount(),
-                new ExhibitionMateListResponse(mateBookmark.getMate().getExhibition().getId(),mateBookmark.getMate().getExhibition().getTitle(),
-                        mateBookmark.getMate().getExhibition().getSpace(), mateBookmark.getMate().getExhibition().getPosterUrl(),
-                        mateBookmark.getMate().getExhibition().getStatus()));
-    }
 }

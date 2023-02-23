@@ -25,7 +25,7 @@ public class BlogReview extends BaseTime {
     private String time;
     @Column(nullable = false)
     private String title;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 3000)
     private String content;
     private Integer likeCount = 0;
     private Integer viewCount = 0;
@@ -65,9 +65,12 @@ public class BlogReview extends BaseTime {
         this.content = target.getContent();
         this.viewDate = target.getViewDate();
         this.time = target.getTime();
-        this.congestion = target.getCongestion();
-        this.revisit = target.getRevisit();
-        this.transportation = target.getTransportation();
+        if(target.getCongestion() != null)
+            this.congestion = target.getCongestion();
+        if(target.getRevisit() != null)
+            this.revisit = target.getRevisit();
+        if(target.getTransportation() != null)
+            this.transportation = target.getTransportation();
     }
 
     public void setImage(BlogImage image){

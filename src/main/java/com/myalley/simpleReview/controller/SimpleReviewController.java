@@ -33,11 +33,11 @@ public class SimpleReviewController {
         return new ResponseEntity<>("한 줄 리뷰가 등록되었습니다",headers,HttpStatus.CREATED);
     }
 
-    @PatchMapping("/api/simple-reviews/{simple-id}")
+    @PutMapping("/api/simple-reviews/{simple-id}")
     public ResponseEntity patchSimpleReview(@PathVariable("simple-id") Long simpleId,
                                             @Valid @RequestBody SimpleRequestDto.PatchSimpleDto simpleDto){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        SimpleReview post = SimpleReviewMapper.INSTANCE.patchSimpleDtoToSimpleReview(simpleDto);
+        SimpleReview post = SimpleReviewMapper.INSTANCE.putSimpleDtoToSimpleReview(simpleDto);
         simpleService.updateSimpleReview(simpleId,post, member);
 
         HttpHeaders headers = new HttpHeaders();
