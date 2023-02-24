@@ -7,6 +7,7 @@ public enum MemberExceptionType implements BaseExceptionType{
     ALREADY_EXIST_NAME(409,"이름 중복"),
     WRONG_ADMINNO(404,"관리자번호 확인 불가"),
     NOT_FOUND_MEMBER(404,"회원 정보 없음"),
+    USING_ADMINNO(404,"관리자번호 사용중"),
     ACESSTOKEN_EXPIRED(403,"ACESS토큰 만료"),
     TOKEN_FORBIDDEN(403,"Forbidden"),
     IMAGE_BAD_REQUEST(400,"올바른 형식의 이미지 파일이 아닙니다.");
