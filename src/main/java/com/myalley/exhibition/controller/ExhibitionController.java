@@ -138,8 +138,8 @@ public class ExhibitionController {
         if (type.isEmpty() || sortCriteria.isEmpty() || status.isEmpty()) {
             throw new CustomException(ExhibitionExceptionType.EXHIBITION_SORT_CRITERIA_ERROR);
         } else if (type.equals("전체 전시")) {
-            pageExhibitions = exhibitionService.readPageAll(status, sortCriteria, page);
-        } else pageExhibitions = exhibitionService.findStatusAndType(status, type, page, sortCriteria);
+            pageExhibitions = exhibitionService.findListsAll(status, sortCriteria, page);
+        } else pageExhibitions = exhibitionService.findSListsByStatusAndType(status, type, page, sortCriteria);
 
             List<ExhibitionBasicResponse> exhibitions = pageExhibitions
                     .stream()
@@ -152,7 +152,7 @@ public class ExhibitionController {
         }
 
 
-    //전시회 관람여부만 조회
+    //전시회 관람여부만 조회 - 수정하면서 사용하지 않게 됨
     @GetMapping("/main/exhibitions")
     public ResponseEntity getExhibitionsAll(
             @Positive @RequestParam int page,
@@ -160,7 +160,7 @@ public class ExhibitionController {
             @RequestParam(value = "sort", required = false) String sortCriteria) {
 
         log.info("전시회 목록조회 상태 필터 검색");
-        Page<Exhibition> pageExhibitions = exhibitionService.readPageAll(status, sortCriteria, page);
+        Page<Exhibition> pageExhibitions = exhibitionService.findListsAll(status, sortCriteria, page);
         List<ExhibitionBasicResponse> exhibitions = pageExhibitions
                 .stream()
                 .map(ExhibitionBasicResponse::of)
