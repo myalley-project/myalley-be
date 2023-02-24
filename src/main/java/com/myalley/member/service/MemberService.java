@@ -1,13 +1,11 @@
 package com.myalley.member.service;
 
 import com.myalley.member.domain.AdminNo;
-import com.myalley.member.dto.MemberInfoDto;
-import com.myalley.member.dto.MemberUpdateDto;
+import com.myalley.member.dto.*;
 import com.myalley.member.options.Authority;
 import com.myalley.member.options.Level;
 import com.myalley.member.options.Status;
 import com.myalley.member.domain.Member;
-import com.myalley.member.dto.MemberRegisterDto;
 import com.myalley.exception.CustomException;
 import com.myalley.exception.MemberExceptionType;
 import com.myalley.member.repository.AdminNoRepository;
@@ -33,7 +31,7 @@ public class MemberService {
     private final AdminNoRepository adminNoRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public ResponseEntity signup(MemberRegisterDto memberRegisterDto) {
+    public ResponseDto signup(MemberRegisterDto memberRegisterDto) {
         if (memberRepository.findByEmail(memberRegisterDto.getEmail()) != null) {
             throw new CustomException(MemberExceptionType.ALREADY_EXIST_USERNAME);
         }else if(memberRepository.findByNickname(memberRegisterDto.getNickname())!=null){
@@ -52,13 +50,11 @@ public class MemberService {
                 .status(Status.활동중)
                 .build());
 
-        HashMap<String,Integer> map=new HashMap<>();
-        map.put("resultCode",200);
-        return new ResponseEntity(map,HttpStatus.OK);
+        return new ResponseDto(200);
     }
 
 
-    public ResponseEntity signupAdmin(MemberRegisterDto memberRegisterDto)
+    public ResponseDto signupAdmin(MemberRegisterDto memberRegisterDto)
     {
         if (memberRepository.findByEmail(memberRegisterDto.getEmail()) != null) {
             throw new CustomException(MemberExceptionType.ALREADY_EXIST_USERNAME);
@@ -83,9 +79,8 @@ public class MemberService {
                 .adminNo(memberRegisterDto.getAdminNo())
                 .build());
 
-        HashMap<String,Integer> map=new HashMap<>();
-        map.put("resultCode",200);
-        return new ResponseEntity(map,HttpStatus.OK);
+
+        return new ResponseDto(200);
     }
 
     public MemberInfoDto memberInfo(String email){
@@ -125,7 +120,7 @@ public class MemberService {
                 .build();
     }
 
-    public ResponseEntity update(MemberUpdateDto memberUpdateDto,String url){
+    public ResponseDto update(MemberUpdateDto memberUpdateDto,String url){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(memberRepository.findByNickname(memberUpdateDto.getNickname())!=null&&!memberUpdateDto.getNickname().equals(member.getNickname())){
@@ -140,9 +135,8 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        HashMap<String,Integer> map=new HashMap<>();
-        map.put("resultCode",200);
-        return new ResponseEntity(map,HttpStatus.OK);
+
+        return new ResponseDto(200);
     }
 
 
@@ -163,5 +157,20 @@ public class MemberService {
         return  memberRepository.findById(memberId).orElseThrow(() ->{
             throw new CustomException(MemberExceptionType.NOT_FOUND_MEMBER);
         });
+    }
+
+    public ResponseDto createAdminNo(AdminNoRegisterDto adminNoRegisterDto) {
+
+        if(adminNoRepository.findByAdminNo(adminNoRegisterDto.getAdminNo())!=null){
+
+        throw new CustomException(MemberExceptionType.USING_ADMINNO);
+        }
+        adminNoRepository.save(AdminNo.builder()
+                .adminNo(adminNoRegisterDto.getAdminNo())
+                .isRegistered(false)
+                .role(adminNoRegisterDto.getRole())
+                .build());
+
+        return new ResponseDto(200);
     }
 }
