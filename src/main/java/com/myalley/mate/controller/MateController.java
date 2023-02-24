@@ -99,7 +99,7 @@ public class MateController {
         } else if (status.equals("모집 중") || status.equals("모집 완료")) {
             mates = mateService.findListsByStatus(status, page);
         } else {
-            throw new CustomException(MateExceptionType.UNAUTHORIZED_MATE_SEARCH_KEYWORD);
+            throw new CustomException(MateExceptionType.MATE_SORT_CRITERIA_ERROR);
         }
 
        List<MateSimpleResponse> response = mates
