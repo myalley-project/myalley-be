@@ -72,6 +72,13 @@ public class BlogReviewController {
         return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
     }
 
+    @GetMapping("/blogs/search")
+    public ResponseEntity getBlogReviewsWithSearch(@RequestParam(value = "title") String title,
+                                         @RequestParam(required = false, value = "page") Integer pageNo){
+        Page<BlogReview> blogReviewPage = blogReviewService.searchBlogReviewList(title,pageNo);
+        return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
+    }
+
     @GetMapping("/api/blogs/me")
     public ResponseEntity getUserBlogReviewList(@RequestParam(value = "page",required = false) Integer pageNo){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
