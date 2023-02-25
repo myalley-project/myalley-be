@@ -69,6 +69,19 @@ public class BlogReviewService {
         return blogReviewList;
     }
 
+    public Page<BlogReview> searchBlogReviewList(String title, Integer pageNo){
+        PageRequest pageRequest;
+        if(title == "")
+            throw new CustomException(BlogReviewExceptionType.BLOG_BAD_REQUEST);
+        if(pageNo == null){
+            pageRequest = PageRequest.of(0, 9, Sort.by("id").descending());
+        } else{
+            pageRequest = PageRequest.of(pageNo-1, 9, Sort.by("id").descending());
+        }
+        Page<BlogReview> blogReviewList = blogReviewRepository.findAllByTitleContaining(title,pageRequest);
+        return blogReviewList;
+    }
+
     public Page<BlogReview> retrieveMyBlogReviewList(Member member, Integer pageNo) {
         PageRequest pageRequest;
         if(pageNo == null)

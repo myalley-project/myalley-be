@@ -14,13 +14,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/likes")
+@RequestMapping("/api/blogs/likes")
 @RequiredArgsConstructor
 public class BlogLikesController {
     private final BlogLikesService blogLikesService;
     private final BlogReviewService blogReviewService;
 
-    @PutMapping("/blogs/{blog-id}")
+    @PutMapping("/{blog-id}")
     public ResponseEntity clickLikes(@PathVariable("blog-id") Long blogId){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview blogReview = blogReviewService.findBlogReview(blogId);
