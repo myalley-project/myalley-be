@@ -36,7 +36,7 @@ public class MateBookmarkController {
     }
 
     //회원 본인의 북마크한 게시글 조회
-    @GetMapping("/api/mate-bookmarks/me")
+    @GetMapping("/api/mates/bookmarks/me")
     public ResponseEntity getMatesAll(@Positive @RequestParam("page") int page) {
 
         log.info("본인의 메이트글 북마크 목록 조회");
