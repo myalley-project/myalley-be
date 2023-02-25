@@ -1,9 +1,7 @@
 package com.myalley.member.controller;
 
 import com.myalley.member.domain.Member;
-import com.myalley.member.dto.MemberInfoDto;
-import com.myalley.member.dto.MemberRegisterDto;
-import com.myalley.member.dto.MemberUpdateDto;
+import com.myalley.member.dto.*;
 import com.myalley.member.jwt.JwtUtils;
 import com.myalley.member.service.MemberService;
 import com.myalley.member.service.ProfileS3Service;
@@ -35,15 +33,16 @@ public class MemberController {
     ) {
         log.info("유저 회원가입");
         if(memberRegisterDto.getAdminNo()!=null)
-             return memberService.signupAdmin(memberRegisterDto);
+             return new ResponseEntity<ResponseDto>(memberService.signupAdmin(memberRegisterDto),HttpStatus.OK);
         else
-            return memberService.signup(memberRegisterDto);
+            return new ResponseEntity<ResponseDto>(memberService.signup(memberRegisterDto),HttpStatus.OK);
 
     }
 
 
+
     @PutMapping("/api/me")
-    public ResponseEntity updateMember(@Valid @RequestPart(value = "data") MemberUpdateDto memberUpdateDto,
+    public ResponseEntity<ResponseDto> updateMember(@Valid @RequestPart(value = "data") MemberUpdateDto memberUpdateDto,
             @RequestPart(value="imageFile",required =false) MultipartFile multipartFile//
             ) throws IOException {//
         Member member = (Member)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -57,7 +56,7 @@ public class MemberController {
 
 
 
-        return memberService.update(memberUpdateDto,url);
+        return new ResponseEntity<ResponseDto>(memberService.update(memberUpdateDto,url),HttpStatus.OK);
     }
 
 
@@ -81,6 +80,11 @@ public class MemberController {
     }
 
 
+    @PostMapping("/admin/create")
+    ResponseEntity<ResponseDto> createAdminNo(@RequestBody AdminNoRegisterDto adminNoRegisterDto){
+
+        return new ResponseEntity<ResponseDto>(memberService.createAdminNo(adminNoRegisterDto),HttpStatus.OK);
+    }
 
     @GetMapping("/exhibitions/good")
     ResponseEntity good(HttpServletRequest request, HttpServletResponse response) {
@@ -89,6 +93,8 @@ public class MemberController {
         map.put("msg","배포 정상적으로 작동");
         return new ResponseEntity(map,HttpStatus.OK);
     }
+
+
 
 
 }
