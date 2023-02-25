@@ -17,8 +17,8 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "mate")
-@SQLDelete(sql = "UPDATE mate SET deleted = true WHERE mate_id = ?")
-@Where(clause = "deleted = false")
+@SQLDelete(sql = "UPDATE mate SET is_deleted = true WHERE mate_id = ?")
+@Where(clause = "is_deleted = false")
 @Entity
 public class Mate extends BaseTime {
     @Id
@@ -49,7 +49,9 @@ public class Mate extends BaseTime {
     private Integer viewCount;
 
     private Integer bookmarkCount;
-    private boolean deleted = Boolean.FALSE;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted = Boolean.FALSE;
 
 
     @ManyToOne(fetch = FetchType.LAZY)

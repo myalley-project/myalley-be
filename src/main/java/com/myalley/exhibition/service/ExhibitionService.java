@@ -114,15 +114,8 @@ public class ExhibitionService {
         exhibitionRepository.updateViewCount(id);
     }
 
-//    //전시회 상태와 유형 같이 검색
-//    public Page<Exhibition> readPageAllSearch(String status, String type, int page, int size) {
-//        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("createdAt").descending());
-//        return exhibitionRepository.findByTypeOrStatus(type, status, pageRequest);
-//
-//    }
-
     //전시회 상태와 유형 같이 검색
-    public Page<Exhibition> findStatusAndType(String status, String type, int page, String sortCriteria) {
+    public Page<Exhibition> findSListsByStatusAndType(String status, String type, int page, String sortCriteria) {
 
         Page<Exhibition> exhibitionPages;
         PageRequest pageRequest;
@@ -142,12 +135,12 @@ public class ExhibitionService {
     }
 
     //전시회 관람여부만으로 목록 조회
-    public Page<Exhibition> readPageAll(String status, String sortCriteria, int page) {
+    public Page<Exhibition> findListsAll(String status, String sortCriteria, int page) {
         Page<Exhibition> exhibitionPages;
         PageRequest pageRequest;
 
         if (sortCriteria.equals("조회수순")) {
-            pageRequest = PageRequest.of(page - 1, 8, Sort.by("viewCount").descending()
+            pageRequest = PageRequest.of(page -1, 8, Sort.by("viewCount").descending()
                     .and(Sort.by("id").descending()));
         } else if (sortCriteria.equals("최신순")) {
             pageRequest = PageRequest.of(page - 1, 8, Sort.by("id").descending());
