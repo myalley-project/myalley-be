@@ -8,7 +8,6 @@ import com.myalley.exhibition.dto.request.ExhibitionRequest;
 import com.myalley.exhibition.dto.request.ExhibitionUpdateRequest;
 import com.myalley.exhibition.dto.response.ExhibitionBasicResponse;
 import com.myalley.exhibition.dto.response.ExhibitionDetailResponse;
-import com.myalley.exhibition.exhibitionImage.service.ImageService;
 import com.myalley.exhibition.repository.ExhibitionBookmarkRepository;
 import com.myalley.exhibition.repository.ExhibitionRepository;
 import com.myalley.member.domain.Member;
@@ -27,7 +26,7 @@ import java.util.Optional;
 public class ExhibitionService {
 
     private final ExhibitionRepository exhibitionRepository;
-    private final ImageService imageService;
+    private final ExhibitionImageService exhibitionImageService;
     private final MemberRepository memberRepository;
     private final ExhibitionBookmarkRepository bookmarkRepository;
 
@@ -71,7 +70,7 @@ public class ExhibitionService {
         Exhibition exhibition = exhibitionRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
         String target = exhibition.getFileName();
-        imageService.removeFile(target);
+        exhibitionImageService.removeFile(target);
     }
 
     //전시글 삭제 - 삭제 테이블로 이동시키고 기존 테이블에서 삭제
