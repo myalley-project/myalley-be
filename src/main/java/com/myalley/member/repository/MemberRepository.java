@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface MemberRepository extends JpaRepository<Member,Long> {
     Member findByEmail(String email);
 
-    Member findByAdminNo(Long adminNo);
 
     Member findByNickname(String nickname);
 }
