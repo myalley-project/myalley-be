@@ -6,12 +6,10 @@ import com.myalley.member.domain.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 public interface BlogReviewRepository extends JpaRepository<BlogReview, Long> {
     Page<BlogReview> findAll(Pageable pageable); //최신순, 조회수 순
-    Page<BlogReview> findAllByTitleContaining(@Param("word")String word, @Param("page")Pageable pageable);
+    Page<BlogReview> findAllByTitleContaining(String word, Pageable pageable);
     Page<BlogReview> findAllByMember(Member member, Pageable pageable); //내 글 조회
     Page<BlogReview> findAllByExhibition(Exhibition exhibition, Pageable pageable); //전시에 맞는 글 조회
 }
