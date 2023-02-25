@@ -140,7 +140,7 @@ public class ExhibitionService {
         PageRequest pageRequest;
 
         if (sortCriteria.equals("조회수순")) {
-            pageRequest = PageRequest.of(page - 1, 8, Sort.by("viewCount").descending()
+            pageRequest = PageRequest.of(page -1, 8, Sort.by("viewCount").descending()
                     .and(Sort.by("id").descending()));
         } else if (sortCriteria.equals("최신순")) {
             pageRequest = PageRequest.of(page - 1, 8, Sort.by("id").descending());
