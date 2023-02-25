@@ -1,10 +1,10 @@
-package com.myalley.exhibition.exhibitionImage.service;
+package com.myalley.exhibition.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.myalley.exception.CustomException;
 import com.myalley.exception.ExhibitionExceptionType;
-import com.myalley.exhibition.exhibitionImage.dto.FileResponseDto;
+import com.myalley.exhibition.dto.response.FileResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ImageService {
+public class ExhibitionImageService {
 
     private final AmazonS3Client amazonS3Client;
     private static final Tika tika = new Tika();
