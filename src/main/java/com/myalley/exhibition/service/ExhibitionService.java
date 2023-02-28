@@ -8,11 +8,8 @@ import com.myalley.exhibition.dto.request.ExhibitionRequest;
 import com.myalley.exhibition.dto.request.ExhibitionUpdateRequest;
 import com.myalley.exhibition.dto.response.ExhibitionBasicResponse;
 import com.myalley.exhibition.dto.response.ExhibitionDetailResponse;
-import com.myalley.exhibition.exhibitionImage.service.ImageService;
 import com.myalley.exhibition.repository.ExhibitionBookmarkRepository;
 import com.myalley.exhibition.repository.ExhibitionRepository;
-import com.myalley.exhibition_deleted.domain.ExhibitionDeleted;
-import com.myalley.exhibition_deleted.repository.ExhibitionDeletedRepository;
 import com.myalley.member.domain.Member;
 import com.myalley.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +26,7 @@ import java.util.Optional;
 public class ExhibitionService {
 
     private final ExhibitionRepository exhibitionRepository;
-    private final ImageService imageService;
-    private final ExhibitionDeletedRepository deletedRepository;
+    private final ExhibitionImageService exhibitionImageService;
     private final MemberRepository memberRepository;
     private final ExhibitionBookmarkRepository bookmarkRepository;
 
@@ -74,7 +70,7 @@ public class ExhibitionService {
         Exhibition exhibition = exhibitionRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
         String target = exhibition.getFileName();
-        imageService.removeFile(target);
+        exhibitionImageService.removeFile(target);
     }
 
     //전시글 삭제 - 삭제 테이블로 이동시키고 기존 테이블에서 삭제
@@ -83,27 +79,9 @@ public class ExhibitionService {
        Exhibition exhibition = exhibitionRepository.findById(id)
                .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
 
-        String target = exhibition.getFileName();
-        imageService.removeFile(target);
+//        String target = exhibition.getFileName();
+//        imageService.removeFile(target);
 
-        ExhibitionDeleted deleted = ExhibitionDeleted.builder()
-                .title(exhibition.getTitle())
-                .status(exhibition.getStatus())
-                .type(exhibition.getType())
-                .space(exhibition.getSpace())
-                .adultPrice(exhibition.getAdultPrice())
-                .fileName("")
-                .posterUrl("")
-                .duration(exhibition.getDuration())
-                .webLink(exhibition.getWebLink())
-                .content(exhibition.getContent())
-                .author(exhibition.getAuthor())
-                .viewCount(exhibition.getViewCount())
-                .bookmarkCount(0)
-                .createdAt(exhibition.getCreatedAt())
-                .deletedAt(exhibition.getModifiedAt())
-                .build();
-        deletedRepository.save(deleted);
         bookmarkRepository.deleteByExhibition(exhibition); //북마크 쪽에서 먼저 북마크 삭제해줌
         exhibitionRepository.deleteById(id);
     }
@@ -135,24 +113,41 @@ public class ExhibitionService {
         exhibitionRepository.updateViewCount(id);
     }
 
-//    //전시회 상태와 유형 같이 검색
-//    public Page<Exhibition> readPageAllSearch(String status, String type, int page, int size) {
-//        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("createdAt").descending());
-//        return exhibitionRepository.findByTypeOrStatus(type, status, pageRequest);
-//
-//    }
-
     //전시회 상태와 유형 같이 검색
-    public Page<Exhibition> findStatusAndType(String status, String type, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("createdAt").descending());
-        return exhibitionRepository.findByTypeContainingAndStatusContaining(type, status, pageRequest);
+    public Page<Exhibition> findSListsByStatusAndType(String status, String type, int page, String sortCriteria) {
+
+        Page<Exhibition> exhibitionPages;
+        PageRequest pageRequest;
+
+        if (sortCriteria.equals("조회수순")) {
+           pageRequest = PageRequest.of(page -1, 8, Sort.by("viewCount").descending()
+                    .and(Sort.by("id").descending()));
+        } else if (sortCriteria.equals("최신순")) {
+            pageRequest = PageRequest.of(page -1, 8, Sort.by("id").descending());
+        } else {
+            throw new CustomException(ExhibitionExceptionType.EXHIBITION_SORT_CRITERIA_ERROR);
+        }
+
+        exhibitionPages = exhibitionRepository.findByTypeContainingAndStatusContaining(type, status, pageRequest);
+        return exhibitionPages;
 
     }
 
     //전시회 관람여부만으로 목록 조회
-    public Page<Exhibition> readPageAll(String status, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("id").descending());
-        return exhibitionRepository.findByStatusContaining(status, pageRequest);
+    public Page<Exhibition> findListsAll(String status, String sortCriteria, int page) {
+        Page<Exhibition> exhibitionPages;
+        PageRequest pageRequest;
+
+        if (sortCriteria.equals("조회수순")) {
+            pageRequest = PageRequest.of(page -1, 8, Sort.by("viewCount").descending()
+                    .and(Sort.by("id").descending()));
+        } else if (sortCriteria.equals("최신순")) {
+            pageRequest = PageRequest.of(page - 1, 8, Sort.by("id").descending());
+        } else {
+            throw new CustomException(ExhibitionExceptionType.EXHIBITION_SORT_CRITERIA_ERROR);
+        }
+        exhibitionPages = exhibitionRepository.findByStatusContaining(status, pageRequest);
+        return exhibitionPages;
 
     }
 

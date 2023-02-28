@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BlogReviewRepository extends JpaRepository<BlogReview, Long> {
     Page<BlogReview> findAll(Pageable pageable); //최신순, 조회수 순
+    Page<BlogReview> findAllByTitleContaining(String word, Pageable pageable);
     Page<BlogReview> findAllByMember(Member member, Pageable pageable); //내 글 조회
     Page<BlogReview> findAllByExhibition(Exhibition exhibition, Pageable pageable); //전시에 맞는 글 조회
 }

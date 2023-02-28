@@ -29,22 +29,22 @@ import java.time.LocalDate;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-//@AutoConfigureMockMvc
-//@SpringBootTest
-//@ActiveProfiles(profiles="test")
-//@WebAppConfiguration
-//@ExtendWith(SpringExtension.class)
-//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//public class SignUpTest {
-//    @Autowired
-//    private MemberService memberService;
-//
-//    @Autowired
-//    private MockMvc mockMvc;
-//
-//    @Test
-//    void signup() throws Exception {
-//
+@AutoConfigureMockMvc
+@SpringBootTest
+@ActiveProfiles(profiles="test")
+@WebAppConfiguration
+@ExtendWith(SpringExtension.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class SignUpTest {
+    @Autowired
+    private MemberService memberService;
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Test
+    void signup() throws Exception {
+
 //        MemberRegisterDto member1=MemberRegisterDto.builder()
 //                .email("test@naver.com")
 //                .password("Test1234!")
@@ -83,12 +83,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //
 //        content=result.getResponse().getContentAsString();
 //        Token token=mapper.readValue(content, Token.class);
-//
-//
-//
-//        //memberService.signup(member2);
-//
-//
-//    }
-//
-//}
+
+
+
+        //memberService.signup(member2);
+
+
+    }
+
+}

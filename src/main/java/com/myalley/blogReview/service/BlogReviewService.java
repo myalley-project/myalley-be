@@ -2,7 +2,6 @@ package com.myalley.blogReview.service;
 
 import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview.domain.DetailBlogReview;
-import com.myalley.blogReview_deleted.service.BlogReviewDeletedService;
 import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.exhibition.service.ExhibitionService;
 import com.myalley.member.domain.Member;
@@ -25,7 +24,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BlogReviewService {
     private final BlogReviewRepository blogReviewRepository;
-    private final BlogReviewDeletedService blogReviewDeletedService;
     private final ExhibitionService exhibitionService;
     private final BlogImageService blogImageService;
     private final BlogBookmarkService bookmarkService;
@@ -46,8 +44,8 @@ public class BlogReviewService {
         DetailBlogReview detail = new DetailBlogReview();
         BlogReview blog = findBlogReview(blogId);
         blog.updateViewCount();
-        detail.setLikesStatus(likesService.retrieveBlogLikes(blog,memberId));
-        detail.setBookmarkStatus(bookmarkService.retrieveBlogBookmark(blog,memberId));
+        detail.setLikesStatus(likesService.retrieveBlogLikes(blogId,memberId));
+        detail.setBookmarkStatus(bookmarkService.retrieveBlogBookmark(blogId,memberId));
         detail.setBlogReview(blogReviewRepository.save(blog));
         return detail;
     }
@@ -68,6 +66,19 @@ public class BlogReviewService {
         } else{
             throw new CustomException(BlogReviewExceptionType.BLOG_BAD_REQUEST);
         }
+        return blogReviewList;
+    }
+
+    public Page<BlogReview> searchBlogReviewList(String title, Integer pageNo){
+        PageRequest pageRequest;
+        if(title == "")
+            throw new CustomException(BlogReviewExceptionType.BLOG_BAD_REQUEST);
+        if(pageNo == null){
+            pageRequest = PageRequest.of(0, 9, Sort.by("id").descending());
+        } else{
+            pageRequest = PageRequest.of(pageNo-1, 9, Sort.by("id").descending());
+        }
+        Page<BlogReview> blogReviewList = blogReviewRepository.findAllByTitleContaining(title,pageRequest);
         return blogReviewList;
     }
 
@@ -112,8 +123,7 @@ public class BlogReviewService {
         blogImageService.removeBlogAllImages(pre);
         bookmarkService.removeBlogAllBookmark(pre);
         likesService.removeBlogAllLikes(pre);
-        blogReviewDeletedService.addDeletedBlogReview(pre);
-        blogReviewRepository.delete(pre);
+        blogReviewRepository.deleteById(pre.getId());
     }
 
 

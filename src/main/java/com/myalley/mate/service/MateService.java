@@ -12,8 +12,6 @@ import com.myalley.mate.dto.MateDetailResponse;
 import com.myalley.mate.dto.MateRequest;
 import com.myalley.mate.dto.MateSimpleResponse;
 import com.myalley.mate.dto.MateUpdateRequest;
-import com.myalley.mate.mate_deleted.MateDeleted;
-import com.myalley.mate.mate_deleted.MateDeletedRepository;
 import com.myalley.mate.repository.MateBookmarkRepository;
 import com.myalley.mate.repository.MateRepository;
 import com.myalley.member.domain.Member;
@@ -34,7 +32,6 @@ public class MateService {
 
     private final MateRepository mateRepository;
     private final ExhibitionService exhibitionService;
-    private final MateDeletedRepository deletedRepository;
     private final MemberService memberService;
     private final MateBookmarkRepository bookmarkRepository;
     private final MemberRepository memberRepository;
@@ -110,33 +107,25 @@ public class MateService {
             throw new CustomException(MateExceptionType.UNAUTHORIZED_ACCESS);
         }
 
-        MateDeleted deleted = MateDeleted.builder()
-                .title(mate.getTitle())
-                .status(mate.getStatus())
-                .mateGender(mate.getMateGender())
-                .mateAge(mate.getMateAge())
-                .availableDate(mate.getAvailableDate())
-                .content(mate.getContent())
-                .contact(mate.getContact())
-                .viewCount(mate.getViewCount())
-                .bookmarkCount(0)
-                .exhibition(exhibitionService.verifyExhibition(mate.getExhibition().getId()))
-                .member(memberService.verifyMember(mate.getMember().getMemberId()))
-                .build();
-        deletedRepository.save(deleted);
         bookmarkRepository.deleteByMate(mate); //북마크 쪽에서 먼저 북마크 삭제해줌
         mateRepository.deleteById(id);
     }
 
+    //메이트글 목록 전체 조회
+    public Page<Mate> findListsAll(int page) {
+        PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("id").descending());
+        return mateRepository.findAll(pageRequest);
+    }
+
     //메이트글 목록조회 (모집여부로 판단)
-     public Page<Mate> readPageAll(String status, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("id").descending());
+     public Page<Mate> findListsByStatus(String status, int page) {
+        PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("id").descending());
         return mateRepository.findAllByStatus(status, pageRequest);
     }
 
     //본인이 작성한 메이트글 조회
-    public Page<Mate> findMyMates(Long memberId, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("createdAt").descending());
+    public Page<Mate> findMyMates(Long memberId, int page) {
+        PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("createdAt").descending());
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(MemberExceptionType.NOT_FOUND_MEMBER));
         return mateRepository.findByMember(member, pageRequest);
@@ -144,8 +133,8 @@ public class MateService {
 
 
     //전시글 상세페이지에서 해당 전시회 id에 해당하는 메이트글 목록조회
-    public Page<Mate> findExhibitionMates(Long exhibitionId, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("createdAt").descending());
+    public Page<Mate> findExhibitionMates(Long exhibitionId, int page) {
+        PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("createdAt").descending());
         Exhibition exhibition = exhibitionRepository.findById(exhibitionId)
                 .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
 
@@ -153,8 +142,8 @@ public class MateService {
     }
 
     //메이트 목록 조회 검색바 (title)
-    public Page<Mate> findTitle(String keyword, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("id").descending());
+    public Page<Mate> findTitle(String keyword, int page) {
+        PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("id").descending());
         return mateRepository.findByTitleContaining(keyword, pageRequest);
     }
 

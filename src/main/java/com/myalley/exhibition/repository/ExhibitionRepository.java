@@ -16,7 +16,7 @@ public interface ExhibitionRepository extends JpaRepository<Exhibition,Long> {
 
     Page<Exhibition> findByTypeOrStatus(@Param("type") String type, @Param("status") String status, Pageable pageable);
 
-    @Query("select e from Exhibition e where e.status like %:status% order by e.id desc")
+//    @Query("select e from Exhibition e where e.status like %:status% order by e.id desc")
     Page<Exhibition> findByStatusContaining(@Param("status") String status, Pageable pageable);
 
     Page<Exhibition> findByStatusContainingAndTitleContaining(String status, String keyword, Pageable pageable);

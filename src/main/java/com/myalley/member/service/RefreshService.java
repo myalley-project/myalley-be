@@ -4,29 +4,22 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.myalley.exception.CustomException;
 import com.myalley.exception.MemberExceptionType;
 import com.myalley.member.domain.Member;
 import com.myalley.member.domain.RefreshToken;
-import com.myalley.member.jwt.JwtSecret;
 import com.myalley.member.jwt.JwtUtils;
 import com.myalley.member.repository.MemberRepository;
 import com.myalley.member.repository.TokenRedisRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +35,7 @@ public class RefreshService {
 
         // === Refresh Token 유효성 검사 === //
         try {
-            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JwtSecret.JWT_SECRET_KEY)).build();
+            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JwtUtils.SECRET_KEY)).build();
             DecodedJWT decodedJWT = verifier.verify(refreshToken);
 
             // === Access Token 재발급 === //

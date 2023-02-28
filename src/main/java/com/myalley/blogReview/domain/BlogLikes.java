@@ -1,11 +1,11 @@
 package com.myalley.blogReview.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.myalley.common.domain.BaseTime;
 import com.myalley.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 @Entity(name="blog_likes")
 @Getter
 @NoArgsConstructor
-public class BlogLikes extends BaseTime {
+@Where(clause="is_deleted = 0")
+public class BlogLikes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "like_id")
@@ -27,13 +28,24 @@ public class BlogLikes extends BaseTime {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name="blog_id")
     private BlogReview blog;
-    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private Boolean isDeleted;
 
     @Builder
-    public BlogLikes(Member member, BlogReview blog, LocalDateTime createdAt){
+    public BlogLikes(Member member, BlogReview blog){
         this.member = member;
         this.blog = blog;
-        this.createdAt = createdAt;
     }
 
+    public void changeLikesStatus() {
+        if(isDeleted == null || isDeleted.equals(Boolean.TRUE)) {
+            this.isDeleted=Boolean.FALSE;
+            this.blog.increaseLikesCount();
+        }
+        else {
+            this.isDeleted = Boolean.TRUE;
+            this.blog.decreaseLikesCount();
+        }
+        this.updatedAt=LocalDateTime.now();
+    }
 }

@@ -64,14 +64,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         // authorization경로별 설정
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers( "/home","/", "/signup","/refresh","/simple-reviews/**","/blogs/**","/exhibitions/**","/mates/**","/logout","/main/**","/api/ping").permitAll()//"/login"
-                //0207 69번째줄 권한이 USER로 되어있어서 ADMIN으로 수정했습니다! - 화담
+                .antMatchers( "/home","/", "/signup","/refresh","/simple-reviews/**","/blogs/**","/exhibitions/**","/mates/**","/logout","/main/**","/api/ping","/admin/create").permitAll()//"/login"
+                .antMatchers("/api/bookmarks/exhibitions/**","/api/exhibitions/bookmarks/**","/api/blogs/bookmarks/**"," /api/mates/bookmarks/**").hasRole("USER")
                 .antMatchers("/api/admin/**","/api/exhibitions/**").hasRole("ADMIN")
-                //아래 코드는 전시글 북마크 주소도 관리자 권한 주소로 막혀서 새로 변경한 api 설정입니다 - 화담
-                .antMatchers("api/bookmarks/exhibitions/**").hasRole("USER")
                 .antMatchers("/api/**").hasAnyRole("USER","ADMIN")
-//                .antMatchers(HttpMethod.POST, "/notice").hasRole("ADMIN")
-//                .antMatchers(HttpMethod.DELETE, "/notice").hasRole("ADMIN")
                 .anyRequest().authenticated();
 
     }
@@ -80,7 +76,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
 
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-        web.ignoring().antMatchers(  "/home","/","/signup","/refresh","/simple-reviews/**","/blogs/**","/mates/**","/main/**","/exhibitions/**","/api/ping");
+
+        //web.ignoring().antMatchers(  "/home","/","/signup","/refresh","/blogs/**","/mates/**","/main/**","/exhibitions/**","/api/ping");
+
     }
 
     /**

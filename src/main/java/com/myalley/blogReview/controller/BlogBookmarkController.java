@@ -14,26 +14,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/blog-bookmarks")
+@RequestMapping("/api/blogs/bookmarks")
 @RequiredArgsConstructor
 public class BlogBookmarkController {
     private final BlogBookmarkService blogBookmarkService;
     private final BlogReviewService blogReviewService;
 
-    @PostMapping("/blogs/{blog-id}")
-    public ResponseEntity postBlogBookmark(@PathVariable("blog-id") Long blogId){
+    @PutMapping("/{blog-id}")
+    public ResponseEntity clickBlogBookmark(@PathVariable("blog-id") Long blogId){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview blogReview = blogReviewService.findBlogReview(blogId);
-        blogBookmarkService.createBookmark(blogReview, member);
-        return new ResponseEntity<>("on", HttpStatus.CREATED);
-    }
-
-    @DeleteMapping("/blogs/{blog-id}")
-    public ResponseEntity deleteBlogBookmark(@PathVariable("blog-id") Long blogId){
-        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        BlogReview blogReview = blogReviewService.findBlogReview(blogId);
-        blogBookmarkService.removeBookmark(blogReview, member);
-        return new ResponseEntity<>("off", HttpStatus.OK);
+        if(blogBookmarkService.findBookmark(blogReview, member))
+            return new ResponseEntity<>("on", HttpStatus.OK);
+        else return new ResponseEntity<>("off", HttpStatus.OK);
     }
 
     @GetMapping("/me")

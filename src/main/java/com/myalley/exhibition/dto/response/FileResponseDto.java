@@ -1,4 +1,4 @@
-package com.myalley.exhibition.exhibitionImage.dto;
+package com.myalley.exhibition.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;

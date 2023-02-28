@@ -22,14 +22,14 @@ import java.util.Optional;
 @Transactional
 @Service
 @RequiredArgsConstructor
-public class BookmarkService {
+public class ExhibitionBookmarkService {
 
     private final ExhibitionService exhibitionService;
     private final ExhibitionBookmarkRepository bookmarkRepository;
     private final ExhibitionRepository exhibitionRepository;
     private final MemberRepository memberRepository;
 
-    public BookmarkResponseDto addNewBookmark(Long memberId, Long exhibitionId) {
+    public BookmarkResponseDto addBookmark(Long memberId, Long exhibitionId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(MemberExceptionType.NOT_FOUND_MEMBER));
 
@@ -50,7 +50,6 @@ public class BookmarkService {
                 .exhibition(exhibition)
                 .build();
 
-        exBookmark.addBookmark();
         bookmarkRepository.save(exBookmark);
         exhibitionService.bookmarkCountUp(exhibitionId);
 
@@ -64,8 +63,8 @@ public class BookmarkService {
     }
 
     //북마크 추가한 전시글 목록 페이징 조회하기
-    public Page<ExhibitionBookmark> findBookmarkedExhibitions(Long memberId, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page -1, size, Sort.by("id").descending());
+    public Page<ExhibitionBookmark> findBookmarks(Long memberId, int page) {
+        PageRequest pageRequest = PageRequest.of(page -1, 8, Sort.by("id").descending());
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(MemberExceptionType.NOT_FOUND_MEMBER));
         return bookmarkRepository.findAllByMember(member, pageRequest);

@@ -88,15 +88,24 @@ public class MateController {
     @GetMapping("/mates")
     public ResponseEntity findMateAll(
             @Positive @RequestParam int page,
-            @RequestParam(value = "status", required = false) String status) {
-        int size = 4;
+            @RequestParam(value = "status", required = true) String status) {
+
         log.info("메이트 모집글 상태 필터 목록 조회 ");
-        Page<Mate> mates = mateService.readPageAll(status, page, size);
+
+        Page<Mate> mates;
+
+        if (status.equals("전체")) {
+            mates = mateService.findListsAll(page);
+        } else if (status.equals("모집 중") || status.equals("모집 완료")) {
+            mates = mateService.findListsByStatus(status, page);
+        } else {
+            throw new CustomException(MateExceptionType.MATE_SORT_CRITERIA_ERROR);
+        }
+
        List<MateSimpleResponse> response = mates
                .stream()
                .map(MateSimpleResponse::of)
                .collect(Collectors.toList());
-//        List<MateSimpleResponse> mateList = responsePage.getContent();
 
         return new ResponseEntity<>(
                 new MatePageResponse<>(response, mates),
@@ -109,9 +118,8 @@ public class MateController {
         log.info("본인이 작성한 메이트 모집글 목록 조회");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
-        int size = 8;
 
-        Page<Mate> mate = mateService.findMyMates(memberId, page, size);
+        Page<Mate> mate = mateService.findMyMates(memberId, page);
         List<MateMyResponse> responses = mate
                 .stream()
                 .map(MateMyResponse::of)
@@ -125,10 +133,9 @@ public class MateController {
     @GetMapping("/exhibitions/mates/{id}")
     public ResponseEntity getMatesByExhibition(@Positive @RequestParam("page") int page,
                                                @PathVariable Long id) {
-        int size = 4;
         log.info("상세페이지 메이트 모집글 목록 조회");
 
-        Page<Mate> mates = mateService.findExhibitionMates(id, page, size);
+        Page<Mate> mates = mateService.findExhibitionMates(id, page);
         List<MateExhibitionResponse> response = mates
                 .stream()
                 .map(MateExhibitionResponse::of)
@@ -143,10 +150,9 @@ public class MateController {
     @GetMapping("/mates/search")
     public ResponseEntity findInfoByTitle( @Positive @RequestParam int page,
                                            @RequestParam(value = "keyword", required = false) String keyword) {
-        int size = 8;
 
         log.info("메이트 모집글 서치바 제목 검색");
-        Page<Mate> pageMate = mateService.findTitle(keyword, page, size);
+        Page<Mate> pageMate = mateService.findTitle(keyword, page);
         List<MateSimpleResponse> mates = pageMate
                 .stream()
                 .map(MateSimpleResponse::of)
