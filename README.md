@@ -1,16 +1,17 @@
+<br></br>
 <p align="middle" >
-  <img src="https://user-images.githubusercontent.com/61264510/218919921-ccae06ab-8407-4e9d-815c-981bb1dd3215.png?raw=true" width="600px;" height="100px;"/>
+  <img src="https://user-images.githubusercontent.com/61264510/218919921-ccae06ab-8407-4e9d-815c-981bb1dd3215.png?raw=true" width="400px;" height="100px;"/>
 </p>
-
+<br></br>
 
 <p align="middle"> My Alley 는 전시회에 관심이 있고 전시회를 즐기는 모든 분들을 위한 웹 사이트입니다 :)  </p>
-<p align="middle"> 지금 관람 가능한 전시회는 뭐가 있지? 일일이 미술관 웹사이트에 방문해서 확인해야하다니 너무 불편한걸 🤔
+<p align="middle"> 지금 진행 중인 전시회는 뭐가 있지? 미술관 웹사이트마다 확인해야하다니 너무 불편한걸 🤔
 
-<p align="middle">전시회 후기를 검색했는데 왜 불필요한 그 사람의 하루 일과 정보까지 다 봐야하는거지? 전시회 별로 후기만 모아서 보여주면 좋을텐데 🤔 
+<p align="middle">전시회 후기를 검색했는데 불필요한 내용이 많네? 전시회 별로 후기만 모아서 보여주면 좋을텐데 🤔 
 
-<p align="middle">전시회 보러 가고 싶은데 혼자 말고 나와 비슷한 취향을 가진 사람과 함께 관람하면서 미술 이야기 나누고 싶은데 그런 사람을 어디서 찾지? 🤔 
+<p align="middle">전시회 보러 가고 싶은데 혼자 말고 같이 관람하면서 미술 이야기 나눌 사람을 어디서 찾지? 🤔
 
-<p align="middle">이런 불편함, 고민을 하셨던 분들은 저희 My Alley에 방문해서 원하는 전시회 정보와 리뷰, 나와 맞는 메이트까지 손쉽게 찾아보세요! </p>
+<p align="middle"> 이제 저희 My Alley에서 원하는 전시회 정보와 리뷰, 나와 맞는 메이트까지 손쉽게 찾아보세요! </p>
 
 <br></br>
 
