@@ -59,7 +59,7 @@
 
 ### [API 문서](https://www.notion.so/API-77fb0b5a78d64873a8feece00fbe0d70?pvs=4)
 
-### CI/CD
+## CI/CD
 ![ci_cd](https://user-images.githubusercontent.com/61264510/218928419-be640812-91b5-4600-9aba-0370868ec083.png)
 
 ## 팀 문화 🏠
