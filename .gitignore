@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+.env*
+*.pem
+
+.DS_Store
