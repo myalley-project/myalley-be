@@ -8,7 +8,6 @@ import com.myalley.blogReview.service.BlogReviewService;
 import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +17,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping
+@RequestMapping(produces = "application/json; charset=utf8")
 @RequiredArgsConstructor
 public class BlogReviewController {
     private final BlogReviewService blogReviewService;
@@ -30,10 +29,7 @@ public class BlogReviewController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview target = BlogReviewMapper.INSTANCE.postBlogDtoToBlogReview(blogRequestDto);
         blogReviewService.createBlog(target, member,exhibitionId,images);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-        return new ResponseEntity<>("블로그 글이 등록되었습니다",headers,HttpStatus.CREATED);
+        return new ResponseEntity<>("블로그 글이 등록되었습니다",HttpStatus.CREATED);
     }
 
     @PutMapping("/api/blogs/{blog-id}")
@@ -42,20 +38,14 @@ public class BlogReviewController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview target = BlogReviewMapper.INSTANCE.putBlogDtoToBlogReview(blogRequestDto);
         blogReviewService.updateBlogReview(target,blogId,member);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-        return new ResponseEntity("블로그 글이 수정되었습니다.",headers,HttpStatus.OK);
+        return new ResponseEntity("블로그 글이 수정되었습니다.",HttpStatus.OK);
     }
 
     @DeleteMapping("/api/blogs/{blog-id}")
     public ResponseEntity deleteBlogReview(@PathVariable("blog-id") Long blogId){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         blogReviewService.removeBlogReview(blogId,member);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-        return new ResponseEntity<>("블로그 글이 삭제되었습니다.",headers,HttpStatus.OK);
+        return new ResponseEntity<>("블로그 글이 삭제되었습니다.",HttpStatus.OK);
     }
 
     @GetMapping("/blogs/{blog-id}")
