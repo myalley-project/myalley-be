@@ -22,73 +22,34 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping
+@RequestMapping(produces = "application/json; charset=utf8")
 @RequiredArgsConstructor
 @Log
 public class ExhibitionController {
 
     private final ExhibitionService exhibitionService;
-    /**
-     * 전시글 등록 요청
-     * @param request 전시회 정보를 담은 request json body
-     * @return "전시회 게시글 등록이 완료되었습니다." 메시지를 전달한다.
-     * @author Hwadam
-     * */
-    @PostMapping("/api/exhibitions")
+
+    @PostMapping(value = "/api/exhibitions")
     public ResponseEntity save(@Valid @RequestBody ExhibitionRequest request) {
         log.info("전시회 정보 등록");
-        exhibitionService.save(request);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-
-        return new ResponseEntity<>("전시글 등록이 완료되었습니다.", headers, HttpStatus.OK);
+        return ResponseEntity.ok(exhibitionService.save(request));
     }
 
-    /**
-     * 전시글 수정 요청
-     * @param updateRequest 전시회 정보 수정을 위한 정보를 담은 request body
-     * @param id 수정하려는 전시글 정보에 해당하는 id를 파라미터로 보낸다.
-     * @return 파라미터로 보낸 id에 해당하는 게시글이 존재하면 수정 요청 성공 시 수정 완료 문자열 메시지가 리턴된다.
-     *         만약 파라미터로 보낸 id에 해당하는 게시글이 존재하지 않는다면 게시글이 존재하지 않는다는 Exception 메시지와 코드를 리턴한다.
-     * @author Hwadam
-     * */
     @PutMapping("/api/exhibitions/{id}")
     public ResponseEntity update(@PathVariable Long id,
                                  @Valid @RequestBody ExhibitionUpdateRequest updateRequest) {
         log.info("전시회 정보 수정");
-        exhibitionService.update(updateRequest, id);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-
-        return new ResponseEntity<>("전시글 정보 수정이 완료되었습니다.", headers, HttpStatus.OK);
+        return ResponseEntity.ok(exhibitionService.update(updateRequest, id));
     }
 
-    /**
-     * 전시글 삭제 요청
-     * @param id 삭제하려는 전시글 정보에 해당하는 id를 파라미터로 보낸다.
-     * @return 파라미터로 보낸 id에 해당하는 게시글이 존재하면 수정 요청 성공 시 수정 완료 문자열 메시지가 리턴된다.
-     *         만약 파라미터로 보낸 id에 해당하는 게시글이 존재하지 않는다면 게시글이 존재하지 않는다는 Exception 메시지와 코드를 리턴한다.
-     * @author Hwadam
-     * */
     @DeleteMapping("/api/exhibitions/{id}")
     public ResponseEntity delete(@PathVariable Long id) {
         log.info("전시회 정보 삭제");
         exhibitionService.delete(id);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-
-        return new ResponseEntity<>("해당 전시회 게시글이 삭제되었습니다.", headers, HttpStatus.OK);
+        return new ResponseEntity<>("해당 전시회 게시글이 삭제되었습니다.", HttpStatus.OK);
     }
 
-    /**
-     * 전시글 상세페이지 조회 요청
-     * @param id 조회하려는 전시글 정보에 해당하는 id를 파라미터로 보낸다.
-     * @return 파라미터로 보낸 id에 해당하는 게시글이 존재하면 전시글 정보를 담은 ExhibitionResponse 를 리턴하고 조회수 카운트를 증가시킨다.
-     *         만약 파라미터로 보낸 id에 해당하는 게시글이 존재하지 않는다면 게시글이 존재하지 않는다는 Exception 메시지와 코드를 리턴한다.
-     * @author Hwadam
-     * */
     @GetMapping("/exhibitions/{id}")
     public ResponseEntity read(@PathVariable Long id, @RequestHeader("memberId") Long data) {
         Long memberId =  data;

@@ -11,8 +11,8 @@ import javax.persistence.*;
 
 @Getter
 @Table(name = "mate_bookmark")
-@SQLDelete(sql = "UPDATE mate_bookmark SET isBookmarked = false WHERE mate_book_id = ?")
-@Where(clause = "isBookmarked = true")
+@SQLDelete(sql = "UPDATE mate_bookmark SET is_bookmarked = false WHERE mate_book_id = ?")
+@Where(clause = "is_bookmarked = true")
 @Entity
 @NoArgsConstructor
 public class MateBookmark {
@@ -29,6 +29,7 @@ public class MateBookmark {
     @JoinColumn(name = "memberId")
     private Member member;
 
+    @Column(name = "is_bookmarked")
     private boolean isBookmarked = Boolean.TRUE;
 
     @Builder
