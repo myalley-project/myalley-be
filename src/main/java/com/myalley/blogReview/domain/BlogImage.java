@@ -16,11 +16,12 @@ public class BlogImage {
     @Column(name = "blog_image_id")
     private Long id;
     private String fileName;
+    private String url;
+
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "blog_id")
+    @JoinColumn(name = "blog_id", nullable = false)
     private BlogReview blog;
-    private String url;
 
     @Builder
     public BlogImage(String fileName, String url){

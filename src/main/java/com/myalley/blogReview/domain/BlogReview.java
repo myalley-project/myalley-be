@@ -39,13 +39,15 @@ public class BlogReview extends BaseTime {
     private String revisit;
     private String congestion;
     private Boolean isDeleted=false;
+
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
     @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "exhibition_id")
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "exhibition_id", nullable = false)
     private Exhibition exhibition;
 
     @OneToMany(mappedBy = "blog")
