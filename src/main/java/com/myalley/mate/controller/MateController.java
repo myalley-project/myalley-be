@@ -9,7 +9,6 @@ import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Log
 @RestController
-@RequestMapping
+@RequestMapping(produces = "application/json; charset=utf8")
 @RequiredArgsConstructor
 public class MateController {
 
@@ -31,26 +30,22 @@ public class MateController {
     @PostMapping("/api/mates")
     public ResponseEntity save(@Valid @RequestBody MateRequest mateRequest) {
         log.info("메이트 모집글 등록");
+
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
-        mateService.save(mateRequest, memberId);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-        return new ResponseEntity<>("메이트 모집글 등록이 완료되었습니다.", headers, HttpStatus.OK);
+        return ResponseEntity.ok( mateService.save(mateRequest, memberId));
     }
 
     @PutMapping("/api/mates/{id}")
     public ResponseEntity update(@PathVariable Long id,
                                  @Valid @RequestBody MateUpdateRequest request) {
         log.info("메이트 모집글 수정");
+
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
-        mateService.update(id, request, memberId);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-        return new ResponseEntity<>("메이트 모집글 수정이 완료되었습니다.", headers, HttpStatus.OK);
+        return ResponseEntity.ok(mateService.update(id, request, memberId));
     }
 
     //메이트글 상세페이지 조회 (회원/비회원)
@@ -74,14 +69,12 @@ public class MateController {
     @DeleteMapping("/api/mates/{id}")
     public ResponseEntity delete(@PathVariable Long id) {
         log.info("메이트 모집글 삭제");
+
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
         mateService.delete(id, memberId);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-
-        return new ResponseEntity<>("메이트 모집글 삭제가 완료되었습니다.", headers, HttpStatus.OK);
+        return new ResponseEntity<>("메이트 모집글 삭제가 완료되었습니다.", HttpStatus.OK);
     }
 
     //메이트글 모집완료 여부 목록 조회
