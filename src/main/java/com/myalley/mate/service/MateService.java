@@ -1,9 +1,7 @@
 package com.myalley.mate.service;
 
 import com.myalley.exception.CustomException;
-import com.myalley.exception.ExhibitionExceptionType;
 import com.myalley.exception.MateExceptionType;
-;import com.myalley.exception.MemberExceptionType;
 import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.exhibition.repository.ExhibitionRepository;
 import com.myalley.exhibition.service.ExhibitionService;
@@ -32,9 +30,6 @@ public class MateService {
     private final ExhibitionService exhibitionService;
     private final MemberService memberService;
     private final MateBookmarkRepository bookmarkRepository;
-    private final MemberRepository memberRepository;
-
-    private final ExhibitionRepository exhibitionRepository;
 
     //메이트글 등록
     public String save(MateRequest request, Long memberId) {
@@ -80,11 +75,8 @@ public class MateService {
 
     //메이트글 상세조회 - 로그인 한 회원의 요청
     public MateDetailResponse findDetail(Long id, Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MemberExceptionType.NOT_FOUND_MEMBER));
-
+        Member member = memberService.verifyMember(memberId);
         Mate mate = verifyMate(id);
-
         boolean bookmarked = bookmarkRepository.existsByMateAndMember(mate, member);
 
         return MateDetailResponse.of(mate, bookmarked);
@@ -118,16 +110,14 @@ public class MateService {
     //본인이 작성한 메이트글 조회
     public Page<Mate> findMyMates(Long memberId, int page) {
         PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("createdAt").descending());
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MemberExceptionType.NOT_FOUND_MEMBER));
+        Member member = memberService.verifyMember(memberId);
         return mateRepository.findByMember(member, pageRequest);
     }
 
     //전시글 상세페이지에서 해당 전시회 id에 해당하는 메이트글 목록조회
     public Page<Mate> findExhibitionMates(Long exhibitionId, int page) {
         PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("createdAt").descending());
-        Exhibition exhibition = exhibitionRepository.findById(exhibitionId)
-                .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
+        Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
 
         return mateRepository.findByExhibition(exhibition, pageRequest);
     }
