@@ -10,8 +10,10 @@ import com.myalley.mate.domain.Mate;
 import com.myalley.mate.dto.MateSimpleResponse;
 import com.myalley.mate.dto.MateUpdateRequest;
 import com.myalley.mate.repository.MateRepository;
+import com.myalley.mate.service.MateService;
 import com.myalley.member.domain.Member;
 import com.myalley.member.repository.MemberRepository;
+import com.myalley.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,8 @@ import java.util.stream.Collectors;
 public class CommentService {
 
     private final CommentRepository commentRepository;
+    private final MemberService memberService;
+    private final MateService mateService;
     private final MemberRepository memberRepository;
     private final MateRepository mateRepository;
 
