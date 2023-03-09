@@ -28,13 +28,13 @@ public class MateController {
     private final MateService mateService;
 
     @PostMapping("/api/mates")
-    public ResponseEntity save(@Valid @RequestBody MateRequest request) {
+    public ResponseEntity create(@Valid @RequestBody MateRequest request) {
         log.info("메이트 모집글 등록");
 
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
 
-        return ResponseEntity.ok( mateService.save(request, memberId));
+        return ResponseEntity.ok(mateService.save(request, memberId));
     }
 
     @PutMapping("/api/mates/{mateId}")
@@ -50,16 +50,18 @@ public class MateController {
 
     //메이트글 상세페이지 조회 (회원/비회원)
     @GetMapping("/mates/{mateId}")
-    public ResponseEntity showMateDetail(@PathVariable Long mateId, @RequestHeader("memberId") Long memberId) {
+    public ResponseEntity getMateDetail(@PathVariable Long mateId, @RequestHeader("memberId") Long memberId) {
         log.info("메이트 모집글 상세페이지 조회");
 
         if (memberId == null) {
             throw new CustomException(MateExceptionType.MEMBER_ID_IS_MANDATORY);
         }
+
+        mateService.updateViewCount(mateId);
+
         if (memberId == 0) {
             return ResponseEntity.ok(mateService.findDetail(mateId));
         }
-        mateService.updateViewCount(mateId);
         return ResponseEntity.ok(mateService.findDetail(mateId, memberId));
     }
 
@@ -76,7 +78,7 @@ public class MateController {
 
     //메이트글 모집완료 여부 목록 조회
     @GetMapping("/mates")
-    public ResponseEntity findMateAll(
+    public ResponseEntity getMateListByStatus(
             @Positive @RequestParam int page,
             @RequestParam(value = "status", required = true) String status) {
 
@@ -85,9 +87,9 @@ public class MateController {
         Page<Mate> mates;
 
         if (status.equals("전체")) {
-            mates = mateService.findListsAll(page);
+            mates = mateService.findListAll(page);
         } else if (status.equals("모집 중") || status.equals("모집 완료")) {
-            mates = mateService.findListsByStatus(status, page);
+            mates = mateService.findListByStatus(status, page);
         } else {
             throw new CustomException(MateExceptionType.MATE_SORT_CRITERIA_ERROR);
         }
@@ -104,7 +106,7 @@ public class MateController {
 
     //본인이 작성한 글 조회
     @GetMapping("/api/mates/me")
-    public ResponseEntity getMatesAll(@Positive @RequestParam("page") int page) {
+    public ResponseEntity getMyMatePosts(@Positive @RequestParam("page") int page) {
         log.info("본인이 작성한 메이트 모집글 목록 조회");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
@@ -121,7 +123,7 @@ public class MateController {
 
     //전시글 상세페이지에서 해당 전시회에 해당하는 메이트 모집글 목록 조회
     @GetMapping("/exhibitions/mates/{exhibitionId}")
-    public ResponseEntity getMatesByExhibition(@Positive @RequestParam("page") int page,
+    public ResponseEntity getMatesPostsByExhibition(@Positive @RequestParam("page") int page,
                                                @PathVariable Long exhibitionId) {
         log.info("상세페이지 메이트 모집글 목록 조회");
 
@@ -138,7 +140,7 @@ public class MateController {
 
     //메이트글 서치바 (제목 or 내용 검색)
     @GetMapping("/mates/search")
-    public ResponseEntity findInfoByTitle( @Positive @RequestParam int page,
+    public ResponseEntity getMateListByTitle( @Positive @RequestParam int page,
                                            @RequestParam(value = "keyword", required = false) String keyword) {
 
         log.info("메이트 모집글 서치바 제목 검색");

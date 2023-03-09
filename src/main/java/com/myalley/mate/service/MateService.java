@@ -94,13 +94,13 @@ public class MateService {
     }
 
     //메이트글 목록 전체 조회
-    public Page<Mate> findListsAll(int pageNo) {
+    public Page<Mate> findListAll(int pageNo) {
         PageRequest pageRequest = PageRequest.of(pageNo -1, 4, Sort.by("id").descending());
         return mateRepository.findAll(pageRequest);
     }
 
     //메이트글 목록조회 (모집여부로 판단)
-     public Page<Mate> findListsByStatus(String status, int pageNo) {
+     public Page<Mate> findListByStatus(String status, int pageNo) {
         PageRequest pageRequest = PageRequest.of(pageNo -1, 4, Sort.by("id").descending());
         return mateRepository.findAllByStatus(status, pageRequest);
     }
