@@ -28,51 +28,48 @@ public class MateController {
     private final MateService mateService;
 
     @PostMapping("/api/mates")
-    public ResponseEntity save(@Valid @RequestBody MateRequest mateRequest) {
+    public ResponseEntity save(@Valid @RequestBody MateRequest request) {
         log.info("메이트 모집글 등록");
 
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
 
-        return ResponseEntity.ok( mateService.save(mateRequest, memberId));
+        return ResponseEntity.ok( mateService.save(request, memberId));
     }
 
-    @PutMapping("/api/mates/{id}")
-    public ResponseEntity update(@PathVariable Long id,
+    @PutMapping("/api/mates/{mateId}")
+    public ResponseEntity update(@PathVariable Long mateId,
                                  @Valid @RequestBody MateUpdateRequest request) {
         log.info("메이트 모집글 수정");
 
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
 
-        return ResponseEntity.ok(mateService.update(id, request, memberId));
+        return ResponseEntity.ok(mateService.update(mateId, request, memberId));
     }
 
     //메이트글 상세페이지 조회 (회원/비회원)
-    @GetMapping("/mates/{id}")
-    public ResponseEntity showMateDetail(@PathVariable Long id, @RequestHeader("memberId") Long data) {
+    @GetMapping("/mates/{mateId}")
+    public ResponseEntity showMateDetail(@PathVariable Long mateId, @RequestHeader("memberId") Long memberId) {
         log.info("메이트 모집글 상세페이지 조회");
 
-        if (data == null) {
+        if (memberId == null) {
             throw new CustomException(MateExceptionType.MEMBER_ID_IS_MANDATORY);
         }
-
-        Long memberId =  data;
-        mateService.updateViewCount(id);
-
         if (memberId == 0) {
-            return ResponseEntity.ok(mateService.findDetail(id));
+            return ResponseEntity.ok(mateService.findDetail(mateId));
         }
-        return ResponseEntity.ok(mateService.findDetail(id, memberId));
+        mateService.updateViewCount(mateId);
+        return ResponseEntity.ok(mateService.findDetail(mateId, memberId));
     }
 
-    @DeleteMapping("/api/mates/{id}")
-    public ResponseEntity delete(@PathVariable Long id) {
+    @DeleteMapping("/api/mates/{mateId}")
+    public ResponseEntity delete(@PathVariable Long mateId) {
         log.info("메이트 모집글 삭제");
 
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
-        mateService.delete(id, memberId);
+        mateService.delete(mateId, memberId);
 
         return new ResponseEntity<>("메이트 모집글 삭제가 완료되었습니다.", HttpStatus.OK);
     }
@@ -123,12 +120,12 @@ public class MateController {
     }
 
     //전시글 상세페이지에서 해당 전시회에 해당하는 메이트 모집글 목록 조회
-    @GetMapping("/exhibitions/mates/{id}")
+    @GetMapping("/exhibitions/mates/{exhibitionId}")
     public ResponseEntity getMatesByExhibition(@Positive @RequestParam("page") int page,
-                                               @PathVariable Long id) {
+                                               @PathVariable Long exhibitionId) {
         log.info("상세페이지 메이트 모집글 목록 조회");
 
-        Page<Mate> mates = mateService.findExhibitionMates(id, page);
+        Page<Mate> mates = mateService.findExhibitionMates(exhibitionId, page);
         List<MateExhibitionResponse> response = mates
                 .stream()
                 .map(MateExhibitionResponse::of)
