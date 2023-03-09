@@ -59,8 +59,7 @@ public class MateService {
     //메이트글 수정
     @Transactional
     public String update(Long id, MateUpdateRequest request, Long memberId) {
-        Mate findMate = mateRepository.findById(id)
-                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+        Mate findMate = verifyMate(id);
 
         if (!memberId.equals(findMate.getMember().getMemberId())) {
                 throw new CustomException(MateExceptionType.UNAUTHORIZED_ACCESS);
@@ -70,12 +69,6 @@ public class MateService {
         findMate.updateExhibition(exhibitionService.verifyExhibition(request.getExhibitionId()));
 
         return "메이트 모집글 수정이 완료되었습니다.";
-    }
-
-    //메이트글 조회수 증가
-    @Transactional
-    public void updateViewCount(Long id) {
-        mateRepository.updateViewCount(id);
     }
 
     //메이트글 상세조회 - 비회원
@@ -90,8 +83,7 @@ public class MateService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(MemberExceptionType.NOT_FOUND_MEMBER));
 
-        Mate mate = mateRepository.findById(id)
-                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+        Mate mate = verifyMate(id);
 
         boolean bookmarked = bookmarkRepository.existsByMateAndMember(mate, member);
 
@@ -101,8 +93,7 @@ public class MateService {
     //메이트글 삭제
     @Transactional
     public void delete(Long id, Long memberId) {
-        Mate mate = mateRepository.findById(id)
-                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+        Mate mate = verifyMate(id);
 
         if (!memberId.equals(mate.getMember().getMemberId())) {
             throw new CustomException(MateExceptionType.UNAUTHORIZED_ACCESS);
@@ -132,7 +123,6 @@ public class MateService {
         return mateRepository.findByMember(member, pageRequest);
     }
 
-
     //전시글 상세페이지에서 해당 전시회 id에 해당하는 메이트글 목록조회
     public Page<Mate> findExhibitionMates(Long exhibitionId, int page) {
         PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("createdAt").descending());
@@ -148,17 +138,27 @@ public class MateService {
         return mateRepository.findByTitleContaining(keyword, pageRequest);
     }
 
+    //메이트글 존재여부 검증
+    public Mate verifyMate(Long id) {
+        return mateRepository.findById(id)
+                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+    }
+
+    //메이트글 조회수 증가
+    @Transactional
+    public void updateViewCount(Long id) {
+        mateRepository.updateViewCount(id);
+    }
+
     @Transactional
     public void bookmarkCountUp(Long id) {
-        Mate mate = mateRepository.findById(id)
-                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+        Mate mate = verifyMate(id);
         mate.bookmarkCountUp();
     }
 
     @Transactional
     public void bookmarkCountDown(Long id) {
-        Mate mate = mateRepository.findById(id)
-                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+        Mate mate = verifyMate(id);
         mate.bookmarkCountDown();
     }
 }
