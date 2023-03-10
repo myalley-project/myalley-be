@@ -2,7 +2,6 @@ package com.myalley.blogReview.domain;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +14,11 @@ public class BlogImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "blog_image_id")
     private Long id;
+    @Column(nullable = false)
     private String fileName;
+    @Column(nullable = false)
     private String url;
 
-    @JsonIgnore
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "blog_id", nullable = false)
     private BlogReview blog;

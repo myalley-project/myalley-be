@@ -1,6 +1,5 @@
 package com.myalley.blogReview.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.common.domain.BaseTime;
 import com.myalley.member.domain.Member;
@@ -31,8 +30,11 @@ public class BlogReview extends BaseTime {
     private String title;
     @Column(nullable = false, length = 3000)
     private String content;
+    @Column(nullable = false)
     private Integer likeCount = 0;
+    @Column(nullable = false)
     private Integer viewCount = 0;
+    @Column(nullable = false)
     private Integer bookmarkCount = 0;
 
     private String transportation;
@@ -40,12 +42,10 @@ public class BlogReview extends BaseTime {
     private String congestion;
     private Boolean isDeleted=false;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @JsonIgnore
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "exhibition_id", nullable = false)
     private Exhibition exhibition;

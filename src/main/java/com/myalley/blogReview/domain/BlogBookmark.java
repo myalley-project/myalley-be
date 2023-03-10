@@ -1,6 +1,5 @@
 package com.myalley.blogReview.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myalley.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,17 +18,18 @@ public class BlogBookmark {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "b_bookmarks_id")
     private Long id;
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+    private Boolean isDeleted;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
-    @JsonIgnore
+
     @ManyToOne
     @JoinColumn(name = "blog_id", nullable = false)
     private BlogReview blog;
-    private LocalDateTime updatedAt;
-    private Boolean isDeleted;
+
 
     @Builder
     public BlogBookmark(Member member, BlogReview blog){
