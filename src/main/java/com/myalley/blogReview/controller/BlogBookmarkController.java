@@ -22,7 +22,9 @@ public class BlogBookmarkController {
 
     @PutMapping("/{blog-id}")
     public ResponseEntity clickBlogBookmark(@PathVariable("blog-id") Long blogId){
+        //북마크 클릭 - 블로그 id 포함. 멤버 정보가 필요할까?
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println("** member id: "+member.getMemberId());
         BlogReview blogReview = blogReviewService.findBlogReview(blogId);
         if(blogBookmarkService.findBookmark(blogReview, member))
             return new ResponseEntity<>("on", HttpStatus.OK);
@@ -31,6 +33,7 @@ public class BlogBookmarkController {
 
     @GetMapping("/me")
     public ResponseEntity getMyBlogBookmark(@RequestParam(required = false, value = "page") Integer pageNo){
+        //내 북마크 목록 조회 - 멤버 정보가 필요할까?
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Page<BlogBookmark> bookmarkPage = blogBookmarkService.retrieveMyBlogBookmarks(member,pageNo);
         return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBookmarkToMyBlogBookmarkDto(bookmarkPage),

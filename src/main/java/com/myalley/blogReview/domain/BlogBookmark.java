@@ -19,14 +19,14 @@ public class BlogBookmark {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "b_bookmarks_id")
     private Long id;
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "blog_id")
+    @ManyToOne
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "blog_id", nullable = false)
     private BlogReview blog;
     private LocalDateTime updatedAt;
     private Boolean isDeleted;

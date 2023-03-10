@@ -26,6 +26,7 @@ public class BlogReviewController {
     public ResponseEntity postBlogReview(@Valid @RequestPart(value = "blogInfo") BlogRequestDto.PostBlogDto blogRequestDto,
                                          @RequestPart(value = "images",required = false) List<MultipartFile> images,
                                          @RequestPart(value = "exhibitionId")Long exhibitionId) throws Exception {
+        //블로그 등록 - 전시회 id 포함, 멤버 정보를 포함할까?
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview target = BlogReviewMapper.INSTANCE.postBlogDtoToBlogReview(blogRequestDto);
         blogReviewService.createBlog(target, member,exhibitionId,images);
@@ -35,6 +36,7 @@ public class BlogReviewController {
     @PutMapping("/api/blogs/{blog-id}")
     public ResponseEntity putBlogReview(@PathVariable("blog-id") Long blogId,
                                            @Valid @RequestBody BlogRequestDto.PutBlogDto blogRequestDto) {
+        //블로그 수정 - 블로그 id 포함, 멤버 정보를 포함할까?
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview target = BlogReviewMapper.INSTANCE.putBlogDtoToBlogReview(blogRequestDto);
         blogReviewService.updateBlogReview(target,blogId,member);
@@ -43,6 +45,7 @@ public class BlogReviewController {
 
     @DeleteMapping("/api/blogs/{blog-id}")
     public ResponseEntity deleteBlogReview(@PathVariable("blog-id") Long blogId){
+        //블로그 삭제 - 블로그 id 포함, 멤버 정보를 포함할까?
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         blogReviewService.removeBlogReview(blogId,member);
         return new ResponseEntity<>("블로그 글이 삭제되었습니다.",HttpStatus.OK);
@@ -51,6 +54,7 @@ public class BlogReviewController {
     @GetMapping("/blogs/{blog-id}")
     public ResponseEntity getBlogReviewDetail(@PathVariable("blog-id") Long blogId,
                                               @RequestHeader(value = "memberId", required = false) Long memberId){
+        //블로그 상세 정보 조회 - 블로그 id 포함
         DetailBlogReview review = blogReviewService.retrieveBlogReview(blogId, memberId);
         return new ResponseEntity<>(BlogReviewMapper.INSTANCE.blogToDetailBlogDto(review),HttpStatus.OK);
     }
@@ -58,6 +62,7 @@ public class BlogReviewController {
     @GetMapping("/blogs")
     public ResponseEntity getBlogReviews(@RequestParam(required = false, value = "page") Integer pageNo,
                                          @RequestParam(required = false, value = "order") String orderType){
+        //블로그 목록 조회
         Page<BlogReview> blogReviewPage = blogReviewService.retrieveBlogReviewList(pageNo,orderType);
         return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
     }
@@ -65,12 +70,14 @@ public class BlogReviewController {
     @GetMapping("/blogs/search")
     public ResponseEntity getBlogReviewsWithSearch(@RequestParam(value = "title") String title,
                                          @RequestParam(required = false, value = "page") Integer pageNo){
+        //블로그 목록 조회 - 검색어 포함
         Page<BlogReview> blogReviewPage = blogReviewService.searchBlogReviewList(title,pageNo);
         return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
     }
 
     @GetMapping("/api/blogs/me")
     public ResponseEntity getUserBlogReviewList(@RequestParam(value = "page",required = false) Integer pageNo){
+        //내 블로그 목록 조회 - 멤버 정보 필요할까?
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Page<BlogReview> blogReviewPage = blogReviewService.retrieveMyBlogReviewList(member,pageNo);
         return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToUserBlogListDto(blogReviewPage),HttpStatus.OK);
@@ -80,6 +87,7 @@ public class BlogReviewController {
     public ResponseEntity getExhibitionBlogReviewList(@PathVariable("exhibition-id") Long exhibitionId,
                                                       @RequestParam(value = "page",required = false) Integer pageNo,
                                                       @RequestParam(value = "order",required = false) String orderType){
+        //전시회의 블로그 목록 조회 - 전시회 id
         Page<BlogReview> blogReviewPage =
                 blogReviewService.retrieveExhibitionBlogReviewList(exhibitionId,pageNo,orderType);
         return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);

@@ -22,6 +22,7 @@ public class BlogImageController {
     @DeleteMapping("/{blog-id}/{image-id}")
     public ResponseEntity deleteBlogReviewImage(@PathVariable("blog-id") Long blogId,
                                                 @PathVariable("image-id") Long imageId){
+        //블로그 내의 이미지 삭제 - 블로그 id, 이미지 id 포함
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview target = blogReviewService.findBlogReview(blogId);
         blogImageService.removeBlogImage(target,member,imageId);
@@ -32,6 +33,7 @@ public class BlogImageController {
     @PostMapping("/{blog-id}")
     public ResponseEntity newPostBlogReviewImage(@PathVariable("blog-id") Long blogId,
                                                  @RequestPart(value = "image") MultipartFile image) throws Exception {
+        //블로그 이미지 추가 등록 - 블로그 id 포함
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview target = blogReviewService.findBlogReview(blogId);
         blogImageService.createNewBlogImage(target,member,image);

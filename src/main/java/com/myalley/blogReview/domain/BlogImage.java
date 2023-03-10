@@ -19,7 +19,7 @@ public class BlogImage {
     private String url;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "blog_id", nullable = false)
     private BlogReview blog;
 

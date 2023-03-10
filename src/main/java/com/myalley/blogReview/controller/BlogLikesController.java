@@ -22,6 +22,7 @@ public class BlogLikesController {
 
     @PutMapping("/{blog-id}")
     public ResponseEntity clickLikes(@PathVariable("blog-id") Long blogId){
+        //좋아요 클릭 - 블로그 id 포함. 멤버 정보가 필요할까?
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         BlogReview blogReview = blogReviewService.findBlogReview(blogId);
         if(blogLikesService.findLikes(blogReview,member))
@@ -31,6 +32,7 @@ public class BlogLikesController {
 
     @GetMapping("/me")
     public ResponseEntity getMyBlogLikes(@RequestParam(required = false, value = "page") Integer pageNo){
+        //내 좋아요 목록 조회 - 멤버 정보가 필요할까?
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Page<BlogLikes> likesPage = blogLikesService.retrieveMyBlogLikes(member,pageNo);
         return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableLikesToMyBlogLikesDto(likesPage),HttpStatus.OK);
