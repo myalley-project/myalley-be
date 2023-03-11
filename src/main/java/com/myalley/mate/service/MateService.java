@@ -89,7 +89,7 @@ public class MateService {
             throw new CustomException(MateExceptionType.UNAUTHORIZED_ACCESS);
         }
 
-        bookmarkRepository.deleteByMate(mate); //북마크 쪽에서 먼저 북마크 삭제해줌
+        bookmarkRepository.deleteAllByMate(mate);
         mateRepository.deleteById(mateId);
     }
 
