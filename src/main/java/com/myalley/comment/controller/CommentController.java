@@ -3,8 +3,6 @@ package com.myalley.comment.controller;
 import com.myalley.comment.dto.CommentsResponse;
 import com.myalley.comment.dto.CommentRequest;
 import com.myalley.comment.service.CommentService;
-import com.myalley.exception.CustomException;
-import com.myalley.exception.MateExceptionType;
 import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -45,28 +43,11 @@ public class CommentController {
         return new ResponseEntity<>("답글이 등록되었습니다.", HttpStatus.OK);
     }
 
-    @PatchMapping("/api/mates/comments/{commentId}")
-    public ResponseEntity updateComment(@PathVariable Long commentId,
-                                        @Valid @RequestBody CommentRequest request) {
-        log.info("메이트 모집글 댓글/대댓글 수정");
-
-        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long memberId = member.getMemberId();
-
-        if (request.getContent().isEmpty()) {
-            throw new CustomException(MateExceptionType.COMMENT_NOT_FOUND);
-        }
-        commentService.updateComment(commentId, memberId, request);
-
-        return new ResponseEntity<>("댓글이 수정되었습니다.", HttpStatus.OK);
-    }
-
-
     @GetMapping("/mates/{mateId}/comments")
     public ResponseEntity<CommentsResponse> findComments(@PathVariable Long mateId) {
         log.info("메이트 모집글의 댓글 목록 조회");
-        CommentsResponse commentsResponse = commentService.findComments(mateId);
 
+        CommentsResponse commentsResponse = commentService.findComments(mateId);
         return ResponseEntity.ok(commentsResponse);
     }
 
