@@ -20,7 +20,6 @@ public class BlogImageController {
     private final BlogImageService blogImageService;
     private final BlogReviewService blogReviewService;
 
-    //블로그 리뷰 내에 이미지 수정이 필요하여 삭제 요청을 보내는 경우 입니다
     @DeleteMapping("/{blog-id}/{image-id}")
     public ResponseEntity deleteBlogReviewImage(@PathVariable("blog-id") Long blogId,
                                                 @PathVariable("image-id") Long imageId){
@@ -33,7 +32,6 @@ public class BlogImageController {
         return new ResponseEntity<>("이미지가 삭제 되었습니다.",HttpStatus.OK);
     }
 
-    //블로그 수정할 때는 이미지를 하나씩 등록 할 수 있도록 해줍니다
     @PostMapping("/{blog-id}")
     public ResponseEntity newPostBlogReviewImage(@PathVariable("blog-id") Long blogId,
                                                  @RequestPart(value = "image") MultipartFile image) throws Exception {
