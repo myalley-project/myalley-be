@@ -1,8 +1,9 @@
 package com.myalley.blogReview.controller;
 
 import com.myalley.blogReview.domain.BlogReview;
-import com.myalley.blogReview.domain.DetailBlogReview;
-import com.myalley.blogReview.dto.BlogRequestDto;
+//import com.myalley.blogReview.domain.DetailBlogReview;
+import com.myalley.blogReview.dto.request.BlogRequestDto;
+//import com.myalley.blogReview.dto.request.PutBlogDtoXXX;
 import com.myalley.blogReview.mapper.BlogReviewMapper;
 import com.myalley.blogReview.service.BlogReviewService;
 import com.myalley.member.domain.Member;
@@ -25,25 +26,25 @@ public class BlogReviewController {
     private final BlogReviewService blogReviewService;
 
     @PostMapping("/api/blogs")
-    public ResponseEntity postBlogReview(@Valid @RequestPart(value = "blogInfo") BlogRequestDto.PostBlogDto blogRequestDto,
+    public ResponseEntity postBlogReview(@Valid @RequestPart(value = "blogInfo") BlogRequestDto blogRequestDto,
                                          @RequestPart(value = "images",required = false) List<MultipartFile> images,
                                          @RequestPart(value = "exhibitionId")Long exhibitionId) throws Exception {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Request-Type : Post, Entity : BlogReview, Member-ID : {}", member.getMemberId());
 
-        BlogReview target = BlogReviewMapper.INSTANCE.postBlogDtoToBlogReview(blogRequestDto);
-        blogReviewService.createBlog(target, member,exhibitionId,images);
+        //BlogReview target = BlogReviewMapper.INSTANCE.postBlogDtoToBlogReview(blogRequestDto);
+        blogReviewService.createBlog(blogRequestDto, member,exhibitionId,images);
         return new ResponseEntity<>("블로그 글이 등록되었습니다",HttpStatus.CREATED);
     }
 
     @PutMapping("/api/blogs/{blog-id}")
     public ResponseEntity putBlogReview(@PathVariable("blog-id") Long blogId,
-                                           @Valid @RequestBody BlogRequestDto.PutBlogDto blogRequestDto) {
+                                           @Valid @RequestBody BlogRequestDto blogRequestDto) {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Request-Type : Put, Entity : BlogReview, Blog-ID : {}, Member-ID : {}", blogId, member.getMemberId());
 
-        BlogReview target = BlogReviewMapper.INSTANCE.putBlogDtoToBlogReview(blogRequestDto);
-        blogReviewService.updateBlogReview(target,blogId,member);
+        //BlogReview target = BlogReviewMapper.INSTANCE.putBlogDtoToBlogReview(blogRequestDto);
+        blogReviewService.updateBlogReview(blogRequestDto,blogId,member);
         return new ResponseEntity("블로그 글이 수정되었습니다.",HttpStatus.OK);
     }
 
@@ -61,8 +62,9 @@ public class BlogReviewController {
                                               @RequestHeader(value = "memberId", required = false) Long memberId){
         log.info("Request-Type : Get, Entity : BlogReview, Blog-ID : {}, Member-ID : {}", blogId, memberId);
 
-        DetailBlogReview review = blogReviewService.retrieveBlogReview(blogId, memberId);
-        return new ResponseEntity<>(BlogReviewMapper.INSTANCE.blogToDetailBlogDto(review),HttpStatus.OK);
+        return new ResponseEntity<>(blogReviewService.retrieveBlogReview(blogId, memberId),HttpStatus.OK);
+        //DetailBlogReview review = blogReviewService.retrieveBlogReview(blogId, memberId);
+        //return new ResponseEntity<>(BlogReviewMapper.INSTANCE.blogToDetailBlogDto(review),HttpStatus.OK);
     }
 
     @GetMapping("/blogs")
@@ -70,8 +72,9 @@ public class BlogReviewController {
                                          @RequestParam(required = false, value = "order") String orderType){
         log.info("Request-Type : Get, Entity : BlogReview_List");
 
-        Page<BlogReview> blogReviewPage = blogReviewService.retrieveBlogReviewList(pageNo,orderType);
-        return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
+        return new ResponseEntity<>(blogReviewService.retrieveBlogReviewList(pageNo,orderType),HttpStatus.OK);
+        //Page<BlogReview> blogReviewPage = blogReviewService.retrieveBlogReviewList(pageNo,orderType);
+        //return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
     }
 
     @GetMapping("/blogs/search")
@@ -79,8 +82,9 @@ public class BlogReviewController {
                                          @RequestParam(required = false, value = "page") Integer pageNo){
         log.info("Request-Type : Get, Entity : BlogReview_List, Search : {}", title);
 
-        Page<BlogReview> blogReviewPage = blogReviewService.searchBlogReviewList(title,pageNo);
-        return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
+        return new ResponseEntity<>(blogReviewService.searchBlogReviewList(title,pageNo),HttpStatus.OK);
+        //Page<BlogReview> blogReviewPage = blogReviewService.searchBlogReviewList(title,pageNo);
+        //return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
     }
 
     @GetMapping("/api/blogs/me")
@@ -88,8 +92,9 @@ public class BlogReviewController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Request-Type : Get, Entity : BlogReview_List, Member-ID : {}", member.getMemberId());
 
-        Page<BlogReview> blogReviewPage = blogReviewService.retrieveMyBlogReviewList(member,pageNo);
-        return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToUserBlogListDto(blogReviewPage),HttpStatus.OK);
+        return new ResponseEntity<>(blogReviewService.retrieveMyBlogReviewList(member,pageNo),HttpStatus.OK);
+        //Page<BlogReview> blogReviewPage = blogReviewService.retrieveMyBlogReviewList(member,pageNo);
+        //return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToUserBlogListDto(blogReviewPage),HttpStatus.OK);
     }
 
     @GetMapping("/blogs/exhibitions/{exhibition-id}")

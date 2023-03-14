@@ -2,6 +2,9 @@ package com.myalley.blogReview.service;
 
 import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview.domain.DetailBlogReview;
+import com.myalley.blogReview.dto.request.BlogRequestDto;
+import com.myalley.blogReview.dto.response.BlogDetailResponseDto;
+import com.myalley.blogReview.dto.response.BlogListResponseDto;
 import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.exhibition.service.ExhibitionService;
 import com.myalley.member.domain.Member;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -29,18 +33,51 @@ public class BlogReviewService {
     private final BlogBookmarkService bookmarkService;
     private final BlogLikesService likesService;
 
+    public static final String BASIC_LIST = "basic";
+    public static final String SELF_LIST = "self";
+
     @Transactional
-    public void createBlog(BlogReview blogReview, Member member, Long exhibitionId,
-                                 List<MultipartFile> images) throws IOException {
+    public void createBlog(BlogRequestDto blogRequestDto, Member member, Long exhibitionId,
+                           List<MultipartFile> images) throws IOException {
         if(images != null && images.size()>3)
             throw new CustomException(BlogReviewExceptionType.IMAGE_BAD_REQUEST_OVER);
-        blogReview.setMember(member);
-        blogReview.setExhibition(exhibitionService.verifyExhibition(exhibitionId));
+        BlogReview blogReview = BlogReview.builder()
+                .title(blogRequestDto.getTitle())
+                .content(blogRequestDto.getContent())
+                .viewDate(LocalDate.parse(blogRequestDto.getViewDate()))
+                .time(blogRequestDto.getTime())
+                .congestion(blogRequestDto.getCongestion())
+                .transportation(blogRequestDto.getTransportation())
+                .revisit(blogRequestDto.getRevisit())
+                .member(member)
+                .exhibition(exhibitionService.verifyExhibition(exhibitionId)).build();
         BlogReview newBlog = blogReviewRepository.save(blogReview);
         blogImageService.addBlogImageList(images, newBlog);
+
+        /*
+         blogReview.title( requestDto.getTitle() );
+        blogReview.content( requestDto.getContent() );
+        blogReview.viewDate( LocalDate.parse( requestDto.getViewDate() ) );
+        blogReview.time( requestDto.getTime() );
+
+        if(requestDto.getRevisit() == null)
+            blogReview.revisit( "모르겠음" );
+        else
+            blogReview.revisit( requestDto.getRevisit() );
+        if(requestDto.getCongestion() == null)
+            blogReview.congestion( "기억나지않음" );
+        else
+            blogReview.congestion( requestDto.getCongestion() );
+        if(requestDto.getTransportation() == null)
+            blogReview.transportation( "기억나지않음" );
+        else
+            blogReview.transportation( requestDto.getTransportation() );
+
+        return blogReview.build();
+         */
     }
 
-    public DetailBlogReview retrieveBlogReview(Long blogId, Long memberId){
+    public DetailBlogReview retrieveBlogReview_ex(Long blogId, Long memberId){
         DetailBlogReview detail = new DetailBlogReview();
         BlogReview blog = findBlogReview(blogId);
         blog.updateViewCount();
@@ -50,7 +87,15 @@ public class BlogReviewService {
         return detail;
     }
 
-    public Page<BlogReview> retrieveBlogReviewList(Integer pageNo,String orderType){
+    public BlogDetailResponseDto retrieveBlogReview(Long blogId, Long memberId){
+        BlogReview blog = findBlogReview(blogId);
+        blog.updateViewCount();
+        return BlogDetailResponseDto.of(blog,likesService.retrieveBlogLikes(blogId,memberId),
+                bookmarkService.retrieveBlogBookmark(blogId,memberId));
+    }
+
+    //public Page<BlogReview> retrieveBlogReviewList(Integer pageNo,String orderType){
+    public BlogListResponseDto retrieveBlogReviewList(Integer pageNo, String orderType){
         Page<BlogReview> blogReviewList;
         if(pageNo == null)
             pageNo = 0;
@@ -66,10 +111,11 @@ public class BlogReviewService {
         } else{
             throw new CustomException(BlogReviewExceptionType.BLOG_BAD_REQUEST);
         }
-        return blogReviewList;
+        return BlogListResponseDto.of(blogReviewList,BASIC_LIST);
     }
 
-    public Page<BlogReview> searchBlogReviewList(String title, Integer pageNo){
+    // public Page<BlogReview> searchBlogReviewList(String title, Integer pageNo){
+    public BlogListResponseDto searchBlogReviewList(String title, Integer pageNo){
         PageRequest pageRequest;
         if(title == "")
             throw new CustomException(BlogReviewExceptionType.BLOG_BAD_REQUEST);
@@ -79,17 +125,18 @@ public class BlogReviewService {
             pageRequest = PageRequest.of(pageNo-1, 9, Sort.by("id").descending());
         }
         Page<BlogReview> blogReviewList = blogReviewRepository.findAllByTitleContaining(title,pageRequest);
-        return blogReviewList;
+        return BlogListResponseDto.of(blogReviewList,BASIC_LIST);
     }
 
-    public Page<BlogReview> retrieveMyBlogReviewList(Member member, Integer pageNo) {
+    //public Page<BlogReview> retrieveMyBlogReviewList(Member member, Integer pageNo) {
+    public BlogListResponseDto retrieveMyBlogReviewList(Member member, Integer pageNo) {
         PageRequest pageRequest;
         if(pageNo == null)
             pageRequest = PageRequest.of(0, 6, Sort.by("id").descending());
         else
             pageRequest = PageRequest.of(pageNo-1, 6, Sort.by("id").descending());
         Page<BlogReview> myBlogReviewList = blogReviewRepository.findAllByMember(member,pageRequest);
-        return myBlogReviewList;
+        return BlogListResponseDto.of(myBlogReviewList,SELF_LIST);
     }
 
     public Page<BlogReview> retrieveExhibitionBlogReviewList(Long exhibitionId, Integer pageNo, String orderType) {
@@ -111,10 +158,10 @@ public class BlogReviewService {
     }
 
     @Transactional
-    public void updateBlogReview(BlogReview postBlogReview, Long blogId, Member member) {
+    public void updateBlogReview(BlogRequestDto blogRequestDto, Long blogId, Member member) {
         BlogReview preBlogReview = verifyRequester(blogId,member.getMemberId());
-        preBlogReview.updateReview(postBlogReview);
-        blogReviewRepository.save(preBlogReview);
+        preBlogReview.updateReview(blogRequestDto);
+        //blogReviewRepository.save(preBlogReview);
     }
 
     @Transactional

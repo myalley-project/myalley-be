@@ -2,14 +2,12 @@ package com.myalley.blogReview.mapper;
 
 
 import com.myalley.blogReview.domain.*;
-import com.myalley.blogReview.dto.BlogRequestDto;
-import com.myalley.blogReview.dto.BlogResponseDto;
-import com.myalley.blogReview.dto.ImageResponseDto;
+import com.myalley.blogReview.dto.request.BlogRequestDto;
+import com.myalley.blogReview.dto.response.*;
 import com.myalley.common.dto.pagingDto;
 import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.member.domain.Member;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.util.CollectionUtils;
@@ -25,7 +23,7 @@ public interface BlogReviewMapper {
 
     //** REQUEST **
     //1. 블로그 등록
-    default BlogReview postBlogDtoToBlogReview(BlogRequestDto.PostBlogDto requestDto){
+    default BlogReview postBlogDtoToBlogReview(BlogRequestDto requestDto){
         BlogReview.BlogReviewBuilder blogReview = BlogReview.builder();
 
         blogReview.title( requestDto.getTitle() );
@@ -49,12 +47,12 @@ public interface BlogReviewMapper {
         return blogReview.build();
     }
     //2. 블로그 수정
-    BlogReview putBlogDtoToBlogReview(BlogRequestDto.PutBlogDto requestDto);
+    BlogReview putBlogDtoToBlogReview(BlogRequestDto requestDto);
     
     //** RESPONSE **
     //1. 블로그 상세
-    default BlogResponseDto.DetailBlogDto blogToDetailBlogDto(DetailBlogReview blog){
-        BlogResponseDto.DetailBlogDto dto = new BlogResponseDto.DetailBlogDto();
+    default BlogDetailResponseDto blogToDetailBlogDto(DetailBlogReview blog){
+        BlogDetailResponseDto dto = new BlogDetailResponseDto();
         dto.setId(blog.getBlogReview().getId());
         dto.setTitle(blog.getBlogReview().getTitle());
         dto.setContent(blog.getBlogReview().getContent());
@@ -68,18 +66,18 @@ public interface BlogReviewMapper {
         dto.setCreatedAt(blog.getBlogReview().getCreatedAt());
         dto.setViewCount(blog.getBlogReview().getViewCount());
         dto.setImageInfo(imageToImageDtoList(blog.getBlogReview().getImages()));
-        dto.setMemberInfo(memberToSimpleMemberDto(blog.getBlogReview().getMember()));
-        dto.setExhibitionInfo(exhibitionToSimpleExhibitionDto(blog.getBlogReview().getExhibition()));
+        //dto.setMemberInfo(memberToSimpleMemberDto(blog.getBlogReview().getMember()));
+        //dto.setExhibitionInfo(exhibitionToSimpleExhibitionDto(blog.getBlogReview().getExhibition()));
         dto.setLikeStatus(blog.isLikesStatus());
         dto.setBookmarkStatus(blog.isBookmarkStatus());
 
         return dto;
     }
     //2. 블로그 목록 : 전시 관련
-    default BlogResponseDto.BlogListDto pageableBlogToBlogListDto(Page<BlogReview> pageBlogs){
-        BlogResponseDto.BlogListDto dto = new BlogResponseDto.BlogListDto();
-        List<BlogResponseDto.SimpleBlogDto> simpleBlogDtoList = pageBlogs.get().map( blogReview -> {
-            BlogResponseDto.SimpleBlogDto simpleBlogDto = new BlogResponseDto.SimpleBlogDto();
+    default BlogListResponseDto pageableBlogToBlogListDto(Page<BlogReview> pageBlogs){
+        BlogListResponseDto dto = new BlogListResponseDto();
+        List<BlogListDto> simpleBlogDtoList = pageBlogs.get().map(blogReview -> {
+            BlogListDto simpleBlogDto = new BlogListDto();
             simpleBlogDto.setId(blogReview.getId());
             simpleBlogDto.setViewDate(blogReview.getViewDate());
             if(!CollectionUtils.isEmpty(blogReview.getImages()))
@@ -96,10 +94,10 @@ public interface BlogReviewMapper {
         return dto;
     }
     //3. 블로그 목록 : 내 블로그
-    default BlogResponseDto.UserBlogListDto pageableBlogToUserBlogListDto(Page<BlogReview> pageBlogs){
-        BlogResponseDto.UserBlogListDto dto = new BlogResponseDto.UserBlogListDto();
-        List<BlogResponseDto.SimpleUserBlogDto> simpleBlogDtoList = pageBlogs.get().map( blogReview -> {
-            BlogResponseDto.SimpleUserBlogDto userBlogDto = new BlogResponseDto.SimpleUserBlogDto();
+    default BlogListResponseDto pageableBlogToUserBlogListDto(Page<BlogReview> pageBlogs){
+        BlogListResponseDto dto = new BlogListResponseDto();
+        List<BlogListDto> simpleBlogDtoList = pageBlogs.get().map(blogReview -> {
+            BlogListDto userBlogDto = new BlogListDto();
             userBlogDto.setId(blogReview.getId());
             userBlogDto.setViewDate(blogReview.getViewDate());
             if(!CollectionUtils.isEmpty(blogReview.getImages()))
@@ -115,10 +113,10 @@ public interface BlogReviewMapper {
         return dto;
     }
     //4. 블로그 목록 : 마이페이지 좋아요
-    default BlogResponseDto.BlogListDto pageableLikesToMyBlogLikesDto(Page<BlogLikes> pageLikes){
-        BlogResponseDto.BlogListDto dto = new BlogResponseDto.BlogListDto();
-        List<BlogResponseDto.SimpleBlogDto> simpleBlogDtoList = pageLikes.get().map( blogLikes -> {
-            BlogResponseDto.SimpleBlogDto simpleBlogDto = new BlogResponseDto.SimpleBlogDto();
+    default BlogListResponseDto pageableLikesToMyBlogLikesDto(Page<BlogLikes> pageLikes){
+        BlogListResponseDto dto = new BlogListResponseDto();
+        List<BlogListDto> simpleBlogDtoList = pageLikes.get().map(blogLikes -> {
+            BlogListDto simpleBlogDto = new BlogListDto();
             simpleBlogDto.setId(blogLikes.getBlog().getId());
             simpleBlogDto.setViewDate(blogLikes.getBlog().getViewDate());
             if(!CollectionUtils.isEmpty(blogLikes.getBlog().getImages()))
@@ -135,10 +133,10 @@ public interface BlogReviewMapper {
         return dto;
     }
     //5. 블로그 목록 : 마이페이지 북마크
-    default BlogResponseDto.BlogListDto pageableBookmarkToMyBlogBookmarkDto(Page<BlogBookmark> bookmarkPage){
-        BlogResponseDto.BlogListDto dto = new BlogResponseDto.BlogListDto();
-        List<BlogResponseDto.SimpleBlogDto> simpleBlogDtoList = bookmarkPage.get().map( blogBookmark -> {
-            BlogResponseDto.SimpleBlogDto simpleBlogDto = new BlogResponseDto.SimpleBlogDto();
+    default BlogListResponseDto pageableBookmarkToMyBlogBookmarkDto(Page<BlogBookmark> bookmarkPage){
+        BlogListResponseDto dto = new BlogListResponseDto();
+        List<BlogListDto> simpleBlogDtoList = bookmarkPage.get().map(blogBookmark -> {
+            BlogListDto simpleBlogDto = new BlogListDto();
             simpleBlogDto.setId(blogBookmark.getBlog().getId());
             simpleBlogDto.setViewDate(blogBookmark.getBlog().getViewDate());
             if(!CollectionUtils.isEmpty(blogBookmark.getBlog().getImages()))
@@ -157,21 +155,21 @@ public interface BlogReviewMapper {
 
     //** 그 외 **
     //1. 멤버 DTO
-    BlogResponseDto.SimpleMemberDto memberToSimpleMemberDto(Member member);
+    BlogResponseDtoXXX.SimpleMemberDto memberToSimpleMemberDto(Member member);
     //2. 전시회 DTO
-    BlogResponseDto.SimpleExhibitionDto exhibitionToSimpleExhibitionDto(Exhibition exhibition);
+    BlogResponseDtoXXX.SimpleExhibitionDto exhibitionToSimpleExhibitionDto(Exhibition exhibition);
     //3. 이미지 하나 DTO
-    ImageResponseDto imageToImageDto(BlogImage image);
+    ImageDto imageToImageDto(BlogImage image);
     //4. 이미지 리스트 중 대표사진 DTO
-    default ImageResponseDto imageListToImageDto(List<BlogImage> imageList){
+    default ImageDto imageListToImageDto(List<BlogImage> imageList){
         return imageToImageDto(imageList.get(0));
     }
     //5. 이미지 리스트 전체 조회 DTO
-    default List<ImageResponseDto> imageToImageDtoList(List<BlogImage> images){
-        List<ImageResponseDto> imageResponseDtoList = images.stream().map(i ->{
-            ImageResponseDto dto = imageToImageDto(i);
+    default List<ImageDto> imageToImageDtoList(List<BlogImage> images){
+        List<ImageDto> imageDtoList = images.stream().map(i ->{
+            ImageDto dto = imageToImageDto(i);
             return dto;
         }).collect(Collectors.toList());
-        return imageResponseDtoList;
+        return imageDtoList;
     }
 }

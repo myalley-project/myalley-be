@@ -1,5 +1,6 @@
 package com.myalley.blogReview.domain;
 
+import com.myalley.blogReview.dto.request.BlogRequestDto;
 import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.common.domain.BaseTime;
 import com.myalley.member.domain.Member;
@@ -67,10 +68,10 @@ public class BlogReview extends BaseTime {
         this.exhibition = exhibition;
     }
 
-    public void updateReview(BlogReview target){
+    public void updateReview(BlogRequestDto target){
         this.title= target.getTitle();
         this.content = target.getContent();
-        this.viewDate = target.getViewDate();
+        this.viewDate = LocalDate.parse(target.getViewDate());
         this.time = target.getTime();
         if(target.getCongestion() != null)
             this.congestion = target.getCongestion();
