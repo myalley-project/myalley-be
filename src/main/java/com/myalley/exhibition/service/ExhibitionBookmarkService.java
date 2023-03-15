@@ -26,14 +26,14 @@ public class ExhibitionBookmarkService {
     private final ExhibitionBookmarkRepository bookmarkRepository;
     private final MemberService memberService;
 
-    public BookmarkResponseDto addBookmark(Long memberId, Long exhibitionId) {
+    public BookmarkResponseDto createBookmark(Long memberId, Long exhibitionId) {
         Member member = memberService.verifyMember(memberId);
-        Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
+        Exhibition exhibition = exhibitionService.validateExistExhibition(exhibitionId);
 
          Optional<ExhibitionBookmark> bookmark = bookmarkRepository.findByExhibitionAndMember(exhibition, member);
 
         if (bookmark.isPresent()) {
-            deleteBookmark(bookmark.get().getId());
+            removeBookmark(bookmark.get().getId());
             exhibitionService.bookmarkCountDown(exhibitionId);
 
             return new BookmarkResponseDto("전시글 북마크 목록에서 삭제되었습니다.", false);
@@ -50,21 +50,21 @@ public class ExhibitionBookmarkService {
         return new BookmarkResponseDto("전시글 북마크 목록에 추가되었습니다.", true);
     }
 
-    private void deleteBookmark(Long bookmarkId) {
-        ExhibitionBookmark bookmark = validateBookmark(bookmarkId);
+    private void removeBookmark(Long bookmarkId) {
+        validateBookmark(bookmarkId);
         bookmarkRepository.deleteById(bookmarkId);
     }
 
     //북마크 추가한 전시글 목록 페이징 조회하기
-    public Page<ExhibitionBookmark> findBookmarks(Long memberId, int page) {
+    public Page<ExhibitionBookmark> findBookmarksByMemberId(Long memberId, int page) {
         PageRequest pageRequest = PageRequest.of(page -1, 8, Sort.by("id").descending());
         Member member = memberService.verifyMember(memberId);
         return bookmarkRepository.findAllByMember(member, pageRequest);
     }
 
     //북마크글 존재여부 확인
-    public ExhibitionBookmark validateBookmark(Long bookmarkId) {
-       return bookmarkRepository.findById(bookmarkId)
+    public void validateBookmark(Long bookmarkId) {
+        bookmarkRepository.findById(bookmarkId)
                 .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_BOOKMARK_NOT_FOUND));
     }
 }
