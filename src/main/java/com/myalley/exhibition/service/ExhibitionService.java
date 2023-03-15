@@ -106,46 +106,20 @@ public class ExhibitionService {
         exhibitionRepository.updateViewCount(id);
     }
 
-    //전시회 상태와 유형 같이 검색
-    public Page<Exhibition> findSListsByStatusAndType(String status, String type, int page, String sortCriteria) {
-        Page<Exhibition> exhibitionPages;
+    //전시글 목록 조회
+    public Page<Exhibition> getExhibitionList(String status, String type, String sort, String titleKeyword, int page) {
         PageRequest pageRequest;
 
-        if (sortCriteria.equals("조회수순")) {
+        if (sort.equals("조회수순")) {
             pageRequest = PageRequest.of(page - 1, 8, Sort.by("viewCount").descending()
                     .and(Sort.by("id").descending()));
-        } else if (sortCriteria.equals("최신순")) {
+        } else if (sort.isEmpty()) {
             pageRequest = PageRequest.of(page - 1, 8, Sort.by("id").descending());
-        } else {
+        }
+        else {
             throw new CustomException(ExhibitionExceptionType.EXHIBITION_SORT_CRITERIA_ERROR);
         }
-
-        exhibitionPages = exhibitionRepository.findByTypeContainingAndStatusContaining(type, status, pageRequest);
-        return exhibitionPages;
-    }
-
-    //전시회 관람여부만으로 목록 조회
-    public Page<Exhibition> findListsAll(String status, String sortCriteria, int page) {
-        Page<Exhibition> exhibitionPages;
-        PageRequest pageRequest;
-
-        if (sortCriteria.equals("조회수순")) {
-            pageRequest = PageRequest.of(page - 1, 8, Sort.by("viewCount").descending()
-                    .and(Sort.by("id").descending()));
-        } else if (sortCriteria.equals("최신순")) {
-            pageRequest = PageRequest.of(page - 1, 8, Sort.by("id").descending());
-        } else {
-            throw new CustomException(ExhibitionExceptionType.EXHIBITION_SORT_CRITERIA_ERROR);
-        }
-        exhibitionPages = exhibitionRepository.findByStatusContaining(status, pageRequest);
-        return exhibitionPages;
-
-    }
-
-    //전시글 목록 조회 검색바 (status&title)
-    public Page<Exhibition> findTitle(String status, String keyword, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("id").descending());
-        return exhibitionRepository.findByStatusContainingAndTitleContaining(status, keyword, pageRequest);
+        return exhibitionRepository.searchPage(status, type, titleKeyword, pageRequest);
     }
 
     //전시글 존재여부 확인
