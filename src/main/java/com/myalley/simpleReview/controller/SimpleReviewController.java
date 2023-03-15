@@ -7,7 +7,6 @@ import com.myalley.simpleReview.mapper.SimpleReviewMapper;
 import com.myalley.simpleReview.service.SimpleReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping
+@RequestMapping(produces = "application/json; charset=utf8")
 @RequiredArgsConstructor
 public class SimpleReviewController {
     private final SimpleReviewService simpleService;
@@ -27,10 +26,7 @@ public class SimpleReviewController {
         SimpleReview newSimpleReviewInfo =
                 SimpleReviewMapper.INSTANCE.postSimpleDtoToSimpleReview(simpleDto);
         simpleService.createSimpleReview(newSimpleReviewInfo,member, simpleDto.getExhibitionId());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-        return new ResponseEntity<>("한 줄 리뷰가 등록되었습니다",headers,HttpStatus.CREATED);
+        return new ResponseEntity<>("한 줄 리뷰가 등록되었습니다",HttpStatus.CREATED);
     }
 
     @PutMapping("/api/simple-reviews/{simple-id}")
@@ -39,20 +35,14 @@ public class SimpleReviewController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         SimpleReview post = SimpleReviewMapper.INSTANCE.putSimpleDtoToSimpleReview(simpleDto);
         simpleService.updateSimpleReview(simpleId,post, member);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-        return new ResponseEntity<>("한 줄 리뷰가 수정되었습니다",headers,HttpStatus.OK);
+        return new ResponseEntity<>("한 줄 리뷰가 수정되었습니다",HttpStatus.OK);
     }
 
     @DeleteMapping("/api/simple-reviews/{simple-id}")
     public ResponseEntity deleteSimpleReview(@PathVariable("simple-id") Long simpleId){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         simpleService.removeSimpleReview(simpleId,member);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-        return new ResponseEntity<>("한 줄 리뷰가 삭제되었습니다",headers,HttpStatus.OK);
+        return new ResponseEntity<>("한 줄 리뷰가 삭제되었습니다",HttpStatus.OK);
     }
 
     @GetMapping("/simple-reviews/exhibitions/{exhibition-id}")

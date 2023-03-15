@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface BlogImageRepository extends JpaRepository<BlogImage, Long> {
     Optional<BlogImage> findByIdAndBlog(Long imageId, BlogReview blog);
     List<BlogImage> findAllByBlog(BlogReview blog);
+    Integer countByBlog(BlogReview blog);
 }
