@@ -43,7 +43,7 @@ public class BlogReview extends BaseTime {
     private String congestion;
     private Boolean isDeleted=false;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
@@ -84,10 +84,6 @@ public class BlogReview extends BaseTime {
     public void setImage(BlogImage image){
         this.images.add(image);
     }
-    public void setMember(Member member){
-        this.member = member;
-    }
-    public void setExhibition(Exhibition exhibition) {this.exhibition=exhibition;}
 
     //조회수 관리
     public void updateViewCount(){

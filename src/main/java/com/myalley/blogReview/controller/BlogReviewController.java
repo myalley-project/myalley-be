@@ -1,15 +1,10 @@
 package com.myalley.blogReview.controller;
 
-import com.myalley.blogReview.domain.BlogReview;
-//import com.myalley.blogReview.domain.DetailBlogReview;
 import com.myalley.blogReview.dto.request.BlogRequestDto;
-//import com.myalley.blogReview.dto.request.PutBlogDtoXXX;
-import com.myalley.blogReview.mapper.BlogReviewMapper;
 import com.myalley.blogReview.service.BlogReviewService;
 import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,7 +27,6 @@ public class BlogReviewController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Request-Type : Post, Entity : BlogReview, Member-ID : {}", member.getMemberId());
 
-        //BlogReview target = BlogReviewMapper.INSTANCE.postBlogDtoToBlogReview(blogRequestDto);
         blogReviewService.createBlog(blogRequestDto, member,exhibitionId,images);
         return new ResponseEntity<>("블로그 글이 등록되었습니다",HttpStatus.CREATED);
     }
@@ -43,7 +37,6 @@ public class BlogReviewController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Request-Type : Put, Entity : BlogReview, Blog-ID : {}, Member-ID : {}", blogId, member.getMemberId());
 
-        //BlogReview target = BlogReviewMapper.INSTANCE.putBlogDtoToBlogReview(blogRequestDto);
         blogReviewService.updateBlogReview(blogRequestDto,blogId,member);
         return new ResponseEntity("블로그 글이 수정되었습니다.",HttpStatus.OK);
     }
@@ -63,8 +56,6 @@ public class BlogReviewController {
         log.info("Request-Type : Get, Entity : BlogReview, Blog-ID : {}, Member-ID : {}", blogId, memberId);
 
         return new ResponseEntity<>(blogReviewService.retrieveBlogReview(blogId, memberId),HttpStatus.OK);
-        //DetailBlogReview review = blogReviewService.retrieveBlogReview(blogId, memberId);
-        //return new ResponseEntity<>(BlogReviewMapper.INSTANCE.blogToDetailBlogDto(review),HttpStatus.OK);
     }
 
     @GetMapping("/blogs")
@@ -73,8 +64,6 @@ public class BlogReviewController {
         log.info("Request-Type : Get, Entity : BlogReview_List");
 
         return new ResponseEntity<>(blogReviewService.retrieveBlogReviewList(pageNo,orderType),HttpStatus.OK);
-        //Page<BlogReview> blogReviewPage = blogReviewService.retrieveBlogReviewList(pageNo,orderType);
-        //return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
     }
 
     @GetMapping("/blogs/search")
@@ -83,8 +72,6 @@ public class BlogReviewController {
         log.info("Request-Type : Get, Entity : BlogReview_List, Search : {}", title);
 
         return new ResponseEntity<>(blogReviewService.searchBlogReviewList(title,pageNo),HttpStatus.OK);
-        //Page<BlogReview> blogReviewPage = blogReviewService.searchBlogReviewList(title,pageNo);
-        //return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
     }
 
     @GetMapping("/api/blogs/me")
@@ -93,8 +80,6 @@ public class BlogReviewController {
         log.info("Request-Type : Get, Entity : BlogReview_List, Member-ID : {}", member.getMemberId());
 
         return new ResponseEntity<>(blogReviewService.retrieveMyBlogReviewList(member,pageNo),HttpStatus.OK);
-        //Page<BlogReview> blogReviewPage = blogReviewService.retrieveMyBlogReviewList(member,pageNo);
-        //return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToUserBlogListDto(blogReviewPage),HttpStatus.OK);
     }
 
     @GetMapping("/blogs/exhibitions/{exhibition-id}")
@@ -103,8 +88,7 @@ public class BlogReviewController {
                                                       @RequestParam(value = "order",required = false) String orderType){
         log.info("Request-Type : Get, Entity : BlogReview_List, Exhibition-ID : {}", exhibitionId);
 
-        Page<BlogReview> blogReviewPage =
-                blogReviewService.retrieveExhibitionBlogReviewList(exhibitionId,pageNo,orderType);
-        return new ResponseEntity<>(BlogReviewMapper.INSTANCE.pageableBlogToBlogListDto(blogReviewPage),HttpStatus.OK);
+        return new ResponseEntity<>(blogReviewService.retrieveExhibitionBlogReviewList(exhibitionId,pageNo,orderType),
+                HttpStatus.OK);
     }
 }

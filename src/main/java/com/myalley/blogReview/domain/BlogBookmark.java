@@ -22,7 +22,7 @@ public class BlogBookmark {
     private LocalDateTime updatedAt;
     private Boolean isDeleted;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 

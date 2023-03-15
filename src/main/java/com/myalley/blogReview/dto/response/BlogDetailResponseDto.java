@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.awt.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,16 +34,16 @@ public class BlogDetailResponseDto {
     private List<ImageDto> imageInfo;
 
     //멤버에서 가져올 예정
-    private SimpleMemberDtoX memberInfo;
+    private SimpleMemberDto memberInfo;
     //전시회에서 가져올 예정
-    private SimpleExhibitionDtoX exhibitionInfo;
+    private SimpleExhibitionDto exhibitionInfo;
 
     public static BlogDetailResponseDto of(BlogReview blog, boolean likeStatus, boolean bookmarkStatus){
         return new BlogDetailResponseDto(blog.getId(),blog.getViewDate(),blog.getCreatedAt(),
                 blog.getTitle(),blog.getContent(),blog.getTime(), blog.getLikeCount(), blog.getViewCount(),
                 blog.getBookmarkCount(), blog.getTransportation(), blog.getRevisit(), blog.getCongestion(),
                 likeStatus,bookmarkStatus,blog.getImages().stream().map(ImageDto::from).collect(Collectors.toList()),
-                SimpleMemberDtoX.from(blog.getMember()), SimpleExhibitionDtoX.from(blog.getExhibition()));
+                SimpleMemberDto.from(blog.getMember()), SimpleExhibitionDto.from(blog.getExhibition()));
 
         //blogDto.setImageInfo(imageToImageDtoList(blog.getBlogReview().getImages())); -> null인 경우랑 아닌 경우를 나눌까?XX 여기서 확인하고 케이스에 맞게 생성하자
         //blogDto.setMemberInfo(); -> Member를 받아서 dto 생성하고 넣기. 그니까 blogDto.setMemberInfo(MemberDto.from(member));

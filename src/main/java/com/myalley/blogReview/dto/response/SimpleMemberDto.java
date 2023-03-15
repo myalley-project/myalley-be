@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SimpleMemberDtoX {
+public class SimpleMemberDto {
     private Long memberId;
     private String nickname;
     private String memberImage;
 
-    public static SimpleMemberDtoX from(Member member){
-        return new SimpleMemberDtoX(member.getMemberId(), member.getNickname(), member.getMemberImage());
+    public static SimpleMemberDto from(Member member){
+        return new SimpleMemberDto(member.getMemberId(), member.getNickname(), member.getMemberImage());
     }
 }

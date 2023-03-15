@@ -1,5 +1,7 @@
 package com.myalley.blogReview.dto.response;
 
+import com.myalley.blogReview.domain.BlogBookmark;
+import com.myalley.blogReview.domain.BlogLikes;
 import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.common.dto.pagingDto;
 import lombok.Data;
@@ -16,7 +18,7 @@ public class BlogListResponseDto {
     private List<BlogListDto> blogInfo;
     private pagingDto pageInfo;
 
-    public static BlogListResponseDto of(Page<BlogReview> blogReviewPage, String type){
+    public static BlogListResponseDto blogOf(Page<BlogReview> blogReviewPage, String type){
         BlogListResponseDto listResponseDto = new BlogListResponseDto();
         if(type.equals("basic"))
             listResponseDto.setBlogInfo(blogReviewPage.get().map(BlogListDto::basicFrom).collect(Collectors.toList()));
@@ -26,4 +28,23 @@ public class BlogListResponseDto {
                 blogReviewPage.getTotalElements(), blogReviewPage.getTotalPages()));
         return listResponseDto;
     }
+
+    public static BlogListResponseDto likesFrom(Page<BlogLikes> blogLikesPage){
+        BlogListResponseDto listResponseDto = new BlogListResponseDto();
+        listResponseDto.setBlogInfo(blogLikesPage.get().map(blogLikes -> BlogListDto.basicFrom(blogLikes.getBlog()))
+                    .collect(Collectors.toList()));
+        listResponseDto.setPageInfo(new pagingDto(blogLikesPage.getNumber()+1, blogLikesPage.getSize(),
+                blogLikesPage.getTotalElements(), blogLikesPage.getTotalPages()));
+        return listResponseDto;
+    }
+
+    public static BlogListResponseDto bookmarkFrom(Page<BlogBookmark> blogBookmarkPage){
+        BlogListResponseDto listResponseDto = new BlogListResponseDto();
+        listResponseDto.setBlogInfo(blogBookmarkPage.get().map(blogBookmark -> BlogListDto.basicFrom(blogBookmark.getBlog()))
+                .collect(Collectors.toList()));
+        listResponseDto.setPageInfo(new pagingDto(blogBookmarkPage.getNumber()+1, blogBookmarkPage.getSize(),
+                blogBookmarkPage.getTotalElements(), blogBookmarkPage.getTotalPages()));
+        return listResponseDto;
+    }
+
 }

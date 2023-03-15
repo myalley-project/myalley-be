@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SimpleExhibitionDtoX {
+public class SimpleExhibitionDto {
     private Long id;
     private String title;
     private String posterUrl;
@@ -16,8 +16,8 @@ public class SimpleExhibitionDtoX {
     private String space;
     private String type;
 
-    public static SimpleExhibitionDtoX from(Exhibition exhibition){
-        return new SimpleExhibitionDtoX(exhibition.getId(), exhibition.getTitle(), exhibition.getPosterUrl(),
+    public static SimpleExhibitionDto from(Exhibition exhibition){
+        return new SimpleExhibitionDto(exhibition.getId(), exhibition.getTitle(), exhibition.getPosterUrl(),
                 exhibition.getDuration(), exhibition.getSpace(), exhibition.getType());
     }
 }
