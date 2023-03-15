@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface ExhibitionRepository extends JpaRepository<Exhibition,Long> {
+public interface ExhibitionRepository extends JpaRepository<Exhibition,Long>, ExhibitionRepositoryCustom {
     @Modifying
     @Query("update Exhibition e set e.viewCount = e.viewCount + 1 where e.id = :id")
     Integer updateViewCount(Long id);
