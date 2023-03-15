@@ -2,14 +2,12 @@ package com.myalley.exhibition.service;
 
 import com.myalley.exception.CustomException;
 import com.myalley.exception.ExhibitionExceptionType;
-import com.myalley.exception.MemberExceptionType;
 import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.exhibition.domain.ExhibitionBookmark;
 import com.myalley.exhibition.dto.response.BookmarkResponseDto;
 import com.myalley.exhibition.repository.ExhibitionBookmarkRepository;
-import com.myalley.exhibition.repository.ExhibitionRepository;
 import com.myalley.member.domain.Member;
-import com.myalley.member.repository.MemberRepository;
+import com.myalley.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,15 +24,11 @@ public class ExhibitionBookmarkService {
 
     private final ExhibitionService exhibitionService;
     private final ExhibitionBookmarkRepository bookmarkRepository;
-    private final ExhibitionRepository exhibitionRepository;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     public BookmarkResponseDto addBookmark(Long memberId, Long exhibitionId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MemberExceptionType.NOT_FOUND_MEMBER));
-
-        Exhibition exhibition = exhibitionRepository.findById(exhibitionId)
-                .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
+        Member member = memberService.verifyMember(memberId);
+        Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
 
          Optional<ExhibitionBookmark> bookmark = bookmarkRepository.findByExhibitionAndMember(exhibition, member);
 
@@ -57,16 +51,20 @@ public class ExhibitionBookmarkService {
     }
 
     private void deleteBookmark(Long bookmarkId) {
-        ExhibitionBookmark bookmark = bookmarkRepository.findById(bookmarkId)
-                .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_BOOKMARK_NOT_FOUND));
+        ExhibitionBookmark bookmark = validateBookmark(bookmarkId);
         bookmarkRepository.deleteById(bookmarkId);
     }
 
     //북마크 추가한 전시글 목록 페이징 조회하기
     public Page<ExhibitionBookmark> findBookmarks(Long memberId, int page) {
         PageRequest pageRequest = PageRequest.of(page -1, 8, Sort.by("id").descending());
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MemberExceptionType.NOT_FOUND_MEMBER));
+        Member member = memberService.verifyMember(memberId);
         return bookmarkRepository.findAllByMember(member, pageRequest);
+    }
+
+    //북마크글 존재여부 확인
+    public ExhibitionBookmark validateBookmark(Long bookmarkId) {
+       return bookmarkRepository.findById(bookmarkId)
+                .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_BOOKMARK_NOT_FOUND));
     }
 }
