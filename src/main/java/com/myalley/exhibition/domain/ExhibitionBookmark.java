@@ -37,9 +37,4 @@ public class ExhibitionBookmark {
         this.exhibition = exhibition;
         this.member = member;
     }
-
-    public void addBookmark() {
-      this.isBookmarked = true;
-    }
-
 }

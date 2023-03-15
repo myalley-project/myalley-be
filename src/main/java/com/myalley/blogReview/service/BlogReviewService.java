@@ -35,7 +35,7 @@ public class BlogReviewService {
         if(images != null && images.size()>3)
             throw new CustomException(BlogReviewExceptionType.IMAGE_BAD_REQUEST_OVER);
         blogReview.setMember(member);
-        blogReview.setExhibition(exhibitionService.verifyExhibition(exhibitionId));
+        blogReview.setExhibition(exhibitionService.validateExistExhibition(exhibitionId));
         BlogReview newBlog = blogReviewRepository.save(blogReview);
         blogImageService.addBlogImageList(images, newBlog);
     }
@@ -94,7 +94,7 @@ public class BlogReviewService {
 
     public Page<BlogReview> retrieveExhibitionBlogReviewList(Long exhibitionId, Integer pageNo, String orderType) {
         PageRequest pageRequest;
-        Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
+        Exhibition exhibition = exhibitionService.validateExistExhibition(exhibitionId);
         if(pageNo == null)
             pageNo = 0;
         else

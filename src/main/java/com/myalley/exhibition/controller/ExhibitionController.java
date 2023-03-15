@@ -27,46 +27,45 @@ public class ExhibitionController {
     private final ExhibitionService exhibitionService;
 
     @PostMapping(value = "/api/exhibitions")
-    public ResponseEntity save(@Valid @RequestBody ExhibitionRequest request) {
+    public ResponseEntity createExhibition(@Valid @RequestBody ExhibitionRequest request) {
         log.info("전시회 정보 등록");
-        return ResponseEntity.ok(exhibitionService.save(request));
+        return ResponseEntity.ok(exhibitionService.createExhibition(request));
     }
 
-    @PutMapping("/api/exhibitions/{id}")
-    public ResponseEntity update(@PathVariable Long id,
+    @PutMapping("/api/exhibitions/{exhibitionId}")
+    public ResponseEntity updateExhibition(@PathVariable Long exhibitionId,
                                  @Valid @RequestBody ExhibitionUpdateRequest updateRequest) {
         log.info("전시회 정보 수정");
-        return ResponseEntity.ok(exhibitionService.update(updateRequest, id));
+        return ResponseEntity.ok(exhibitionService.updateExhibition(updateRequest, exhibitionId));
     }
 
-    @DeleteMapping("/api/exhibitions/{id}")
-    public ResponseEntity delete(@PathVariable Long id) {
+    @DeleteMapping("/api/exhibitions/{exhibitionId}")
+    public ResponseEntity removeExhibition(@PathVariable Long exhibitionId) {
         log.info("전시회 정보 삭제");
-        exhibitionService.delete(id);
+        exhibitionService.removeExhibition(exhibitionId);
 
         return new ResponseEntity<>("해당 전시회 게시글이 삭제되었습니다.", HttpStatus.OK);
     }
 
-    @GetMapping("/exhibitions/{id}")
-    public ResponseEntity read(@PathVariable Long id, @RequestHeader("memberId") Long data) {
-        Long memberId =  data;
+    @GetMapping("/exhibitions/{exhibitionId}")
+    public ResponseEntity findByExhibitionId(@PathVariable Long exhibitionId, @RequestHeader("memberId") Long memberId) {
         log.info("전시회 정보 상세페이지 조회");
-        exhibitionService.updateViewCount(id);
+        exhibitionService.updateViewCount(exhibitionId);
 
         if (memberId == 0) {
-            return ResponseEntity.ok(exhibitionService.findInfoGeneral(id));
+            return ResponseEntity.ok(exhibitionService.findByExhibitionId(exhibitionId));
         }
-        return ResponseEntity.ok(exhibitionService.findInfoMember(id, memberId));
+        return ResponseEntity.ok(exhibitionService.findByExhibitionIdAndMemberId(exhibitionId, memberId));
     }
 
     @GetMapping("/exhibitions")
-    public ResponseEntity getExhibitions(@Positive @RequestParam int page,
+    public ResponseEntity findPagedExhibitions(@Positive @RequestParam int page,
                                                   @RequestParam(value = "status", required = false) String status,
                                                   @RequestParam(value = "type", required = false) String type,
                                                   @RequestParam(value = "sort", required = false) String sort,
                                                   @RequestParam(value = "title", required = false) String title) {
 
-        Page<Exhibition> pagedExhibitions = exhibitionService.getExhibitionList(status, type, sort, title, page);
+        Page<Exhibition> pagedExhibitions = exhibitionService.findExhibitionsByConditions(status, type, sort, title, page);
         List<ExhibitionBasicResponse> exhibitions = pagedExhibitions
                 .stream()
                 .map(ExhibitionBasicResponse::of)

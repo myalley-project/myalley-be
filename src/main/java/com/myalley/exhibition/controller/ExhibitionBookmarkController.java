@@ -25,13 +25,14 @@ public class ExhibitionBookmarkController {
 
     private final ExhibitionBookmarkService exhibitionBookmarkService;
 
-    @PutMapping("/api/exhibitions/bookmarks/{id}")
-    public ResponseEntity switchBookmark(@PathVariable Long id) {
-        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long memberId = member.getMemberId();
+    @PutMapping("/api/exhibitions/bookmarks/{exhibitionId}")
+    public ResponseEntity switchBookmark(@PathVariable Long exhibitionId) {
         log.info("전시글 북마크 추가/삭제");
 
-        return ResponseEntity.ok(exhibitionBookmarkService.addBookmark(memberId, id));
+        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long memberId = member.getMemberId();
+
+        return ResponseEntity.ok(exhibitionBookmarkService.createBookmark(memberId, exhibitionId));
     }
 
     @GetMapping("/api/exhibitions/bookmarks/me")
@@ -41,7 +42,7 @@ public class ExhibitionBookmarkController {
 
         log.info("본인의 전시글 북마크 목록 조회");
 
-        Page<ExhibitionBookmark> exhibitionBookmarks = exhibitionBookmarkService.findBookmarks(memberId, page);
+        Page<ExhibitionBookmark> exhibitionBookmarks = exhibitionBookmarkService.findBookmarksByMemberId(memberId, page);
         List<ExhibitionBasicResponse> exhibitions = exhibitionBookmarks
                 .stream()
                 .map(ExhibitionBasicResponse::of)
