@@ -22,7 +22,7 @@ public class SimpleReviewService {
     private final ExhibitionService exhibitionService;
 
     public void createSimpleReview(SimpleReview simpleReview, Member member, Long exhibitionId){
-        Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
+        Exhibition exhibition = exhibitionService.validateExistExhibition(exhibitionId);
         simpleReview.setMember(member);
         simpleReview.setExhibition(exhibition);
         simpleRepository.save(simpleReview);
@@ -42,7 +42,7 @@ public class SimpleReviewService {
     }
 
     public Page<SimpleReview> retrieveExhibitionSimpleReviewList(Long exhibitionId, Integer pageNo, String orderType){
-        Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
+        Exhibition exhibition = exhibitionService.validateExistExhibition(exhibitionId);
         if(pageNo==null)
             pageNo=0;
         else

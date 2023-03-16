@@ -1,8 +1,15 @@
+buildscript {
+	ext {
+		queryDslVersion = "5.0.0"
+	}
+}
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.6.11'
 	id 'io.spring.dependency-management' version '1.1.0'
 	id "org.asciidoctor.jvm.convert" version "3.3.2"
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 group = 'com'
@@ -33,6 +40,10 @@ dependencies {
 	implementation 'org.apache.tika:tika-core:2.6.0'
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final' //mapstruct 추가
 
+	// querydsl 추가
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'mysql:mysql-connector-java'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -48,14 +59,34 @@ dependencies {
 	runtimeOnly 'mysql:mysql-connector-java'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.5.2'
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
 	implementation 'com.google.code.gson:gson:2.8.7'
+}
+
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl { //querydsl 추가
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+
+sourceSets { //querydsl 추가
+	main.java.srcDir querydslDir
+}
+
+configurations { //querydsl 추가
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl { //querydsl 추가
+	options.annotationProcessorPath = configurations.querydsl
 }
 
 jar {

@@ -8,13 +8,11 @@ import java.util.List;
 @Getter
 public class ExhibitionPageResponse<T> {
     private List<T> exhibitions;
-    private PagingDto pageInfo;
+    private int totalPage;
 
     public ExhibitionPageResponse(List<T> exhibition, Page page) {
         this.exhibitions = exhibition;
-        this.pageInfo = new PagingDto(page.getNumber() +1,
-                page.getSize(), page.getTotalElements(),
-                page.getTotalPages());
+        this.totalPage = page.getTotalPages();
     }
 
 }

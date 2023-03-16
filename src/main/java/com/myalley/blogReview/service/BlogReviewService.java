@@ -49,7 +49,7 @@ public class BlogReviewService {
                 .transportation(blogRequestDto.getTransportation())
                 .revisit(blogRequestDto.getRevisit())
                 .member(member)
-                .exhibition(exhibitionService.verifyExhibition(exhibitionId)).build();
+                .exhibition(exhibitionService.validateExistExhibition(exhibitionId)).build();
         BlogReview newBlog = blogReviewRepository.save(blogReview);
         blogImageService.uploadFileList(images, newBlog);
     }
@@ -106,7 +106,7 @@ public class BlogReviewService {
 
     public BlogListResponseDto findPagedBlogReviewsByExhibitionId(Long exhibitionId, Integer pageNo, String orderType) {
         PageRequest pageRequest;
-        Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
+        Exhibition exhibition = exhibitionService.validateExistExhibition(exhibitionId);
         if(pageNo == null)
             pageNo = 0;
         else
