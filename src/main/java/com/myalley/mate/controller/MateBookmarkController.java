@@ -1,7 +1,6 @@
 package com.myalley.mate.controller;
 
 import com.myalley.mate.domain.MateBookmark;
-import com.myalley.mate.dto.MateMyResponse;
 import com.myalley.mate.dto.MatePageResponse;
 import com.myalley.mate.dto.MateSimpleResponse;
 import com.myalley.mate.service.MateBookmarkService;
@@ -27,24 +26,23 @@ public class MateBookmarkController {
 
     //북마크 추가 및 삭제
     @PutMapping("/api/mates/bookmarks/{id}")
-    public ResponseEntity addBookmark(@PathVariable Long id) {
+    public ResponseEntity switchBookmark(@PathVariable Long id) {
         log.info("메이트글 북마크 추가/삭제");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
 
-        return ResponseEntity.ok(bookmarkService.addNewBookmark(memberId, id));
+        return ResponseEntity.ok(bookmarkService.createBookmark(memberId, id));
     }
 
     //회원 본인의 북마크한 게시글 조회
     @GetMapping("/api/mates/bookmarks/me")
-    public ResponseEntity getMatesAll(@Positive @RequestParam("page") int page) {
+    public ResponseEntity findMyBookmarkedMates(@Positive @RequestParam("page") int page) {
 
         log.info("본인의 메이트글 북마크 목록 조회");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
-        int size = 8;
 
-        Page<MateBookmark> mateBookmarks = bookmarkService.findBookmarkedMate(memberId, page, size);
+        Page<MateBookmark> mateBookmarks = bookmarkService.findBookmarkedMatesByMemberId(memberId, page);
         List<MateSimpleResponse> responses = mateBookmarks
                 .stream()
                 .map(MateSimpleResponse::of)

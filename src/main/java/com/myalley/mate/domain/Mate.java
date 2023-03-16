@@ -53,15 +53,12 @@ public class Mate extends BaseTime {
     @Column(name = "is_deleted")
     private boolean isDeleted = Boolean.FALSE;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exhibitionId")
-    @JsonBackReference
     private Exhibition exhibition;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId")
-    @JsonBackReference
     private Member member;
 
     @Builder
