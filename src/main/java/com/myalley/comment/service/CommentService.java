@@ -29,8 +29,8 @@ public class CommentService {
 
     //댓글 작성
     @Transactional
-    public void addComment(Long mateId, CommentRequest request, Long memberId) {
-        Mate mate = mateService.verifyMate(mateId);
+    public void createComment(Long mateId, CommentRequest request, Long memberId) {
+        Mate mate = mateService.validateExistMate(mateId);
         Member member = memberService.verifyMember(memberId);
         Comment comment = Comment.parent(member, mate, request.getContent());
         commentRepository.save(comment);
@@ -38,8 +38,8 @@ public class CommentService {
 
     //대댓글 작성
     @Transactional
-    public void addReply(Long commentId, CommentRequest request, Long memberId) {
-        Comment parent = verifyComment(commentId);
+    public void createReply(Long commentId, CommentRequest request, Long memberId) {
+        Comment parent = validateExistComment(commentId);
         Member member = memberService.verifyMember(memberId);
 
         if (!parent.isParent()) {
@@ -51,7 +51,7 @@ public class CommentService {
         commentRepository.save(reply);
     }
     
-    public CommentsResponse findComments(Long mateId) {
+    public CommentsResponse findCommentsByMateId(Long mateId) {
         List<Comment> comments = commentRepository.findCommentsByMateId(mateId);
         List<CommentResponse> commentResponses = comments.stream()
                 .map(this::convertToCommentResponse)
@@ -61,9 +61,6 @@ public class CommentService {
     }
 
     private CommentResponse convertToCommentResponse(Comment comment) {
-//        if (comment.isSoftRemoved()) {
-//            return CommentResponse.softRemovedOf(comment, convertToReplyResponses(comment));
-//        }
         return CommentResponse.of(comment, convertToReplyResponses(comment));
     }
 
@@ -77,37 +74,26 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long commentId, Long memberId) {
-        Comment comment = verifyComment(commentId);
+    public void removeByCommentIdAndMemberId(Long commentId, Long memberId) {
+        if (verifyCommentAuthor(commentId, memberId)) {
+            commentRepository.deleteById(commentId);
+        }
+    }
+
+    //댓글 존재여부 검증
+    private Comment validateExistComment(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(MateExceptionType.COMMENT_NOT_FOUND));
+    }
+
+    //댓글 작성자 본인 확인
+    private boolean verifyCommentAuthor(Long commentId, Long memberId) {
+        Comment comment = validateExistComment(commentId);
         Member member = memberService.verifyMember(memberId);
 
         if (!member.equals(comment.getMember())) {
             throw new CustomException(MemberExceptionType.TOKEN_FORBIDDEN);
         }
-        deleteCommentOrReply(comment);
-    }
-
-    private void deleteCommentOrReply(Comment comment) {
-            deleteParent(comment);
-    }
-
-    private void deleteParent(Comment comment) {
-        comment.changePretendingToBeRemoved();
-    }
-
-    private void deleteChild(Comment comment) {
-        Comment parent = comment.getParent();
-        parent.deleteChild(comment);
-        commentRepository.delete(comment);
-
-        if (parent.hasNoReply() && parent.isSoftRemoved()) {
-            commentRepository.delete(parent);
-        }
-    }
-
-    //댓글 존재여부 검증
-    private Comment verifyComment(Long commentId) {
-        return commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(MateExceptionType.COMMENT_NOT_FOUND));
+        return true;
     }
 }
