@@ -21,8 +21,8 @@ public class BlogBookmarkController {
 
     @PutMapping("/{blog-id}")
     public ResponseEntity clickBlogBookmark(@PathVariable("blog-id") Long blogId){
+        log.info("Request-Type : Put, Entity : BlogBookmark, Blog-ID : {}", blogId);
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("Request-Type : Put, Entity : BlogBookmark, Blog-ID : {}, Member-ID : {}", blogId, member.getMemberId());
 
         BlogReview blogReview = blogReviewService.findBlogReview(blogId);
         if(blogBookmarkService.findBookmark(blogReview, member))
@@ -32,8 +32,8 @@ public class BlogBookmarkController {
 
     @GetMapping("/me")
     public ResponseEntity getMyBlogBookmark(@RequestParam(required = false, value = "page") Integer pageNo){
+        log.info("Request-Type : Get, Entity : BlogBookmark_List, Type : MyPage");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("Request-Type : Get, Entity : BlogBookmark, Member-ID : {}", member.getMemberId());
 
         return new ResponseEntity<>(blogBookmarkService.retrieveMyBlogBookmarks(member,pageNo), HttpStatus.OK);
     }

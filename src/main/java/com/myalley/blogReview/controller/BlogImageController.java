@@ -23,9 +23,8 @@ public class BlogImageController {
     @DeleteMapping("/{blog-id}/{image-id}")
     public ResponseEntity deleteBlogReviewImage(@PathVariable("blog-id") Long blogId,
                                                 @PathVariable("image-id") Long imageId){
+        log.info("Request-Type : Delete, Entity : BlogImage, Blog-ID : {}, Image-ID : {}", blogId, imageId);
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("Request-Type : Delete, Entity : BlogImage, Blog-ID : {}, Member-ID : {}, Image-ID : {}",
-                blogId, member.getMemberId(), imageId);
 
         BlogReview target = blogReviewService.findBlogReview(blogId);
         blogImageService.removeBlogImage(target,member,imageId);
@@ -35,8 +34,8 @@ public class BlogImageController {
     @PostMapping("/{blog-id}")
     public ResponseEntity newPostBlogReviewImage(@PathVariable("blog-id") Long blogId,
                                                  @RequestPart(value = "image") MultipartFile image) throws Exception {
+        log.info("Request-Type : Post, Entity : BlogImage, Blog-ID : {}", blogId);
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("Request-Type : Post, Entity : BlogImage, Blog-ID : {}, Member-ID : {}", blogId, member.getMemberId());
 
         BlogReview target = blogReviewService.findBlogReview(blogId);
         blogImageService.createNewBlogImage(target,member,image);

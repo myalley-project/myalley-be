@@ -21,8 +21,8 @@ public class BlogLikesController {
 
     @PutMapping("/{blog-id}")
     public ResponseEntity clickLikes(@PathVariable("blog-id") Long blogId){
+        log.info("Request-Type : Put, Entity : BlogLikes, Blog-ID : {}", blogId);
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("Request-Type : Put, Entity : BlogLikes, Blog-ID : {}, Member-ID : {}", blogId, member.getMemberId());
 
         BlogReview blogReview = blogReviewService.findBlogReview(blogId);
         if(blogLikesService.findLikes(blogReview,member))
@@ -32,8 +32,8 @@ public class BlogLikesController {
 
     @GetMapping("/me")
     public ResponseEntity getMyBlogLikes(@RequestParam(required = false, value = "page") Integer pageNo){
+        log.info("Request-Type : Get, Entity : BlogLikes_List, Type : MyPage");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("Request-Type : Get, Entity : BlogLikes, Member-ID : {}", member.getMemberId());
 
         return new ResponseEntity<>(blogLikesService.retrieveMyBlogLikes(member,pageNo),HttpStatus.OK);
     }

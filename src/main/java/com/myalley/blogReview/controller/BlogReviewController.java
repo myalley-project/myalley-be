@@ -24,8 +24,8 @@ public class BlogReviewController {
     public ResponseEntity postBlogReview(@Valid @RequestPart(value = "blogInfo") BlogRequestDto blogRequestDto,
                                          @RequestPart(value = "images",required = false) List<MultipartFile> images,
                                          @RequestPart(value = "exhibitionId")Long exhibitionId) throws Exception {
+        log.info("Request-Type : Post, Entity : BlogReview");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("Request-Type : Post, Entity : BlogReview, Member-ID : {}", member.getMemberId());
 
         blogReviewService.createBlog(blogRequestDto, member,exhibitionId,images);
         return new ResponseEntity<>("블로그 글이 등록되었습니다",HttpStatus.CREATED);
@@ -34,8 +34,8 @@ public class BlogReviewController {
     @PutMapping("/api/blogs/{blog-id}")
     public ResponseEntity putBlogReview(@PathVariable("blog-id") Long blogId,
                                            @Valid @RequestBody BlogRequestDto blogRequestDto) {
+        log.info("Request-Type : Put, Entity : BlogReview, Blog-ID : {}", blogId);
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("Request-Type : Put, Entity : BlogReview, Blog-ID : {}, Member-ID : {}", blogId, member.getMemberId());
 
         blogReviewService.updateBlogReview(blogRequestDto,blogId,member);
         return new ResponseEntity("블로그 글이 수정되었습니다.",HttpStatus.OK);
@@ -43,8 +43,8 @@ public class BlogReviewController {
 
     @DeleteMapping("/api/blogs/{blog-id}")
     public ResponseEntity deleteBlogReview(@PathVariable("blog-id") Long blogId){
+        log.info("Request-Type : Delete, Entity : BlogReview, Blog-ID : {}", blogId);
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("Request-Type : Delete, Entity : BlogReview, Blog-ID : {}, Member-ID : {}", blogId, member.getMemberId());
 
         blogReviewService.removeBlogReview(blogId,member);
         return new ResponseEntity<>("블로그 글이 삭제되었습니다.",HttpStatus.OK);
@@ -61,7 +61,7 @@ public class BlogReviewController {
     @GetMapping("/blogs")
     public ResponseEntity getBlogReviews(@RequestParam(required = false, value = "page") Integer pageNo,
                                          @RequestParam(required = false, value = "order") String orderType){
-        log.info("Request-Type : Get, Entity : BlogReview_List");
+        log.info("Request-Type : Get, Entity : BlogReview_List, Type : Basic");
 
         return new ResponseEntity<>(blogReviewService.retrieveBlogReviewList(pageNo,orderType),HttpStatus.OK);
     }
@@ -69,15 +69,15 @@ public class BlogReviewController {
     @GetMapping("/blogs/search")
     public ResponseEntity getBlogReviewsWithSearch(@RequestParam(value = "title") String title,
                                          @RequestParam(required = false, value = "page") Integer pageNo){
-        log.info("Request-Type : Get, Entity : BlogReview_List, Search : {}", title);
+        log.info("Request-Type : Get, Entity : BlogReview_List, Type : Search, Word : {}", title);
 
         return new ResponseEntity<>(blogReviewService.searchBlogReviewList(title,pageNo),HttpStatus.OK);
     }
 
     @GetMapping("/api/blogs/me")
     public ResponseEntity getUserBlogReviewList(@RequestParam(value = "page",required = false) Integer pageNo){
+        log.info("Request-Type : Get, Entity : BlogReview_List, Type : MyPage");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("Request-Type : Get, Entity : BlogReview_List, Member-ID : {}", member.getMemberId());
 
         return new ResponseEntity<>(blogReviewService.retrieveMyBlogReviewList(member,pageNo),HttpStatus.OK);
     }
@@ -86,7 +86,7 @@ public class BlogReviewController {
     public ResponseEntity getExhibitionBlogReviewList(@PathVariable("exhibition-id") Long exhibitionId,
                                                       @RequestParam(value = "page",required = false) Integer pageNo,
                                                       @RequestParam(value = "order",required = false) String orderType){
-        log.info("Request-Type : Get, Entity : BlogReview_List, Exhibition-ID : {}", exhibitionId);
+        log.info("Request-Type : Get, Entity : BlogReview_List, Type : Exhibition, Exhibition-ID : {}", exhibitionId);
 
         return new ResponseEntity<>(blogReviewService.retrieveExhibitionBlogReviewList(exhibitionId,pageNo,orderType),
                 HttpStatus.OK);
