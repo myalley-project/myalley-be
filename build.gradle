@@ -1,9 +1,3 @@
-buildscript {
-	ext {
-		queryDslVersion = "5.0.0"
-	}
-}
-
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.6.11'
@@ -17,10 +11,11 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
-	asciidoctorExtensions
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+	asciidoctorExtensions
+	querydsl.extendsFrom compileClasspath
 }
 
 repositories {
@@ -41,8 +36,8 @@ dependencies {
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final' //mapstruct 추가
 
 	// querydsl 추가
-	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+	implementation 'com.querydsl:querydsl-jpa:5.0.0'
+	implementation 'com.querydsl:querydsl-apt:5.0.0'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'mysql:mysql-connector-java'
@@ -67,28 +62,22 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.8.7'
 }
 
-// ============= querydsl =============
-def querydslDir = "$buildDir/generated/querydsl"
+//* QueryDsl Start */
+def querydslSrcDir = "$buildDir/generated/querydsl"
 
 querydsl {
 	jpa = true
-	querydslSourcesDir = querydslDir
+	querydslSourcesDir = querydslSrcDir
 }
 
 sourceSets {
-	main.java.srcDir querydslDir
+	main.java.srcDir querydslSrcDir
 }
 
 compileQuerydsl {
 	options.annotationProcessorPath = configurations.querydsl
 }
-
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-	querydsl.extendsFrom compileClasspath
-}
+/* QueryDsl End */
 
 jar {
 	enabled = false
