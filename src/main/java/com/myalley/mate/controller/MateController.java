@@ -28,29 +28,29 @@ public class MateController {
     private final MateService mateService;
 
     @PostMapping("/api/mates")
-    public ResponseEntity create(@Valid @RequestBody MateRequest request) {
+    public ResponseEntity createMate(@Valid @RequestBody MateRequest request) {
         log.info("메이트 모집글 등록");
 
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
 
-        return ResponseEntity.ok(mateService.save(request, memberId));
+        return ResponseEntity.ok(mateService.createMate(request, memberId));
     }
 
     @PutMapping("/api/mates/{mateId}")
-    public ResponseEntity update(@PathVariable Long mateId,
+    public ResponseEntity updateMate(@PathVariable Long mateId,
                                  @Valid @RequestBody MateUpdateRequest request) {
         log.info("메이트 모집글 수정");
 
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
 
-        return ResponseEntity.ok(mateService.update(mateId, request, memberId));
+        return ResponseEntity.ok(mateService.updateMate(mateId, request, memberId));
     }
 
     //메이트글 상세페이지 조회 (회원/비회원)
     @GetMapping("/mates/{mateId}")
-    public ResponseEntity getMateDetail(@PathVariable Long mateId, @RequestHeader("memberId") Long memberId) {
+    public ResponseEntity findByMateId(@PathVariable Long mateId, @RequestHeader("memberId") Long memberId) {
         log.info("메이트 모집글 상세페이지 조회");
 
         if (memberId == null) {
@@ -60,25 +60,25 @@ public class MateController {
         mateService.updateViewCount(mateId);
 
         if (memberId == 0) {
-            return ResponseEntity.ok(mateService.findDetail(mateId));
+            return ResponseEntity.ok(mateService.findByMateId(mateId));
         }
-        return ResponseEntity.ok(mateService.findDetail(mateId, memberId));
+        return ResponseEntity.ok(mateService.findByMateIdAndMemberId(mateId, memberId));
     }
 
     @DeleteMapping("/api/mates/{mateId}")
-    public ResponseEntity delete(@PathVariable Long mateId) {
+    public ResponseEntity removeMate(@PathVariable Long mateId) {
         log.info("메이트 모집글 삭제");
 
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
-        mateService.delete(mateId, memberId);
+        mateService.removeByMateIdAndMemberId(mateId, memberId);
 
         return new ResponseEntity<>("메이트 모집글 삭제가 완료되었습니다.", HttpStatus.OK);
     }
 
     //메이트글 모집완료 여부 목록 조회
     @GetMapping("/mates")
-    public ResponseEntity getMateListByStatus(
+    public ResponseEntity findPagedMates(
             @Positive @RequestParam int page,
             @RequestParam(value = "status", required = true) String status) {
 
@@ -87,9 +87,9 @@ public class MateController {
         Page<Mate> mates;
 
         if (status.equals("전체")) {
-            mates = mateService.findListAll(page);
+            mates = mateService.findPagedMates(page);
         } else if (status.equals("모집 중") || status.equals("모집 완료")) {
-            mates = mateService.findListByStatus(status, page);
+            mates = mateService.findMatesByStatus(status, page);
         } else {
             throw new CustomException(MateExceptionType.MATE_SORT_CRITERIA_ERROR);
         }
@@ -104,9 +104,28 @@ public class MateController {
                 HttpStatus.OK);
     }
 
+    @GetMapping("/mates/search")
+    public ResponseEntity findPagedMatesNew( @Positive @RequestParam int page,
+                                             @RequestParam(value = "status", required = false) String status,
+                                             @RequestParam(value = "title", required = false) String title) {
+
+        log.info("메이트 모집글 목록 조회");
+
+        Page<Mate> mates = mateService.findMatesByStatusAndTitle(status, title, page);
+        List<MateSimpleResponse> response = mates
+                .stream()
+                .map(MateSimpleResponse::of)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(
+                new MatePageResponse<>(response, mates),
+                HttpStatus.OK);
+
+    }
+
     //본인이 작성한 글 조회
     @GetMapping("/api/mates/me")
-    public ResponseEntity getMyMatePosts(@Positive @RequestParam("page") int page) {
+    public ResponseEntity findMyMates(@Positive @RequestParam("page") int page) {
         log.info("본인이 작성한 메이트 모집글 목록 조회");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
@@ -121,13 +140,12 @@ public class MateController {
                 new MatePageResponse<>(responses, mate), HttpStatus.OK);
     }
 
-    //전시글 상세페이지에서 해당 전시회에 해당하는 메이트 모집글 목록 조회
     @GetMapping("/exhibitions/mates/{exhibitionId}")
-    public ResponseEntity getMatesPostsByExhibition(@Positive @RequestParam("page") int page,
+    public ResponseEntity findMatesByExhibition(@Positive @RequestParam("page") int page,
                                                @PathVariable Long exhibitionId) {
-        log.info("상세페이지 메이트 모집글 목록 조회");
+        log.info("전시회 상세페이지 메이트 모집글 목록 조회");
 
-        Page<Mate> mates = mateService.findExhibitionMates(exhibitionId, page);
+        Page<Mate> mates = mateService.findMatesByExhibitionId(exhibitionId, page);
         List<MateExhibitionResponse> response = mates
                 .stream()
                 .map(MateExhibitionResponse::of)
@@ -135,23 +153,5 @@ public class MateController {
 
         return new ResponseEntity<>(
                 new MatePageResponse<>(response, mates), HttpStatus.OK);
-    }
-
-
-    //메이트글 서치바 (제목 or 내용 검색)
-    @GetMapping("/mates/search")
-    public ResponseEntity getMateListByTitle( @Positive @RequestParam int page,
-                                           @RequestParam(value = "keyword", required = false) String keyword) {
-
-        log.info("메이트 모집글 서치바 제목 검색");
-        Page<Mate> pageMate = mateService.findTitle(keyword, page);
-        List<MateSimpleResponse> mates = pageMate
-                .stream()
-                .map(MateSimpleResponse::of)
-                .collect(Collectors.toList());
-
-        return new ResponseEntity<>(
-                new MatePageResponse<>(mates, pageMate), HttpStatus.OK);
-
     }
 }
