@@ -66,29 +66,8 @@ public class Comment extends BaseTime {
         return child;
     }
 
-    public boolean isSoftRemoved() {
-        return isDeleted;
-    }
-
-    public void changePretendingToBeRemoved() {
-        this.isDeleted = true;
-    }
-
-    public void deleteChild(Comment reply) {
-        children.remove(reply);
-    }
-
     public boolean isParent() {
         return Objects.isNull(parent);
-    }
-
-    public boolean hasNoReply() {
-        return children.isEmpty();
-    }
-
-    public void updateContent(Long commentId, String content) {
-        this.id = commentId;
-        this.message = content;
     }
 
 }
