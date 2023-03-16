@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor
 public class BlogListResponseDto {
-    //블로그 목록 조회시 모든 response dto 형
     private List<BlogListDto> blogInfo;
     private pagingDto pageInfo;
 

@@ -20,21 +20,21 @@ public class BlogLikesController {
     private final BlogReviewService blogReviewService;
 
     @PutMapping("/{blog-id}")
-    public ResponseEntity clickLikes(@PathVariable("blog-id") Long blogId){
+    public ResponseEntity switchBlogLikes(@PathVariable("blog-id") Long blogId){
         log.info("Request-Type : Put, Entity : BlogLikes, Blog-ID : {}", blogId);
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        BlogReview blogReview = blogReviewService.findBlogReview(blogId);
-        if(blogLikesService.findLikes(blogReview,member))
+        BlogReview blogReview = blogReviewService.validateBlogReview(blogId);
+        if(blogLikesService.switchBlogLikes(blogReview,member))
             return new ResponseEntity<>("on", HttpStatus.OK);
         else return new ResponseEntity<>("off", HttpStatus.OK);
     }
 
     @GetMapping("/me")
-    public ResponseEntity getMyBlogLikes(@RequestParam(required = false, value = "page") Integer pageNo){
+    public ResponseEntity findMyLikedBlogReviews(@RequestParam(required = false, value = "page") Integer pageNo){
         log.info("Request-Type : Get, Entity : BlogLikes_List, Type : MyPage");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return new ResponseEntity<>(blogLikesService.retrieveMyBlogLikes(member,pageNo),HttpStatus.OK);
+        return new ResponseEntity<>(blogLikesService.findMyLikedBlogReviews(member,pageNo),HttpStatus.OK);
     }
 }

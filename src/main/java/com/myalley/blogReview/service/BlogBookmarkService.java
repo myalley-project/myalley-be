@@ -22,7 +22,7 @@ public class BlogBookmarkService {
     private final BlogBookmarkRepository blogBookmarkRepository;
     private final MemberService memberService;
 
-    public Boolean findBookmark(BlogReview blogReview, Member member) {
+    public Boolean switchBlogBookmark(BlogReview blogReview, Member member) {
         if(blogReview.getMember().getMemberId() == member.getMemberId())
             throw new CustomException(BlogReviewExceptionType.BOOKMARK_FORBIDDEN);
         BlogBookmark bookmark = blogBookmarkRepository.selectBookmark(member.getMemberId(), blogReview.getId())
@@ -32,7 +32,7 @@ public class BlogBookmarkService {
         return !bookmark.getIsDeleted();
     }
 
-    public boolean retrieveBlogBookmark(Long blogId, Long memberId) {
+    public boolean findBlogBookmarkByBlogIdAndMemberId(Long blogId, Long memberId) {
         if(memberId != 0) {
             Member member = memberService.verifyMember(memberId);
             Optional<BlogBookmark> blogBookmark = blogBookmarkRepository.selectBookmark(member.getMemberId(), blogId);
@@ -42,7 +42,7 @@ public class BlogBookmarkService {
         return false;
     }
 
-    public BlogListResponseDto retrieveMyBlogBookmarks(Member member, Integer pageNo){
+    public BlogListResponseDto findMyBookmarkedBlogReviews(Member member, Integer pageNo){
         PageRequest pageRequest;
         if(pageNo == null)
             pageRequest = PageRequest.of(0, 6, Sort.by("id").descending());
@@ -52,7 +52,7 @@ public class BlogBookmarkService {
     }
 
     @Transactional
-    public void removeBlogAllBookmark(BlogReview blogReview){
+    public void removeBlogBookmarksByBlogReview(BlogReview blogReview){
         blogBookmarkRepository.deleteAllByBlog(blogReview);
     }
 }

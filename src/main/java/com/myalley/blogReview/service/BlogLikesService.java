@@ -22,7 +22,7 @@ public class BlogLikesService {
     private final BlogLikesRepository likesRepository;
     private final MemberService memberService;
 
-    public Boolean findLikes(BlogReview blogReview, Member member) {
+    public Boolean switchBlogLikes(BlogReview blogReview, Member member) {
         if(blogReview.getMember().getMemberId()==member.getMemberId())
             throw new CustomException(BlogReviewExceptionType.LIKES_BAD_REQUEST);
         BlogLikes like = likesRepository.selectLike(member.getMemberId(),blogReview.getId())
@@ -32,7 +32,7 @@ public class BlogLikesService {
         return !like.getIsDeleted();
     }
 
-    public boolean retrieveBlogLikes(Long blogId, Long memberId) {
+    public boolean findBlogLikesByBlogIdAndMemberId(Long blogId, Long memberId) {
         if(memberId != 0) {
             Member member = memberService.verifyMember(memberId);
             Optional<BlogLikes> blogLikes = likesRepository.selectLike(member.getMemberId(), blogId);
@@ -42,7 +42,7 @@ public class BlogLikesService {
         return false;
     }
 
-    public BlogListResponseDto retrieveMyBlogLikes(Member member, Integer pageNo){
+    public BlogListResponseDto findMyLikedBlogReviews(Member member, Integer pageNo){
         PageRequest pageRequest;
         if(pageNo == null)
             pageRequest = PageRequest.of(0,6, Sort.by("id").descending());
@@ -52,7 +52,7 @@ public class BlogLikesService {
     }
 
     @Transactional
-    public void removeBlogAllLikes(BlogReview blogReview){
+    public void removeBlogLikesByBlogReview(BlogReview blogReview){
         likesRepository.deleteAllByBlog(blogReview);
     }
 }

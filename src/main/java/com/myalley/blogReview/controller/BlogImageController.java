@@ -21,24 +21,24 @@ public class BlogImageController {
     private final BlogReviewService blogReviewService;
 
     @DeleteMapping("/{blog-id}/{image-id}")
-    public ResponseEntity deleteBlogReviewImage(@PathVariable("blog-id") Long blogId,
+    public ResponseEntity removeFile(@PathVariable("blog-id") Long blogId,
                                                 @PathVariable("image-id") Long imageId){
         log.info("Request-Type : Delete, Entity : BlogImage, Blog-ID : {}, Image-ID : {}", blogId, imageId);
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        BlogReview target = blogReviewService.findBlogReview(blogId);
+        BlogReview target = blogReviewService.validateBlogReview(blogId);
         blogImageService.removeBlogImage(target,member,imageId);
         return new ResponseEntity<>("이미지가 삭제 되었습니다.",HttpStatus.OK);
     }
 
     @PostMapping("/{blog-id}")
-    public ResponseEntity newPostBlogReviewImage(@PathVariable("blog-id") Long blogId,
+    public ResponseEntity uploadFile(@PathVariable("blog-id") Long blogId,
                                                  @RequestPart(value = "image") MultipartFile image) throws Exception {
         log.info("Request-Type : Post, Entity : BlogImage, Blog-ID : {}", blogId);
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        BlogReview target = blogReviewService.findBlogReview(blogId);
-        blogImageService.createNewBlogImage(target,member,image);
+        BlogReview target = blogReviewService.validateBlogReview(blogId);
+        blogImageService.uploadFile(target,member,image);
         return new ResponseEntity<>("이미지가 등록 되었습니다",HttpStatus.CREATED);
     }
 }

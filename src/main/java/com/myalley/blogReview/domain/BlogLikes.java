@@ -40,11 +40,11 @@ public class BlogLikes {
     public void changeLikesStatus() {
         if(isDeleted == null || isDeleted.equals(Boolean.TRUE)) {
             this.isDeleted=Boolean.FALSE;
-            this.blog.increaseLikesCount();
+            this.blog.likesCountUp();
         }
         else {
             this.isDeleted = Boolean.TRUE;
-            this.blog.decreaseLikesCount();
+            this.blog.likesCountDown();
         }
         this.updatedAt=LocalDateTime.now();
     }

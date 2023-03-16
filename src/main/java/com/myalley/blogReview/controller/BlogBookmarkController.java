@@ -20,21 +20,21 @@ public class BlogBookmarkController {
     private final BlogReviewService blogReviewService;
 
     @PutMapping("/{blog-id}")
-    public ResponseEntity clickBlogBookmark(@PathVariable("blog-id") Long blogId){
+    public ResponseEntity switchBlogBookmark(@PathVariable("blog-id") Long blogId){
         log.info("Request-Type : Put, Entity : BlogBookmark, Blog-ID : {}", blogId);
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        BlogReview blogReview = blogReviewService.findBlogReview(blogId);
-        if(blogBookmarkService.findBookmark(blogReview, member))
+        BlogReview blogReview = blogReviewService.validateBlogReview(blogId);
+        if(blogBookmarkService.switchBlogBookmark(blogReview, member))
             return new ResponseEntity<>("on", HttpStatus.OK);
         else return new ResponseEntity<>("off", HttpStatus.OK);
     }
 
     @GetMapping("/me")
-    public ResponseEntity getMyBlogBookmark(@RequestParam(required = false, value = "page") Integer pageNo){
+    public ResponseEntity findMyBookmarkedBlogReviews(@RequestParam(required = false, value = "page") Integer pageNo){
         log.info("Request-Type : Get, Entity : BlogBookmark_List, Type : MyPage");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return new ResponseEntity<>(blogBookmarkService.retrieveMyBlogBookmarks(member,pageNo), HttpStatus.OK);
+        return new ResponseEntity<>(blogBookmarkService.findMyBookmarkedBlogReviews(member,pageNo), HttpStatus.OK);
     }
 }

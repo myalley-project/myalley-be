@@ -86,15 +86,13 @@ public class BlogReview extends BaseTime {
     }
 
     //조회수 관리
-    public void updateViewCount(){
-        this.viewCount++;
-    }
+    public void updateViewCount(){ this.viewCount++; }
 
     //좋아요 관리
-    public void increaseLikesCount(){ this.likeCount++; }
-    public void decreaseLikesCount(){ this.likeCount--; }
+    public void likesCountUp(){ this.likeCount++; }
+    public void likesCountDown(){ this.likeCount--; }
     
     //북마크 관리
-    public void increaseBookmarkCount(){ this.bookmarkCount++; }
-    public void decreaseBookmarkCount(){ this.bookmarkCount--; }
+    public void bookmarkCountUp(){ this.bookmarkCount++; }
+    public void bookmarkCountDown(){ this.bookmarkCount--; }
 }

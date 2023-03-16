@@ -21,7 +21,7 @@ public class BlogReviewController {
     private final BlogReviewService blogReviewService;
 
     @PostMapping("/api/blogs")
-    public ResponseEntity postBlogReview(@Valid @RequestPart(value = "blogInfo") BlogRequestDto blogRequestDto,
+    public ResponseEntity createBlogReview(@Valid @RequestPart(value = "blogInfo") BlogRequestDto blogRequestDto,
                                          @RequestPart(value = "images",required = false) List<MultipartFile> images,
                                          @RequestPart(value = "exhibitionId")Long exhibitionId) throws Exception {
         log.info("Request-Type : Post, Entity : BlogReview");
@@ -32,7 +32,7 @@ public class BlogReviewController {
     }
 
     @PutMapping("/api/blogs/{blog-id}")
-    public ResponseEntity putBlogReview(@PathVariable("blog-id") Long blogId,
+    public ResponseEntity updateBlogReview(@PathVariable("blog-id") Long blogId,
                                            @Valid @RequestBody BlogRequestDto blogRequestDto) {
         log.info("Request-Type : Put, Entity : BlogReview, Blog-ID : {}", blogId);
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -42,7 +42,7 @@ public class BlogReviewController {
     }
 
     @DeleteMapping("/api/blogs/{blog-id}")
-    public ResponseEntity deleteBlogReview(@PathVariable("blog-id") Long blogId){
+    public ResponseEntity removeBlogReview(@PathVariable("blog-id") Long blogId){
         log.info("Request-Type : Delete, Entity : BlogReview, Blog-ID : {}", blogId);
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -51,44 +51,44 @@ public class BlogReviewController {
     }
 
     @GetMapping("/blogs/{blog-id}")
-    public ResponseEntity getBlogReviewDetail(@PathVariable("blog-id") Long blogId,
+    public ResponseEntity findBlogReviewByBlogId(@PathVariable("blog-id") Long blogId,
                                               @RequestHeader(value = "memberId", required = false) Long memberId){
         log.info("Request-Type : Get, Entity : BlogReview, Blog-ID : {}, Member-ID : {}", blogId, memberId);
 
-        return new ResponseEntity<>(blogReviewService.retrieveBlogReview(blogId, memberId),HttpStatus.OK);
+        return new ResponseEntity<>(blogReviewService.findBlogReviewByBlogId(blogId, memberId),HttpStatus.OK);
     }
 
     @GetMapping("/blogs")
-    public ResponseEntity getBlogReviews(@RequestParam(required = false, value = "page") Integer pageNo,
+    public ResponseEntity findPagedBlogReviews(@RequestParam(required = false, value = "page") Integer pageNo,
                                          @RequestParam(required = false, value = "order") String orderType){
         log.info("Request-Type : Get, Entity : BlogReview_List, Type : Basic");
 
-        return new ResponseEntity<>(blogReviewService.retrieveBlogReviewList(pageNo,orderType),HttpStatus.OK);
+        return new ResponseEntity<>(blogReviewService.findPagedBlogReviews(pageNo,orderType),HttpStatus.OK);
     }
 
     @GetMapping("/blogs/search")
-    public ResponseEntity getBlogReviewsWithSearch(@RequestParam(value = "title") String title,
+    public ResponseEntity findPagedBlogReviewsByTitle(@RequestParam(value = "title") String title,
                                          @RequestParam(required = false, value = "page") Integer pageNo){
         log.info("Request-Type : Get, Entity : BlogReview_List, Type : Search, Word : {}", title);
 
-        return new ResponseEntity<>(blogReviewService.searchBlogReviewList(title,pageNo),HttpStatus.OK);
+        return new ResponseEntity<>(blogReviewService.findPagedBlogReviewsByTitle(title,pageNo),HttpStatus.OK);
     }
 
     @GetMapping("/api/blogs/me")
-    public ResponseEntity getUserBlogReviewList(@RequestParam(value = "page",required = false) Integer pageNo){
+    public ResponseEntity findMyBlogReviews(@RequestParam(value = "page",required = false) Integer pageNo){
         log.info("Request-Type : Get, Entity : BlogReview_List, Type : MyPage");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return new ResponseEntity<>(blogReviewService.retrieveMyBlogReviewList(member,pageNo),HttpStatus.OK);
+        return new ResponseEntity<>(blogReviewService.findMyBlogReviews(member,pageNo),HttpStatus.OK);
     }
 
     @GetMapping("/blogs/exhibitions/{exhibition-id}")
-    public ResponseEntity getExhibitionBlogReviewList(@PathVariable("exhibition-id") Long exhibitionId,
+    public ResponseEntity findPagedBlogReviewsByExhibitionId(@PathVariable("exhibition-id") Long exhibitionId,
                                                       @RequestParam(value = "page",required = false) Integer pageNo,
                                                       @RequestParam(value = "order",required = false) String orderType){
         log.info("Request-Type : Get, Entity : BlogReview_List, Type : Exhibition, Exhibition-ID : {}", exhibitionId);
 
-        return new ResponseEntity<>(blogReviewService.retrieveExhibitionBlogReviewList(exhibitionId,pageNo,orderType),
+        return new ResponseEntity<>(blogReviewService.findPagedBlogReviewsByExhibitionId(exhibitionId,pageNo,orderType),
                 HttpStatus.OK);
     }
 }

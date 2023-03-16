@@ -51,18 +51,18 @@ public class BlogReviewService {
                 .member(member)
                 .exhibition(exhibitionService.verifyExhibition(exhibitionId)).build();
         BlogReview newBlog = blogReviewRepository.save(blogReview);
-        blogImageService.addBlogImageList(images, newBlog);
+        blogImageService.uploadFileList(images, newBlog);
     }
 
     @Transactional
-    public BlogDetailResponseDto retrieveBlogReview(Long blogId, Long memberId){
-        BlogReview blog = findBlogReview(blogId);
+    public BlogDetailResponseDto findBlogReviewByBlogId(Long blogId, Long memberId){
+        BlogReview blog = validateBlogReview(blogId);
         blog.updateViewCount();
-        return BlogDetailResponseDto.of(blog,likesService.retrieveBlogLikes(blogId,memberId),
-                bookmarkService.retrieveBlogBookmark(blogId,memberId));
+        return BlogDetailResponseDto.of(blog,likesService.findBlogLikesByBlogIdAndMemberId(blogId,memberId),
+                bookmarkService.findBlogBookmarkByBlogIdAndMemberId(blogId,memberId));
     }
 
-    public BlogListResponseDto retrieveBlogReviewList(Integer pageNo, String orderType){
+    public BlogListResponseDto findPagedBlogReviews(Integer pageNo, String orderType){
         Page<BlogReview> blogReviewList;
         if(pageNo == null)
             pageNo = 0;
@@ -81,7 +81,7 @@ public class BlogReviewService {
         return BlogListResponseDto.blogOf(blogReviewList,BASIC_LIST);
     }
 
-    public BlogListResponseDto searchBlogReviewList(String title, Integer pageNo){
+    public BlogListResponseDto findPagedBlogReviewsByTitle(String title, Integer pageNo){
         PageRequest pageRequest;
         if(title == "")
             throw new CustomException(BlogReviewExceptionType.BLOG_BAD_REQUEST);
@@ -94,7 +94,7 @@ public class BlogReviewService {
         return BlogListResponseDto.blogOf(blogReviewList,BASIC_LIST);
     }
 
-    public BlogListResponseDto retrieveMyBlogReviewList(Member member, Integer pageNo) {
+    public BlogListResponseDto findMyBlogReviews(Member member, Integer pageNo) {
         PageRequest pageRequest;
         if(pageNo == null)
             pageRequest = PageRequest.of(0, 6, Sort.by("id").descending());
@@ -104,7 +104,7 @@ public class BlogReviewService {
         return BlogListResponseDto.blogOf(myBlogReviewList,SELF_LIST);
     }
 
-    public BlogListResponseDto retrieveExhibitionBlogReviewList(Long exhibitionId, Integer pageNo, String orderType) {
+    public BlogListResponseDto findPagedBlogReviewsByExhibitionId(Long exhibitionId, Integer pageNo, String orderType) {
         PageRequest pageRequest;
         Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
         if(pageNo == null)
@@ -131,15 +131,15 @@ public class BlogReviewService {
     @Transactional
     public void removeBlogReview(Long blogId, Member member){
         BlogReview pre = verifyRequester(blogId,member.getMemberId());
-        blogImageService.removeBlogAllImages(pre);
-        bookmarkService.removeBlogAllBookmark(pre);
-        likesService.removeBlogAllLikes(pre);
+        blogImageService.removeBlogImagesByBlogReview(pre);
+        bookmarkService.removeBlogBookmarksByBlogReview(pre);
+        likesService.removeBlogLikesByBlogReview(pre);
         blogReviewRepository.deleteById(pre.getId());
     }
 
 
     //1. 존재하는 글인지 확인
-    public BlogReview findBlogReview(Long blogId){
+    public BlogReview validateBlogReview(Long blogId){
         BlogReview blog = blogReviewRepository.findById(blogId).orElseThrow(() -> {
             throw new CustomException(BlogReviewExceptionType.BLOG_NOT_FOUND);
         });

@@ -40,11 +40,11 @@ public class BlogBookmark {
     public void changeBookmarkStatus(){
         if(isDeleted == null || isDeleted.equals(Boolean.TRUE)){
             this.isDeleted = Boolean.FALSE;
-            this.blog.increaseBookmarkCount();
+            this.blog.bookmarkCountUp();
         }
         else {
             this.isDeleted = Boolean.TRUE;
-            this.blog.decreaseBookmarkCount();
+            this.blog.bookmarkCountDown();
         }
         this.updatedAt = LocalDateTime.now();
     }
