@@ -14,4 +14,6 @@ public interface MateBookmarkRepository extends JpaRepository<MateBookmark, Long
     boolean existsByMateAndMember(Mate mate, Member member);
     void deleteByMate(Mate mate);
     Page<MateBookmark> findAllByMember(Member member, PageRequest pageRequest);
+
+    void deleteAllByMate(Mate mate);
 }

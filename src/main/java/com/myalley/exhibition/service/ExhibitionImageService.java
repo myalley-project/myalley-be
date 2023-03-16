@@ -34,7 +34,6 @@ public class ExhibitionImageService {
         validateFileExists(multipartFile);
 
       try (InputStream inputStream = multipartFile.getInputStream()) {
-//          System.out.println("Content Type : " + multipartFile.getContentType());
 
           //확장자 검사
           if(!multipartFile.isEmpty() && validateImgFile(inputStream)) {
@@ -65,13 +64,11 @@ public class ExhibitionImageService {
     //이미지 파일 MIME Type 검사하기
     public boolean validateImgFile(InputStream inputStream) {
         try {
-            List<String> notValidTypeList = Arrays.asList("image/jpeg", "image/jpg", "image/png");
+            List<String> validTypeList = Arrays.asList("image/jpeg", "image/jpg", "image/png");
             String mimeType = tika.detect(inputStream);
-            System.out.println("MimeType : " + mimeType);
 
-            boolean isValid  = notValidTypeList.stream()
-                    .anyMatch(notvalidType -> notvalidType.equalsIgnoreCase(mimeType));
-            return isValid;
+            return validTypeList.stream()
+                    .anyMatch(n -> n.equalsIgnoreCase(mimeType));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -88,11 +85,11 @@ public class ExhibitionImageService {
 
     //파일 이름 만들기
     private String createFilename(String filename) {
-        return UUID.randomUUID().toString().concat(getFileExt(filename));
+        return UUID.randomUUID().toString().concat(findFileExtension(filename));
     }
 
     //파일 확장자 추출
-    private String getFileExt(String filename) {
+    private String findFileExtension(String filename) {
         try {
             return filename.substring(filename.lastIndexOf("."));
         } catch (StringIndexOutOfBoundsException e) {

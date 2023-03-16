@@ -24,8 +24,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class MateService {
@@ -50,7 +48,7 @@ public class MateService {
                 .contact(request.getContact())
                 .viewCount(0)
                 .bookmarkCount(0)
-                .exhibition(exhibitionService.verifyExhibition(request.getExhibitionId()))
+                .exhibition(exhibitionService.validateExistExhibition(request.getExhibitionId()))
                 .member(memberService.verifyMember(memberId))
                 .build();
         return MateSimpleResponse.of(mateRepository.save(newMate));
@@ -67,7 +65,7 @@ public class MateService {
         }
 
         findMate.updateInfo(id, request);
-        findMate.updateExhibition(exhibitionService.verifyExhibition(request.getExhibitionId()));
+        findMate.updateExhibition(exhibitionService.validateExistExhibition(request.getExhibitionId()));
         return MateSimpleResponse.of(findMate);
     }
 
