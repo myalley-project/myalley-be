@@ -67,26 +67,27 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.8.7'
 }
 
+// ============= querydsl =============
 def querydslDir = "$buildDir/generated/querydsl"
 
-querydsl { //querydsl 추가
+querydsl {
 	jpa = true
 	querydslSourcesDir = querydslDir
 }
 
-sourceSets { //querydsl 추가
+sourceSets {
 	main.java.srcDir querydslDir
 }
 
-configurations { //querydsl 추가
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
+}
+
+configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
 	querydsl.extendsFrom compileClasspath
-}
-
-compileQuerydsl { //querydsl 추가
-	options.annotationProcessorPath = configurations.querydsl
 }
 
 jar {
