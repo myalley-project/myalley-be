@@ -33,7 +33,7 @@ public class ProfileS3Service {
     @Value("${profile-path}")
     private String imageDir; // 저장할 폴더 이름
 
-    public String createImageUrl(MultipartFile multipartFile) throws IOException {
+    public String uploadFile(MultipartFile multipartFile) throws IOException {
         verifyFileType(multipartFile.getContentType());
         log.info(multipartFile.getOriginalFilename());
         String fileName = createFileName(multipartFile.getOriginalFilename());
@@ -56,7 +56,7 @@ public class ProfileS3Service {
 
     }
 
-    public void deleteImage(String url){
+    public void removeFile(String url){
         try {
             String key=url.substring(url.indexOf("profile"));
             amazonS3Client.deleteObject(new DeleteObjectRequest(S3Bucket, key));

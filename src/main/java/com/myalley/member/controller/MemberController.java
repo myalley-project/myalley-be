@@ -48,8 +48,8 @@ public class MemberController {
         log.info("유저 본인정보 수정");
 
         if(multipartFile!=null){//프로필 수정시 이미지 삭제 및 저장
-            profileS3Service.deleteImage(url);
-            url=profileS3Service.createImageUrl(multipartFile);
+            profileS3Service.removeFile(url);
+            url=profileS3Service.uploadFile(multipartFile);
         }
 
 

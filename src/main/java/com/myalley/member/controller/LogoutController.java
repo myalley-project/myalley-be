@@ -21,7 +21,7 @@ public class LogoutController {
 
     private final RedisService redisService;
     @PostMapping("/api/me/logout")
-    public ResponseEntity<Map<String, Integer>> logoutPage(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Map<String, Integer>> logout(HttpServletRequest request, HttpServletResponse response) {
         new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
         String authorizationHeader = request.getHeader("AUTHORIZATION");
         String accessToken = authorizationHeader.substring("Bearer ".length());
