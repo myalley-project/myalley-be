@@ -26,8 +26,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class MateService {
@@ -54,7 +52,7 @@ public class MateService {
                 .viewCount(0)
                 .bookmarkCount(0)
                 .exhibition(exhibitionService.verifyExhibition(request.getExhibitionId()))
-                .member(memberService.verifyMember(memberId))
+                .member(memberService.validateMember(memberId))
                 .build();
         return MateSimpleResponse.of(mateRepository.save(newMate));
     }
@@ -121,7 +119,7 @@ public class MateService {
                 .viewCount(mate.getViewCount())
                 .bookmarkCount(0)
                 .exhibition(exhibitionService.verifyExhibition(mate.getExhibition().getId()))
-                .member(memberService.verifyMember(mate.getMember().getMemberId()))
+                .member(memberService.validateMember(mate.getMember().getMemberId()))
                 .build();
         deletedRepository.save(deleted);
         bookmarkRepository.deleteByMate(mate); //북마크 쪽에서 먼저 북마크 삭제해줌

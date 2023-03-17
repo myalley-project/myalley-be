@@ -1,7 +1,6 @@
 package com.myalley.member.controller;
 
 import com.myalley.member.jwt.JwtUtils;
-import com.myalley.member.repository.TokenRedisRepository;
 import com.myalley.member.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,7 +26,7 @@ public class LogoutController {
         String authorizationHeader = request.getHeader("AUTHORIZATION");
         String accessToken = authorizationHeader.substring("Bearer ".length());
 
-        redisService.delete(JwtUtils.getEmail(accessToken));
+        redisService.deleteRefreshToken(JwtUtils.getEmail(accessToken));
         HashMap<String,Integer> result=new HashMap<>();
         result.put("resultCode",200);
 

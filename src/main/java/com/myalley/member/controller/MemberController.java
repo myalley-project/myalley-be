@@ -2,7 +2,6 @@ package com.myalley.member.controller;
 
 import com.myalley.member.domain.Member;
 import com.myalley.member.dto.*;
-import com.myalley.member.jwt.JwtUtils;
 import com.myalley.member.service.MemberService;
 import com.myalley.member.service.ProfileS3Service;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,6 @@ import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +26,7 @@ public class MemberController {
     private final ProfileS3Service profileS3Service;
 
     @PostMapping("/signup")
-    public ResponseEntity signUp(
+    public ResponseEntity createMember(
            @Valid @RequestBody MemberRegisterDto memberRegisterDto
     ) {
         log.info("유저 회원가입");
@@ -51,32 +49,32 @@ public class MemberController {
 
         if(multipartFile!=null){//프로필 수정시 이미지 삭제 및 저장
             profileS3Service.deleteImage(url);
-            url=profileS3Service.uploadImage(multipartFile);
+            url=profileS3Service.createImageUrl(multipartFile);
         }
 
 
 
-        return new ResponseEntity<ResponseDto>(memberService.update(memberUpdateDto,url),HttpStatus.OK);
+        return new ResponseEntity<ResponseDto>(memberService.updateMember(memberUpdateDto,url),HttpStatus.OK);
     }
 
 
 
     @GetMapping("api/me")
-    ResponseEntity<MemberInfoDto> memberInfo(HttpServletRequest request, HttpServletResponse response) {
+    ResponseEntity<MemberInfoDto> findMemberByMyId(HttpServletRequest request, HttpServletResponse response) {
 
         log.info("본인정보 조회");
         Member member = (Member)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return new ResponseEntity<MemberInfoDto>(memberService.memberInfo(member.getEmail()), HttpStatus.OK);
+        return new ResponseEntity<MemberInfoDto>(memberService.findMemberById(member.getEmail()), HttpStatus.OK);
     }
 
     @DeleteMapping("api/me/withdrawals")
-    public ResponseEntity withdrawal(){
+    public ResponseEntity removeMember(){
 
         log.info("일반유저 회원탈퇴");
         Member member = (Member)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return memberService.delete(member);
+        return memberService.deleteMember(member);
     }
 
 
@@ -87,7 +85,7 @@ public class MemberController {
     }
 
     @GetMapping("/exhibitions/good")
-    ResponseEntity good(HttpServletRequest request, HttpServletResponse response) {
+    ResponseEntity test(HttpServletRequest request, HttpServletResponse response) {
 
         HashMap<String,String> map=new HashMap<>();
         map.put("msg","배포 정상적으로 작동");

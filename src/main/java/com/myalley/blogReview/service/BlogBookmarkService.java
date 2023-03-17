@@ -56,7 +56,7 @@ public class BlogBookmarkService {
 
     public boolean retrieveBlogBookmark(BlogReview blogReview, Long memberId) {
         if(memberId != null) {
-            Member member = memberService.verifyMember(memberId);
+            Member member = memberService.validateMember(memberId);
             if (blogBookmarkRepository.findByMemberAndBlog(member, blogReview).isPresent())
                 return true;
         }

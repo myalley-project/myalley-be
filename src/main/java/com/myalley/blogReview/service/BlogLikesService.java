@@ -58,7 +58,7 @@ public class BlogLikesService {
 
     public boolean retrieveBlogLikes(BlogReview blogReview, Long memberId) {
         if(memberId != null) {
-            Member member = memberService.verifyMember(memberId);
+            Member member = memberService.validateMember(memberId);
             if (likesRepository.findByMemberAndBlog(member, blogReview).isPresent())
                 return true;
         }
