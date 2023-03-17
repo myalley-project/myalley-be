@@ -7,11 +7,9 @@ import com.myalley.exception.CustomException;
 import com.myalley.exception.MateExceptionType;
 import com.myalley.exception.MemberExceptionType;
 import com.myalley.mate.domain.Mate;
-import com.myalley.mate.dto.MateSimpleResponse;
-import com.myalley.mate.dto.MateUpdateRequest;
-import com.myalley.mate.repository.MateRepository;
+import com.myalley.mate.service.MateService;
 import com.myalley.member.domain.Member;
-import com.myalley.member.repository.MemberRepository;
+import com.myalley.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,32 +24,23 @@ import java.util.stream.Collectors;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final MemberRepository memberRepository;
-    private final MateRepository mateRepository;
+    private final MemberService memberService;
+    private final MateService mateService;
 
     //댓글 작성
     @Transactional
-    public Long addComment(Long mateId, CommentRequest request, Long memberId) {
-        Mate mate = mateRepository.findById(mateId)
-                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
-
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MemberExceptionType.NOT_FOUND_MEMBER));
-
+    public void createComment(Long mateId, CommentRequest request, Long memberId) {
+        Mate mate = mateService.validateExistMate(mateId);
+        Member member = memberService.verifyMember(memberId);
         Comment comment = Comment.parent(member, mate, request.getContent());
         commentRepository.save(comment);
-
-        return comment.getId();
     }
 
     //대댓글 작성
     @Transactional
-    public Long addReply(Long commentId, CommentRequest request, Long memberId) {
-        Comment parent = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(MateExceptionType.COMMENT_NOT_FOUND));
-
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MemberExceptionType.NOT_FOUND_MEMBER));
+    public void createReply(Long commentId, CommentRequest request, Long memberId) {
+        Comment parent = validateExistComment(commentId);
+        Member member = memberService.verifyMember(memberId);
 
         if (!parent.isParent()) {
             throw new CustomException(MateExceptionType.CANNOT_WRITE_REPLY);
@@ -60,42 +49,18 @@ public class CommentService {
 
         Comment reply = Comment.child(member, mate, request.getContent(), parent);
         commentRepository.save(reply);
-
-        return reply.getId();
     }
-
-    //댓글&대댓글 수정
-    @Transactional
-    public Long updateComment(Long commentId, Long memberId, CommentRequest request) {
-
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(MateExceptionType.COMMENT_NOT_FOUND));
-
-        if (!memberId.equals(comment.getMember().getMemberId())) {
-            throw new CustomException(MateExceptionType.UNAUTHORIZED_ACCESS);
-        }
-        comment.updateContent(commentId, request.getContent());
-
-        return comment.getId();
-    }
-
     
-    public CommentsResponse findComments(Long mateId) {
+    public CommentsResponse findCommentsByMateId(Long mateId) {
         List<Comment> comments = commentRepository.findCommentsByMateId(mateId);
         List<CommentResponse> commentResponses = comments.stream()
-                .map(c -> convertToCommentResponse(c))
+                .map(this::convertToCommentResponse)
                 .collect(Collectors.toList());
-//        int numOfComment = commentResponses.size();
-//        int numOfReply = commentResponses.stream()
-//                .map(c -> c.getReplies().size())
-//                .reduce(Integer::sum).orElse(0);
+
         return new CommentsResponse(commentResponses);
     }
 
     private CommentResponse convertToCommentResponse(Comment comment) {
-        if (comment.isSoftRemoved()) {
-            return CommentResponse.softRemovedOf(comment, convertToReplyResponses(comment));
-        }
         return CommentResponse.of(comment, convertToReplyResponses(comment));
     }
 
@@ -109,44 +74,26 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long commentId, Long memberId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(MateExceptionType.COMMENT_NOT_FOUND));
+    public void removeByCommentIdAndMemberId(Long commentId, Long memberId) {
+        if (verifyCommentAuthor(commentId, memberId)) {
+            commentRepository.deleteById(commentId);
+        }
+    }
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MemberExceptionType.NOT_FOUND_MEMBER));
+    //댓글 존재여부 검증
+    private Comment validateExistComment(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(MateExceptionType.COMMENT_NOT_FOUND));
+    }
+
+    //댓글 작성자 본인 확인
+    private boolean verifyCommentAuthor(Long commentId, Long memberId) {
+        Comment comment = validateExistComment(commentId);
+        Member member = memberService.verifyMember(memberId);
 
         if (!member.equals(comment.getMember())) {
             throw new CustomException(MemberExceptionType.TOKEN_FORBIDDEN);
         }
-        deleteCommentOrReply(comment);
-//        comment.changePretendingToBeRemoved();
+        return true;
     }
-
-    private void deleteCommentOrReply(Comment comment) {
-        if (comment.isParent()) {
-            deleteParent(comment);
-            return;
-        }
-        deleteChild(comment);
-    }
-
-    private void deleteParent(Comment comment) {
-        if (comment.hasNoReply()) {
-            commentRepository.delete(comment);
-            return;
-        }
-        comment.changePretendingToBeRemoved();
-    }
-
-    private void deleteChild(Comment comment) {
-        Comment parent = comment.getParent();
-        parent.deleteChild(comment);
-        commentRepository.delete(comment);
-
-        if (parent.hasNoReply() && parent.isSoftRemoved()) {
-            commentRepository.delete(parent);
-        }
-    }
-
 }

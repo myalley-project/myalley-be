@@ -20,28 +20,29 @@ public class BlogImageService {
     private final BlogImageRepository blogImageRepository;
     private final S3Service s3Service;
 
-    public void addBlogImageList(List<MultipartFile> images, BlogReview blogReview) throws IOException {
+    public void uploadFileList(List<MultipartFile> images, BlogReview blogReview) throws IOException {
         if (images != null) {
-            for (MultipartFile imageFile : images) {
-                String[] imageInformation = s3Service.uploadBlogImage(imageFile);
-                addBlogImage(imageInformation[0],imageInformation[1],blogReview);
+            for (MultipartFile image : images) {
+                addBlogImage(image, blogReview);
             }
         }
     }
 
-    public void createNewBlogImage(BlogReview blogReview, Member member, MultipartFile image) throws IOException {
+    public void uploadFile(BlogReview blogReview, Member member, MultipartFile image) throws IOException {
+        if(blogImageRepository.countByBlog(blogReview) >= 3)
+            throw new CustomException(BlogReviewExceptionType.IMAGE_BAD_REQUEST_OVER);
         if(blogReview.getMember().getMemberId()!= member.getMemberId())
             throw new CustomException(BlogReviewExceptionType.IMAGE_FORBIDDEN);
         if(image.isEmpty())
             throw new CustomException(BlogReviewExceptionType.IMAGE_BAD_REQUEST_EMPTY);
-        String[] information = s3Service.uploadBlogImage(image);
-        addBlogImage(information[0],information[1],blogReview);
+        addBlogImage(image, blogReview);
     }
 
-    public void addBlogImage(String fileName, String S3url, BlogReview blogReview){
+    public void addBlogImage(MultipartFile image, BlogReview blogReview) throws IOException {
+        String[] information = s3Service.uploadBlogImage(image);
         BlogImage newImage=BlogImage.builder()
-                .fileName(fileName)
-                .url(S3url)
+                .fileName(information[0])
+                .url(information[1])
                 .build();
         newImage.setBlog(blogReview);
         blogImageRepository.save(newImage);
@@ -50,12 +51,12 @@ public class BlogImageService {
     public void removeBlogImage(BlogReview blogReview, Member member, Long imageId){
         if(blogReview.getMember().getMemberId()!= member.getMemberId())
             throw new CustomException(BlogReviewExceptionType.IMAGE_FORBIDDEN);
-        BlogImage foundImage = retrieveBlogImage(blogReview,imageId);
+        BlogImage foundImage = validateBlogImage(blogReview,imageId);
         s3Service.deleteBlogImage(foundImage.getFileName());
         blogImageRepository.delete(foundImage);
     }
 
-    public void removeBlogAllImages(BlogReview blogReview) {
+    public void removeBlogImagesByBlogReview(BlogReview blogReview) {
         List<BlogImage> blogImageList = blogImageRepository.findAllByBlog(blogReview);
         if (!CollectionUtils.isEmpty(blogImageList)) {
             for (BlogImage blogImage : blogImageList) {
@@ -65,7 +66,7 @@ public class BlogImageService {
         }
     }
 
-    private BlogImage retrieveBlogImage(BlogReview blogReview, Long imageId){
+    private BlogImage validateBlogImage(BlogReview blogReview, Long imageId){
         BlogImage image = blogImageRepository.findByIdAndBlog(imageId,blogReview).orElseThrow(() -> {
                 throw new CustomException(BlogReviewExceptionType.IMAGE_NOT_FOUND);
         });

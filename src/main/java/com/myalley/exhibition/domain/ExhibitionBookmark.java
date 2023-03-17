@@ -4,12 +4,16 @@ import com.myalley.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
 @NoArgsConstructor
 @Getter
 @Table(name = "exhibition_bookmark")
+@SQLDelete(sql = "UPDATE exhibition_bookmark SET is_bookmarked = false WHERE ex_book_id = ?")
+@Where(clause = "is_bookmarked = true")
 @Entity
 public class ExhibitionBookmark {
 
@@ -25,6 +29,7 @@ public class ExhibitionBookmark {
     @JoinColumn(name = "memberId")
     private Member member;
 
+    @Column(name = "is_bookmarked")
     private boolean isBookmarked = true;
 
     @Builder
@@ -32,9 +37,4 @@ public class ExhibitionBookmark {
         this.exhibition = exhibition;
         this.member = member;
     }
-
-    public void addBookmark() {
-      this.isBookmarked = true;
-    }
-
 }

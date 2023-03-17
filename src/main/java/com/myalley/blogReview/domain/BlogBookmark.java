@@ -1,10 +1,10 @@
 package com.myalley.blogReview.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myalley.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,26 +12,40 @@ import java.time.LocalDateTime;
 @Entity(name="blog_bookmark")
 @Getter
 @NoArgsConstructor
+@Where(clause="is_deleted = 0")
 public class BlogBookmark {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "b_bookmarks_id")
     private Long id;
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "member_id")
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+    private Boolean isDeleted;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @JsonIgnore
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "blog_id")
+    @ManyToOne
+    @JoinColumn(name = "blog_id", nullable = false)
     private BlogReview blog;
-    private LocalDateTime createdAt;
+
 
     @Builder
-    public BlogBookmark(Member member, BlogReview blog, LocalDateTime createdAt){
+    public BlogBookmark(Member member, BlogReview blog){
         this.member = member;
         this.blog = blog;
-        this.createdAt = createdAt;
+    }
+
+    public void changeBookmarkStatus(){
+        if(isDeleted == null || isDeleted.equals(Boolean.TRUE)){
+            this.isDeleted = Boolean.FALSE;
+            this.blog.bookmarkCountUp();
+        }
+        else {
+            this.isDeleted = Boolean.TRUE;
+            this.blog.bookmarkCountDown();
+        }
+        this.updatedAt = LocalDateTime.now();
     }
 }

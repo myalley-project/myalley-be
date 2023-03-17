@@ -7,7 +7,6 @@ import com.myalley.exhibition.service.ExhibitionService;
 import com.myalley.member.domain.Member;
 import com.myalley.simpleReview.domain.SimpleReview;
 import com.myalley.simpleReview.repository.SimpleReviewRepository;
-import com.myalley.simpleReview_deleted.service.SimpleReviewDeletedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,10 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class SimpleReviewService {
     private final SimpleReviewRepository simpleRepository;
     private final ExhibitionService exhibitionService;
-    private final SimpleReviewDeletedService simpleDeletedService;
 
     public void createSimpleReview(SimpleReview simpleReview, Member member, Long exhibitionId){
-        Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
+        Exhibition exhibition = exhibitionService.validateExistExhibition(exhibitionId);
         simpleReview.setMember(member);
         simpleReview.setExhibition(exhibition);
         simpleRepository.save(simpleReview);
@@ -40,12 +38,11 @@ public class SimpleReviewService {
     @Transactional
     public void removeSimpleReview(Long simpleId, Member member){
         SimpleReview target = verifySimpleReview(simpleId, member);
-        simpleDeletedService.createdSimpleDeleted(target);
         simpleRepository.delete(target);
     }
 
     public Page<SimpleReview> retrieveExhibitionSimpleReviewList(Long exhibitionId, Integer pageNo, String orderType){
-        Exhibition exhibition = exhibitionService.verifyExhibition(exhibitionId);
+        Exhibition exhibition = exhibitionService.validateExistExhibition(exhibitionId);
         if(pageNo==null)
             pageNo=0;
         else

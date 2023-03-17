@@ -1,4 +1,4 @@
-package com.myalley.exhibition.exhibitionImage.dto;
+package com.myalley.exhibition.dto.request;
 
 import com.myalley.exhibition.domain.Exhibition;
 import lombok.Getter;

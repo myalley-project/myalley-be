@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface MateRepository extends JpaRepository<Mate, Long> {
+public interface MateRepository extends JpaRepository<Mate, Long>, MateRepositoryCustom {
     @Modifying
     @Query("update Mate m set m.viewCount = m.viewCount + 1 where m.id = :id")
     Integer updateViewCount(Long id);
@@ -22,4 +22,6 @@ public interface MateRepository extends JpaRepository<Mate, Long> {
     Page<Mate> findByExhibition(Exhibition exhibition, Pageable pageable);
 
     Page<Mate> findByTitleContaining(String title, Pageable pageable);
+
+    Page<Mate> findAll(Pageable pageable);
 }

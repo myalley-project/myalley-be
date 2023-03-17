@@ -12,6 +12,5 @@ import java.util.Optional;
 public interface ExhibitionBookmarkRepository extends JpaRepository<ExhibitionBookmark, Long> {
     Optional<ExhibitionBookmark> findByExhibitionAndMember(Exhibition exhibition, Member member);
     boolean existsByExhibitionAndMember(Exhibition exhibition, Member member);
-    void deleteByExhibition(Exhibition exhibition);
     Page<ExhibitionBookmark> findAllByMember(Member member, PageRequest pageRequest);
 }
