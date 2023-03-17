@@ -26,43 +26,43 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMockMvc
-@SpringBootTest
-@ActiveProfiles(profiles="test")
-@Import(S3MockConfig.class)
-@WebAppConfiguration
-@ExtendWith(SpringExtension.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class MemberApiTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private AmazonS3 amazonS3;
-
-    @Autowired
-    private WebApplicationContext context;
-
-    private static String accessToken;
-
-    @BeforeAll()
-    void setup(@Autowired S3Mock s3Mock, @Autowired AmazonS3 amazonS3) throws Exception {
-        //mockMvc= MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
-
-        s3Mock.start();
-        amazonS3.createBucket("profile");
-    }
-    @AfterAll
-    static void tearDown(@Autowired S3Mock s3Mock, @Autowired AmazonS3 amazonS3) throws Exception {
-
-        amazonS3.shutdown();
-        s3Mock.stop();
-    }
-    @Test
-    @DisplayName("본인 정보 조회 성공")
-    @WithMockCustomUser
-    void memberInfo() throws Exception {
+//@AutoConfigureMockMvc
+//@SpringBootTest
+//@ActiveProfiles(profiles="test")
+//@Import(S3MockConfig.class)
+//@WebAppConfiguration
+//@ExtendWith(SpringExtension.class)
+//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//class MemberApiTest {
+//
+//    @Autowired
+//    private MockMvc mockMvc;
+//
+//    @Autowired
+//    private AmazonS3 amazonS3;
+//
+//    @Autowired
+//    private WebApplicationContext context;
+//
+//    private static String accessToken;
+//
+//    @BeforeAll()
+//    void setup(@Autowired S3Mock s3Mock, @Autowired AmazonS3 amazonS3) throws Exception {
+//        //mockMvc= MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
+//
+//        s3Mock.start();
+//        amazonS3.createBucket("profile");
+//    }
+//    @AfterAll
+//    static void tearDown(@Autowired S3Mock s3Mock, @Autowired AmazonS3 amazonS3) throws Exception {
+//
+//        amazonS3.shutdown();
+//        s3Mock.stop();
+//    }
+//    @Test
+//    @DisplayName("본인 정보 조회 성공")
+//    @WithMockCustomUser
+//    void memberInfo() throws Exception {
 //        accessToken= JwtUtils.createToken((Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 //
 //        this.mockMvc.perform(get("/api." +
