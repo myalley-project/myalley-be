@@ -19,11 +19,11 @@ public class ReplyController {
     private final ReplyService replyService;
 
     @PostMapping("/replies")
-    public ResponseEntity createInquiry(
+    public ResponseEntity createReply(
             @Valid @RequestBody ReplyDto replyDto
     ) {
 
-        return replyService.create(replyDto);
+        return replyService.createReply(replyDto);
     }
 
 }

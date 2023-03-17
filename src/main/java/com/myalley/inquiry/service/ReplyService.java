@@ -4,7 +4,6 @@ import com.myalley.exception.CustomException;
 import com.myalley.exception.InquiryExceptionType;
 import com.myalley.inquiry.domain.Inquiry;
 import com.myalley.inquiry.domain.Reply;
-import com.myalley.inquiry.dto.ReplyDetailDto;
 import com.myalley.inquiry.dto.ReplyDto;
 import com.myalley.inquiry.repository.InquiryRepository;
 import com.myalley.inquiry.repository.ReplyRepository;
@@ -27,7 +26,7 @@ public class ReplyService {
     private final InquiryRepository inquiryRepository;
 
 
-    public ResponseEntity create(ReplyDto replyDto) {
+    public ResponseEntity createReply(ReplyDto replyDto) {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Inquiry inquiry=inquiryRepository.findById(replyDto.getInquiryId()).orElseThrow(()->new CustomException(InquiryExceptionType.NOT_FOUND_INQUIRY));
         inquiry.setAnswered(true);

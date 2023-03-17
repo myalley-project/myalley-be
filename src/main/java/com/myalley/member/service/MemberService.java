@@ -83,7 +83,7 @@ public class MemberService {
         return new ResponseDto(200);
     }
 
-    public MemberInfoDto memberInfo(String email){
+    public MemberInfoDto findMemberById(String email){
         Member member=memberRepository.findByEmail(email);
         String nickname=member.getNickname();
         if(member.isAdmin()){//관리자 닉네임 겹치지않게관리
@@ -120,7 +120,7 @@ public class MemberService {
                 .build();
     }
 
-    public ResponseDto update(MemberUpdateDto memberUpdateDto,String url){
+    public ResponseDto updateMember(MemberUpdateDto memberUpdateDto, String url){
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(memberRepository.findByNickname(memberUpdateDto.getNickname())!=null&&!memberUpdateDto.getNickname().equals(member.getNickname())){
@@ -140,7 +140,7 @@ public class MemberService {
     }
 
 
-    public ResponseEntity delete(Member member) {
+    public ResponseEntity deleteMember(Member member) {
 
         member.setIsDeleted(true);
         memberRepository.save(member);
@@ -153,7 +153,7 @@ public class MemberService {
         return memberRepository.findByEmail(email);
     }
 
-    public Member verifyMember(Long memberId) {
+    public Member validateMember(Long memberId) {
         return  memberRepository.findById(memberId).orElseThrow(() ->{
             throw new CustomException(MemberExceptionType.NOT_FOUND_MEMBER);
         });

@@ -11,14 +11,12 @@ import com.myalley.inquiry.dto.ReplyDetailDto;
 import com.myalley.inquiry.repository.InquiryRepository;
 import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Column;
 import java.util.HashMap;
 
 @Service
@@ -26,7 +24,7 @@ import java.util.HashMap;
 @Transactional
 public class InquiryService {
     private final InquiryRepository inquiryRepository;
-    public ResponseEntity create(InquiryDto inquiryDto){
+    public ResponseEntity createInquiry(InquiryDto inquiryDto){
 
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -44,7 +42,7 @@ public class InquiryService {
         return new ResponseEntity(map, HttpStatus.OK);
     }
 
-    public InquiryDetailDto find(Long inquiryId){
+    public InquiryDetailDto findInquiryById(Long inquiryId){
 
         Inquiry inquiry=inquiryRepository.findById(inquiryId).orElseThrow(()->new CustomException(InquiryExceptionType.NOT_FOUND_INQUIRY));
         Reply reply=inquiry.getReply();
