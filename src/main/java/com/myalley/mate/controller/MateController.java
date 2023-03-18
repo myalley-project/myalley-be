@@ -76,36 +76,8 @@ public class MateController {
         return new ResponseEntity<>("메이트 모집글 삭제가 완료되었습니다.", HttpStatus.OK);
     }
 
-    //메이트글 모집완료 여부 목록 조회
     @GetMapping("/mates")
-    public ResponseEntity findPagedMates(
-            @Positive @RequestParam int page,
-            @RequestParam(value = "status", required = true) String status) {
-
-        log.info("메이트 모집글 상태 필터 목록 조회 ");
-
-        Page<Mate> mates;
-
-        if (status.equals("전체")) {
-            mates = mateService.findPagedMates(page);
-        } else if (status.equals("모집 중") || status.equals("모집 완료")) {
-            mates = mateService.findMatesByStatus(status, page);
-        } else {
-            throw new CustomException(MateExceptionType.MATE_SORT_CRITERIA_ERROR);
-        }
-
-       List<MateSimpleResponse> response = mates
-               .stream()
-               .map(MateSimpleResponse::of)
-               .collect(Collectors.toList());
-
-        return new ResponseEntity<>(
-                new MatePageResponse<>(response, mates),
-                HttpStatus.OK);
-    }
-
-    @GetMapping("/mates/search")
-    public ResponseEntity findPagedMatesNew( @Positive @RequestParam int page,
+    public ResponseEntity findPagedMates( @Positive @RequestParam int page,
                                              @RequestParam(value = "status", required = false) String status,
                                              @RequestParam(value = "title", required = false) String title) {
 
