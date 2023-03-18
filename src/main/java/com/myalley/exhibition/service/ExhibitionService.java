@@ -88,7 +88,7 @@ public class ExhibitionService {
 
     //특정 전시글 상세페이지 조회 - 로그인 한 회원
     public ExhibitionDetailResponse findByExhibitionIdAndMemberId(Long exhibitionId, Long memberId) {
-        Member member = memberService.verifyMember(memberId);
+        Member member = memberService.validateMember(memberId);
         Exhibition exhibition = validateExistExhibition(exhibitionId);
 
         return ExhibitionDetailResponse.of(exhibition, validateBookmarkedExhibition(exhibition, member));

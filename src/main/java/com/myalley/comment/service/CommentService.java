@@ -31,7 +31,7 @@ public class CommentService {
     @Transactional
     public void createComment(Long mateId, CommentRequest request, Long memberId) {
         Mate mate = mateService.validateExistMate(mateId);
-        Member member = memberService.verifyMember(memberId);
+        Member member = memberService.validateMember(memberId);
         Comment comment = Comment.parent(member, mate, request.getContent());
         commentRepository.save(comment);
     }
@@ -40,7 +40,7 @@ public class CommentService {
     @Transactional
     public void createReply(Long commentId, CommentRequest request, Long memberId) {
         Comment parent = validateExistComment(commentId);
-        Member member = memberService.verifyMember(memberId);
+        Member member = memberService.validateMember(memberId);
 
         if (!parent.isParent()) {
             throw new CustomException(MateExceptionType.CANNOT_WRITE_REPLY);
@@ -89,7 +89,7 @@ public class CommentService {
     //댓글 작성자 본인 확인
     private boolean verifyCommentAuthor(Long commentId, Long memberId) {
         Comment comment = validateExistComment(commentId);
-        Member member = memberService.verifyMember(memberId);
+        Member member = memberService.validateMember(memberId);
 
         if (!member.equals(comment.getMember())) {
             throw new CustomException(MemberExceptionType.TOKEN_FORBIDDEN);
