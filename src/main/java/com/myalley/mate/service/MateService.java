@@ -76,7 +76,7 @@ public class MateService {
 
     //메이트글 상세조회 - 로그인 한 회원의 요청
     public MateDetailResponse findByMateIdAndMemberId(Long mateId, Long memberId) {
-        Member member = memberService.verifyMember(memberId);
+        Member member = memberService.validateMember(memberId);
         Mate mate = validateExistMate(mateId);
         boolean bookmarked = bookmarkRepository.existsByMateAndMember(mate, member);
 
@@ -99,7 +99,7 @@ public class MateService {
     //본인이 작성한 메이트글 조회
     public Page<Mate> findMyMates(Long memberId, int page) {
         PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("createdAt").descending());
-        Member member = memberService.verifyMember(memberId);
+        Member member = memberService.validateMember(memberId);
         return mateRepository.findByMember(member, pageRequest);
     }
 

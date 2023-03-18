@@ -34,7 +34,7 @@ public class BlogLikesService {
 
     public boolean findBlogLikesByBlogIdAndMemberId(Long blogId, Long memberId) {
         if(memberId != 0) {
-            Member member = memberService.verifyMember(memberId);
+            Member member = memberService.validateMember(memberId);
             Optional<BlogLikes> blogLikes = likesRepository.selectLike(member.getMemberId(), blogId);
             if(blogLikes.isPresent())
                 return !blogLikes.get().getIsDeleted();

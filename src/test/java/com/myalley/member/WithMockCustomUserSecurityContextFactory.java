@@ -1,16 +1,16 @@
 package com.myalley.member;
 
-import com.myalley.member.WithMockCustomUser;
-import com.myalley.member.domain.Member;
-import com.myalley.member.options.Gender;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithSecurityContextFactory;
-
-import java.time.LocalDate;
-import java.util.Arrays;
+//import com.myalley.member.WithMockCustomUser;
+//import com.myalley.member.domain.Member;
+//import com.myalley.member.options.Gender;
+//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+//import org.springframework.security.core.authority.SimpleGrantedAuthority;
+//import org.springframework.security.core.context.SecurityContext;
+//import org.springframework.security.core.context.SecurityContextHolder;
+//import org.springframework.security.test.context.support.WithSecurityContextFactory;
+//
+//import java.time.LocalDate;
+//import java.util.Arrays;
 
 //public class WithMockCustomUserSecurityContextFactory implements WithSecurityContextFactory<WithMockCustomUser> {
 //    @Override
