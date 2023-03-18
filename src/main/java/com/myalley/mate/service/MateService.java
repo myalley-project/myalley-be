@@ -42,7 +42,7 @@ public class MateService {
                 .viewCount(0)
                 .bookmarkCount(0)
                 .exhibition(exhibitionService.validateExistExhibition(request.getExhibitionId()))
-                .member(memberService.verifyMember(memberId))
+                .member(memberService.validateMember(memberId))
                 .build();
         return MateSimpleResponse.of(mateRepository.save(newMate));
     }

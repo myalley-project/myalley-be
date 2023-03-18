@@ -1,19 +1,10 @@
 package com.myalley.member.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.myalley.exception.CustomException;
-import com.myalley.exception.MemberExceptionType;
 import com.myalley.member.domain.Member;
-import com.myalley.member.domain.RefreshToken;
 import com.myalley.member.dto.LoginDto;
-import com.myalley.member.repository.MemberRepository;
-import com.myalley.member.repository.TokenRedisRepository;
-import com.myalley.member.service.MemberService;
 import com.myalley.member.service.RedisService;
-import com.myalley.member.service.RefreshService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -78,7 +68,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         Member member = (Member) authResult.getPrincipal();
         Map<String,String> token = JwtUtils.createTokenSet(member);
-        redisService.save(member.getEmail(),token.get("refreshToken"));
+        redisService.saveRefreshToken(member.getEmail(),token.get("refreshToken"));
         response.setContentType("application/json");
 
 

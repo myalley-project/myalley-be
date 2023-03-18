@@ -19,7 +19,7 @@ public class LogInController {
     private final RefreshService refreshService;
 
     @PostMapping("/refresh")
-    public ResponseEntity<Map<String, String>> refresh(@RequestBody HashMap<String, String> req) {
+    public ResponseEntity<Map<String, String>> createRefreshToken(@RequestBody HashMap<String, String> req) {
 
         String refreshToken = req.get("refreshToken");
 
@@ -28,7 +28,7 @@ public class LogInController {
         }
 
         refreshToken = refreshToken.substring("Bearer ".length());
-        Map<String, String> tokens = refreshService.refresh(refreshToken);
+        Map<String, String> tokens = refreshService.createToken(refreshToken);
 
         return new ResponseEntity(tokens, HttpStatus.ACCEPTED);
     }

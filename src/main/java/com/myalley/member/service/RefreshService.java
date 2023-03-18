@@ -15,7 +15,6 @@ import com.myalley.member.repository.MemberRepository;
 import com.myalley.member.repository.TokenRedisRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -31,7 +30,7 @@ public class RefreshService {
     private final MemberRepository memberRepository;
 
 
-    public Map<String, String> refresh(String refreshToken) {
+    public Map<String, String> createToken(String refreshToken) {
 
         // === Refresh Token 유효성 검사 === //
         try {

@@ -6,7 +6,6 @@ import com.myalley.inquiry.service.InquiryService;
 import com.myalley.inquiry.dto.InquiryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -22,14 +21,14 @@ public class InquiryController {
     public ResponseEntity createInquiry(
             @Valid @RequestBody InquiryDto inquiryDto
     ) {
-        return inquiryService.create(inquiryDto);
+        return inquiryService.createInquiry(inquiryDto);
     }
 
     @GetMapping("/inquiries")
-    public InquiryDetailDto find(
+    public InquiryDetailDto findInquiryById(
             @RequestParam("inquiryId") Long inquiryId){
 
-        return inquiryService.find(inquiryId);
+        return inquiryService.findInquiryById(inquiryId);
     }
 
 

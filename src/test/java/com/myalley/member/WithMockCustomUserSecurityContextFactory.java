@@ -12,20 +12,20 @@ import org.springframework.security.test.context.support.WithSecurityContextFact
 import java.time.LocalDate;
 import java.util.Arrays;
 
-public class WithMockCustomUserSecurityContextFactory implements WithSecurityContextFactory<WithMockCustomUser> {
-    @Override
-    public SecurityContext createSecurityContext(WithMockCustomUser annotation) {
-        final SecurityContext securityContext= SecurityContextHolder.createEmptyContext();
-
-        final UsernamePasswordAuthenticationToken authenticationToken=new UsernamePasswordAuthenticationToken(Member.builder()
-                .email("test@naver.com")
-                .password("Test1234!")
-                .nickname("test")
-                .birth(LocalDate.parse("2000-01-01"))
-                .gender(Gender.valueOf("W"))
-                .build(),null,  Arrays.asList(new SimpleGrantedAuthority(annotation.role())));
-
-        securityContext.setAuthentication(authenticationToken);
-        return securityContext;
-    }
-}
+//public class WithMockCustomUserSecurityContextFactory implements WithSecurityContextFactory<WithMockCustomUser> {
+//    @Override
+//    public SecurityContext createSecurityContext(WithMockCustomUser annotation) {
+//        final SecurityContext securityContext= SecurityContextHolder.createEmptyContext();
+//
+//        final UsernamePasswordAuthenticationToken authenticationToken=new UsernamePasswordAuthenticationToken(Member.builder()
+//                .email("test@naver.com")
+//                .password("Test1234!")
+//                .nickname("test")
+//                .birth(LocalDate.parse("2000-01-01"))
+//                .gender(Gender.valueOf("W"))
+//                .build(),null,  Arrays.asList(new SimpleGrantedAuthority(annotation.role())));
+//
+//        securityContext.setAuthentication(authenticationToken);
+//        return securityContext;
+//    }
+//}

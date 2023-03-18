@@ -54,5 +54,6 @@ public class BlogBookmarkService {
     @Transactional
     public void removeBlogBookmarksByBlogReview(BlogReview blogReview){
         blogBookmarkRepository.deleteAllByBlog(blogReview);
+
     }
 }
