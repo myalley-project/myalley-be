@@ -34,7 +34,7 @@ public class BlogBookmarkService {
 
     public boolean findBlogBookmarkByBlogIdAndMemberId(Long blogId, Long memberId) {
         if(memberId != 0) {
-            Member member = memberService.verifyMember(memberId);
+            Member member = memberService.validateMember(memberId);
             Optional<BlogBookmark> blogBookmark = blogBookmarkRepository.selectBookmark(member.getMemberId(), blogId);
             if (blogBookmark.isPresent())
                 return !blogBookmark.get().getIsDeleted();
@@ -54,5 +54,6 @@ public class BlogBookmarkService {
     @Transactional
     public void removeBlogBookmarksByBlogReview(BlogReview blogReview){
         blogBookmarkRepository.deleteAllByBlog(blogReview);
+
     }
 }

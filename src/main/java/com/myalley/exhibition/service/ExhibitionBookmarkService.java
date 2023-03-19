@@ -27,7 +27,7 @@ public class ExhibitionBookmarkService {
     private final MemberService memberService;
 
     public BookmarkResponseDto createBookmark(Long memberId, Long exhibitionId) {
-        Member member = memberService.verifyMember(memberId);
+        Member member = memberService.validateMember(memberId);
         Exhibition exhibition = exhibitionService.validateExistExhibition(exhibitionId);
 
          Optional<ExhibitionBookmark> bookmark = bookmarkRepository.findByExhibitionAndMember(exhibition, member);
@@ -58,7 +58,7 @@ public class ExhibitionBookmarkService {
     //북마크 추가한 전시글 목록 페이징 조회하기
     public Page<ExhibitionBookmark> findBookmarksByMemberId(Long memberId, int page) {
         PageRequest pageRequest = PageRequest.of(page -1, 8, Sort.by("id").descending());
-        Member member = memberService.verifyMember(memberId);
+        Member member = memberService.validateMember(memberId);
         return bookmarkRepository.findAllByMember(member, pageRequest);
     }
 

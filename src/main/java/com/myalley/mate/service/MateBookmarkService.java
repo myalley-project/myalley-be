@@ -26,7 +26,7 @@ public class MateBookmarkService {
     private final MemberService memberService;
 
     public BookmarkSimpleResponse createBookmark(Long memberId, Long mateId) {
-        Member member = memberService.verifyMember(memberId);
+        Member member = memberService.validateMember(memberId);
         Mate mate = mateService.validateExistMate(mateId);
         Optional<MateBookmark> bookmark = bookmarkRepository.findByMateAndMember(mate, member);
 
@@ -61,7 +61,7 @@ public class MateBookmarkService {
     //북마크 추가한 메이트글 목록 페이징 조회하기
     public Page<MateBookmark> findBookmarkedMatesByMemberId(Long memberId, int page) {
         PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("id").descending());
-        Member member = memberService.verifyMember(memberId);
+        Member member = memberService.validateMember(memberId);
         return bookmarkRepository.findAllByMember(member, pageRequest);
     }
 

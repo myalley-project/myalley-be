@@ -42,7 +42,7 @@ public class MateService {
                 .viewCount(0)
                 .bookmarkCount(0)
                 .exhibition(exhibitionService.validateExistExhibition(request.getExhibitionId()))
-                .member(memberService.verifyMember(memberId))
+                .member(memberService.validateMember(memberId))
                 .build();
         return MateSimpleResponse.of(mateRepository.save(newMate));
     }
@@ -76,7 +76,7 @@ public class MateService {
 
     //메이트글 상세조회 - 로그인 한 회원의 요청
     public MateDetailResponse findByMateIdAndMemberId(Long mateId, Long memberId) {
-        Member member = memberService.verifyMember(memberId);
+        Member member = memberService.validateMember(memberId);
         Mate mate = validateExistMate(mateId);
         boolean bookmarked = bookmarkRepository.existsByMateAndMember(mate, member);
 
@@ -96,22 +96,10 @@ public class MateService {
         mateRepository.deleteById(mateId);
     }
 
-    //메이트글 목록 전체 조회
-    public Page<Mate> findPagedMates(int page) {
-        PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("id").descending());
-        return mateRepository.findAll(pageRequest);
-    }
-
-    //메이트글 목록조회 (모집여부로 판단)
-     public Page<Mate> findMatesByStatus(String status, int page) {
-        PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("id").descending());
-        return mateRepository.findAllByStatus(status, pageRequest);
-    }
-
     //본인이 작성한 메이트글 조회
     public Page<Mate> findMyMates(Long memberId, int page) {
         PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("createdAt").descending());
-        Member member = memberService.verifyMember(memberId);
+        Member member = memberService.validateMember(memberId);
         return mateRepository.findByMember(member, pageRequest);
     }
 
@@ -123,9 +111,9 @@ public class MateService {
         return mateRepository.findByExhibition(exhibition, pageRequest);
     }
 
-    public Page<Mate> findMatesByTitle(String title, int page) {
-        PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("id").descending());
-        return mateRepository.findByTitleContaining(title, pageRequest);
+    public Page<Mate> findMatesByStatusAndTitle(String status, String title, int page) {
+        PageRequest pageRequest = PageRequest.of(page - 1, 4, Sort.by("id").descending());
+        return mateRepository.findMates(status, title, pageRequest);
     }
 
     @Transactional
@@ -143,10 +131,5 @@ public class MateService {
     public Mate validateExistMate(Long mateId) {
         return mateRepository.findById(mateId)
                 .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
-    }
-
-    public Page<Mate> findMatesByStatusAndTitle(String status, String title, int page) {
-        PageRequest pageRequest = PageRequest.of(page - 1, 4, Sort.by("id").descending());
-        return mateRepository.findMates(status, title, pageRequest);
     }
 }
