@@ -30,11 +30,11 @@ public class SimpleReview extends BaseTime {
     private String congestion;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
     private Member member;
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="exhibition_id")
     private Exhibition exhibition;
 
