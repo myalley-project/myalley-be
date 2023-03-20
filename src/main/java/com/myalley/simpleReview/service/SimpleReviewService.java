@@ -41,7 +41,7 @@ public class SimpleReviewService {
         simpleRepository.delete(target);
     }
 
-    public Page<SimpleReview> retrieveExhibitionSimpleReviewList(Long exhibitionId, Integer pageNo, String orderType){
+    public Page<SimpleReview> findPagedSimpleReviewsByExhibitionId(Long exhibitionId, Integer pageNo, String orderType){
         Exhibition exhibition = exhibitionService.validateExistExhibition(exhibitionId);
         if(pageNo==null)
             pageNo=0;
@@ -58,7 +58,7 @@ public class SimpleReviewService {
         return simpleRepository.findAllByExhibition(exhibition,pageRequest);
     }
 
-    public Page<SimpleReview> retrieveUserSimpleReviewList(Member member, Integer pageNo){
+    public Page<SimpleReview> findMySimpleReviews(Member member, Integer pageNo){
         if(pageNo==null)
             pageNo=0;
         else

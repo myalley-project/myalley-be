@@ -23,7 +23,7 @@ public class SimpleReviewController {
     private final SimpleReviewService simpleService;
 
     @PostMapping("/api/simple-reviews")
-    public ResponseEntity postSimpleReview(@Valid @RequestBody SimpleRequestDto.PostSimpleDto simpleDto){
+    public ResponseEntity createSimpleReview(@Valid @RequestBody SimpleRequestDto.PostSimpleDto simpleDto){
         log.info("Request-Type : Post, Entity : SimpleReview");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -34,7 +34,7 @@ public class SimpleReviewController {
     }
 
     @PutMapping("/api/simple-reviews/{simple-id}")
-    public ResponseEntity patchSimpleReview(@PathVariable("simple-id") Long simpleId,
+    public ResponseEntity updateSimpleReview(@PathVariable("simple-id") Long simpleId,
                                             @Valid @RequestBody SimpleRequestDto.PatchSimpleDto simpleDto){
         log.info("Request-Type : Put, Entity : SimpleReview, Simple-ID : {}", simpleId);
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -45,7 +45,7 @@ public class SimpleReviewController {
     }
 
     @DeleteMapping("/api/simple-reviews/{simple-id}")
-    public ResponseEntity deleteSimpleReview(@PathVariable("simple-id") Long simpleId){
+    public ResponseEntity removeSimpleReview(@PathVariable("simple-id") Long simpleId){
         log.info("Request-Type : Delete, Entity : SimpleReview, Simple-ID : {}", simpleId);
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -54,22 +54,22 @@ public class SimpleReviewController {
     }
 
     @GetMapping("/simple-reviews/exhibitions/{exhibition-id}")
-    public ResponseEntity getExhibitionSimpleReviewList(@PathVariable("exhibition-id") Long exhibitionId,
+    public ResponseEntity findPagedSimpleReviewsByExhibitionId(@PathVariable("exhibition-id") Long exhibitionId,
                                                         @RequestParam(required = false, value = "page") Integer pageNo,
                                                         @RequestParam(required = false, value = "order") String orderType){
         log.info("Request-Type : Get, Entity : SimpleReview_List, Type : Exhibition, Exhibition-ID : {}", exhibitionId);
 
-        Page<SimpleReview> simpleReviewPage = simpleService.retrieveExhibitionSimpleReviewList(exhibitionId,pageNo,orderType);
+        Page<SimpleReview> simpleReviewPage = simpleService.findPagedSimpleReviewsByExhibitionId(exhibitionId,pageNo,orderType);
         return new ResponseEntity<>(SimpleReviewMapper.INSTANCE.listExhibitionSimpleReviewDto(simpleReviewPage),
                 HttpStatus.OK);
     }
 
     @GetMapping("/api/simple-reviews/me")
-    public ResponseEntity getUserSimpleReviewList(@RequestParam(required = false, value = "page") Integer pageNo){
+    public ResponseEntity findMySimpleReviews(@RequestParam(required = false, value = "page") Integer pageNo){
         log.info("Request-Type : Get, Entity : SimpleReview_List, Type : MyPage");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        Page<SimpleReview> simpleReviewPage = simpleService.retrieveUserSimpleReviewList(member, pageNo);
+        Page<SimpleReview> simpleReviewPage = simpleService.findMySimpleReviews(member, pageNo);
         return new ResponseEntity<>(SimpleReviewMapper.INSTANCE.listUserSimpleReviewDto(simpleReviewPage),
                 HttpStatus.OK);
     }
