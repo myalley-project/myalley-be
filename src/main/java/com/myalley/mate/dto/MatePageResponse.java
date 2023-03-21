@@ -9,9 +9,11 @@ import java.util.List;
 public class MatePageResponse<T> {
     private List<T> mates;
     private int totalPage;
+    private int totalElement;
 
     public MatePageResponse(List<T> mates, Page page) {
         this.mates = mates;
         this.totalPage = page.getTotalPages();
+        this.totalElement = (int) page.getTotalElements();
     }
 }
