@@ -6,9 +6,11 @@ import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.exhibition.service.ExhibitionService;
 import com.myalley.member.domain.Member;
 import com.myalley.simpleReview.domain.SimpleReview;
+import com.myalley.simpleReview.dto.request.PostSimpleDto;
+import com.myalley.simpleReview.dto.request.PutSimpleDto;
+import com.myalley.simpleReview.dto.response.SimpleListResponseDto;
 import com.myalley.simpleReview.repository.SimpleReviewRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -21,17 +23,24 @@ public class SimpleReviewService {
     private final SimpleReviewRepository simpleRepository;
     private final ExhibitionService exhibitionService;
 
-    public void createSimpleReview(SimpleReview simpleReview, Member member, Long exhibitionId){
-        Exhibition exhibition = exhibitionService.validateExistExhibition(exhibitionId);
-        simpleReview.setMember(member);
-        simpleReview.setExhibition(exhibition);
-        simpleRepository.save(simpleReview);
+    public void createSimpleReview(PostSimpleDto simpleReviewDto, Member member){
+        Exhibition exhibition = exhibitionService.validateExistExhibition(simpleReviewDto.getExhibitionId());
+        SimpleReview newSimpleReview = SimpleReview.builder()
+                .viewDate(simpleReviewDto.getViewDate())
+                .time(simpleReviewDto.getTime())
+                .congestion(simpleReviewDto.getCongestion())
+                .rate(simpleReviewDto.getRate())
+                .content(simpleReviewDto.getContent())
+                .member(member)
+                .exhibition(exhibition)
+                .build();
+        simpleRepository.save(newSimpleReview);
     }
 
     @Transactional
-    public void updateSimpleReview(Long simpleId, SimpleReview simpleReview, Member member){
+    public void updateSimpleReview(Long simpleId, PutSimpleDto simpleReviewDto, Member member){
         SimpleReview pre = verifySimpleReview(simpleId, member);
-        pre.updateSimpleReview(simpleReview);
+        pre.updateSimpleReview(simpleReviewDto);
         simpleRepository.save(pre);
     }
 
@@ -41,7 +50,7 @@ public class SimpleReviewService {
         simpleRepository.delete(target);
     }
 
-    public Page<SimpleReview> retrieveExhibitionSimpleReviewList(Long exhibitionId, Integer pageNo, String orderType){
+    public SimpleListResponseDto findPagedSimpleReviewsByExhibitionId(Long exhibitionId, Integer pageNo, String orderType){
         Exhibition exhibition = exhibitionService.validateExistExhibition(exhibitionId);
         if(pageNo==null)
             pageNo=0;
@@ -55,16 +64,16 @@ public class SimpleReviewService {
             pageRequest = PageRequest.of(pageNo,10, Sort.by("id").descending());
         else
             throw new CustomException(SimpleReviewExceptionType.SIMPLE_BAD_REQUEST);
-        return simpleRepository.findAllByExhibition(exhibition,pageRequest);
+        return SimpleListResponseDto.of(simpleRepository.findAllByExhibition(exhibition,pageRequest), "member");
     }
 
-    public Page<SimpleReview> retrieveUserSimpleReviewList(Member member, Integer pageNo){
+    public SimpleListResponseDto findMySimpleReviews(Member member, Integer pageNo){
         if(pageNo==null)
             pageNo=0;
         else
             pageNo--;
         PageRequest pageRequest = PageRequest.of(pageNo,5, Sort.by("id").descending());
-        return simpleRepository.findAllByMember(member,pageRequest);
+        return SimpleListResponseDto.of(simpleRepository.findAllByMember(member,pageRequest), "exhibition");
     }
 
     //존재하는지, 작성자 본인인지 확인

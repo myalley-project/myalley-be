@@ -1,8 +1,8 @@
 package com.myalley.mate.controller;
 
 import com.myalley.mate.domain.MateBookmark;
-import com.myalley.mate.dto.MatePageResponse;
-import com.myalley.mate.dto.MateSimpleResponse;
+import com.myalley.mate.dto.response.MatePageResponse;
+import com.myalley.mate.dto.response.MateSimpleResponse;
 import com.myalley.mate.service.MateBookmarkService;
 import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;

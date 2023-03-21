@@ -117,7 +117,7 @@ public class ExhibitionService {
         else {
             throw new CustomException(ExhibitionExceptionType.EXHIBITION_SORT_CRITERIA_ERROR);
         }
-        return exhibitionRepository.searchPage(status, type, titleKeyword, pageRequest);
+        return exhibitionRepository.findPagedExhibitions(status, type, titleKeyword, pageRequest);
     }
 
     //전시글 존재여부 확인

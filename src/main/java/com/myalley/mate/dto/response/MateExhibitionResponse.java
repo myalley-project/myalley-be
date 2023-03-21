@@ -1,4 +1,4 @@
-package com.myalley.mate.dto;
+package com.myalley.mate.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.myalley.exhibition.dto.response.ExhibitionSimpleResponse;

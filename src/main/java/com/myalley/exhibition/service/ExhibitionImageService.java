@@ -30,7 +30,7 @@ public class ExhibitionImageService {
     private String dirName;
 
     //이미지 파일 업로드
-    public FileResponseDto upload(MultipartFile multipartFile) throws IOException {
+    public FileResponseDto uploadFile(MultipartFile multipartFile) throws IOException {
         validateFileExists(multipartFile);
 
       try (InputStream inputStream = multipartFile.getInputStream()) {
