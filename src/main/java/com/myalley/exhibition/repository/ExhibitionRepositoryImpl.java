@@ -21,7 +21,7 @@ public class ExhibitionRepositoryImpl implements ExhibitionRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<Exhibition> searchPage(String status, String type, String title, Pageable pageable) {
+    public Page<Exhibition> findPagedExhibitions(String status, String type, String title, Pageable pageable) {
         List<Exhibition> exhibitions = getExhibitionResponses(status, type, title, pageable);
         Long count = getCount(status, type, title);
 

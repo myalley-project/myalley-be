@@ -1,11 +1,9 @@
-package com.myalley.mate.dto;
+package com.myalley.mate.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.myalley.exhibition.dto.response.ExhibitionMateListResponse;
 import com.myalley.mate.domain.Mate;
-import com.myalley.mate.domain.MateBookmark;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

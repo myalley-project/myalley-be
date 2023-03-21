@@ -22,7 +22,7 @@ public class ExhibitionImageController {
     public ResponseEntity uploadFile(
             @RequestPart(value = "file") MultipartFile multipartFile) throws IOException {
         log.info("이미지 파일 업로드");
-        return new ResponseEntity(exhibitionImageService.upload(multipartFile), HttpStatus.OK);
+        return new ResponseEntity(exhibitionImageService.uploadFile(multipartFile), HttpStatus.OK);
     }
 
 }
