@@ -4,7 +4,7 @@ import com.myalley.exception.CustomException;
 import com.myalley.exception.MateExceptionType;
 import com.myalley.mate.domain.Mate;
 import com.myalley.mate.domain.MateBookmark;
-import com.myalley.mate.dto.BookmarkSimpleResponse;
+import com.myalley.mate.dto.response.BookmarkSimpleResponse;
 import com.myalley.mate.repository.MateBookmarkRepository;
 import com.myalley.member.domain.Member;
 import com.myalley.member.service.MemberService;
