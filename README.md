@@ -7,6 +7,7 @@
 
 - **프로젝트 명 :** My Alley (마이 앨리)
 - **프로젝트 기간 :** 2022.11.28 ~ 2023.01.31
+- **수정 & 리팩토링 작업 기간 :** 2023.02.06 ~ 진행 중
 - **Wiki 바로가기 :** https://github.com/myalley-project/myalley-be/wiki
 - **배포 링크 :** https://myalley.netlify.app 
 
