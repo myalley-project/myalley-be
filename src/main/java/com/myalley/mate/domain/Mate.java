@@ -2,7 +2,7 @@ package com.myalley.mate.domain;
 
 import com.myalley.common.domain.BaseTime;
 import com.myalley.exhibition.domain.Exhibition;
-import com.myalley.mate.dto.MateUpdateRequest;
+import com.myalley.mate.dto.request.MateUpdateRequest;
 import com.myalley.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
