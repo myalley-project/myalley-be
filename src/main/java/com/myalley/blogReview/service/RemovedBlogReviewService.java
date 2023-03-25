@@ -3,6 +3,8 @@ package com.myalley.blogReview.service;
 import com.myalley.blogReview.domain.BlogReview;
 import com.myalley.blogReview.dto.response.BlogListResponseDto;
 import com.myalley.blogReview.repository.BlogReviewRepository;
+import com.myalley.exception.BlogReviewExceptionType;
+import com.myalley.exception.CustomException;
 import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,4 +27,14 @@ public class RemovedBlogReviewService {
         return BlogListResponseDto.blogOf(myBlogReviewList,"self");
     }
 
+    public void removeBlogReviewPermanently(Long blogId, Member member) {
+        BlogReview target = reviewRepository.selectRemovedById(blogId).orElseThrow(() -> {
+            throw new CustomException(BlogReviewExceptionType.BLOG_NOT_FOUND);
+        });
+        if(target.getMember().getMemberId() != member.getMemberId()){
+            throw new CustomException(BlogReviewExceptionType.BLOG_FORBIDDEN);
+        }
+
+        reviewRepository.removePermanently(target.getId());
+    }
 }
