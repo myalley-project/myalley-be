@@ -34,7 +34,6 @@ public class RemovedBlogReviewService {
         if(target.getMember().getMemberId() != member.getMemberId()){
             throw new CustomException(BlogReviewExceptionType.BLOG_FORBIDDEN);
         }
-
         reviewRepository.removePermanently(target.getId());
     }
 }
