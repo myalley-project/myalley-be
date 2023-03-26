@@ -60,18 +60,11 @@ public class BlogReviewController {
 
     @GetMapping("/blogs")
     public ResponseEntity findPagedBlogReviews(@RequestParam(required = false, value = "page") Integer pageNo,
-                                         @RequestParam(required = false, value = "order") String orderType){
+                                               @RequestParam(required = false, value = "order") String orderType,
+                                               @RequestParam(required = false, value = "title") String word){
         log.info("Request-Type : Get, Entity : BlogReview_List, Type : Basic");
 
-        return new ResponseEntity<>(blogReviewService.findPagedBlogReviews(pageNo,orderType),HttpStatus.OK);
-    }
-
-    @GetMapping("/blogs/search")
-    public ResponseEntity findPagedBlogReviewsByTitle(@RequestParam(value = "title") String title,
-                                         @RequestParam(required = false, value = "page") Integer pageNo){
-        log.info("Request-Type : Get, Entity : BlogReview_List, Type : Search, Word : {}", title);
-
-        return new ResponseEntity<>(blogReviewService.findPagedBlogReviewsByTitle(title,pageNo),HttpStatus.OK);
+        return new ResponseEntity<>(blogReviewService.findPagedBlogReviews(pageNo,orderType,word),HttpStatus.OK);
     }
 
     @GetMapping("/api/blogs/me")

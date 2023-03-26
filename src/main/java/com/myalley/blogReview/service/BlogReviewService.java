@@ -62,35 +62,25 @@ public class BlogReviewService {
                 bookmarkService.findBlogBookmarkByBlogIdAndMemberId(blogId,memberId));
     }
 
-    public BlogListResponseDto findPagedBlogReviews(Integer pageNo, String orderType){
+    public BlogListResponseDto findPagedBlogReviews(Integer pageNo, String orderType, String word){
+        PageRequest pageRequest;
         Page<BlogReview> blogReviewList;
         if(pageNo == null)
             pageNo = 0;
         else
             pageNo--;
         if(orderType!=null && orderType.equals("ViewCount")) {
-            PageRequest pageRequest = PageRequest.of(pageNo, 9, Sort.by("viewCount").descending()
+            pageRequest = PageRequest.of(pageNo, 9, Sort.by("viewCount").descending()
                     .and(Sort.by("id").descending()));
-            blogReviewList = blogReviewRepository.findAll(pageRequest);
         } else if(orderType==null || orderType.equals("Recent")){
-            PageRequest pageRequest = PageRequest.of(pageNo, 9, Sort.by("id").descending());
+            pageRequest = PageRequest.of(pageNo, 9, Sort.by("id").descending());
+        } else{
+            throw new CustomException(BlogReviewExceptionType.BLOG_BAD_REQUEST);
+        }
+        if(word != null)
+            blogReviewList = blogReviewRepository.findAllByTitleContaining(word,pageRequest);
+        else
             blogReviewList = blogReviewRepository.findAll(pageRequest);
-        } else{
-            throw new CustomException(BlogReviewExceptionType.BLOG_BAD_REQUEST);
-        }
-        return BlogListResponseDto.blogOf(blogReviewList,BASIC_LIST);
-    }
-
-    public BlogListResponseDto findPagedBlogReviewsByTitle(String title, Integer pageNo){
-        PageRequest pageRequest;
-        if(title == "")
-            throw new CustomException(BlogReviewExceptionType.BLOG_BAD_REQUEST);
-        if(pageNo == null){
-            pageRequest = PageRequest.of(0, 9, Sort.by("id").descending());
-        } else{
-            pageRequest = PageRequest.of(pageNo-1, 9, Sort.by("id").descending());
-        }
-        Page<BlogReview> blogReviewList = blogReviewRepository.findAllByTitleContaining(title,pageRequest);
         return BlogListResponseDto.blogOf(blogReviewList,BASIC_LIST);
     }
 
