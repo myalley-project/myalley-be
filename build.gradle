@@ -16,11 +16,14 @@ group = 'com'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+ext["hibernate.version"] = "5.6.5.Final"
+
 configurations {
-	asciidoctorExtensions
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+	asciidoctorExtensions
+	querydsl.extendsFrom compileClasspath
 }
 
 repositories {
@@ -38,17 +41,17 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 	implementation 'org.apache.tika:tika-core:2.6.0'
-	implementation 'org.mapstruct:mapstruct:1.4.2.Final' //mapstruct 추가
 
 	// querydsl 추가
-	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+	implementation 'com.querydsl:querydsl-jpa'
+	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'mysql:mysql-connector-java'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
-	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final' //mapstruct 추가
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 
@@ -67,26 +70,26 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.8.7'
 }
 
-def querydslDir = "$buildDir/generated/querydsl"
+//* QueryDsl Start */
+def querydslSrcDir = "$buildDir/generated/querydsl"
 
-querydsl { //querydsl 추가
+querydsl {
 	jpa = true
-	querydslSourcesDir = querydslDir
+	querydslSourcesDir = querydslSrcDir
 }
 
-sourceSets { //querydsl 추가
-	main.java.srcDir querydslDir
+sourceSets {
+	main.java.srcDir querydslSrcDir
 }
 
-configurations { //querydsl 추가
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-	querydsl.extendsFrom compileClasspath
-}
-
-compileQuerydsl { //querydsl 추가
+compileQuerydsl {
 	options.annotationProcessorPath = configurations.querydsl
+}
+/* QueryDsl End */
+
+//Querydsl 추가, 자동 생성된 Q클래스 gradle clean으로 제거
+clean {
+	delete file('src/main/generated')
 }
 
 jar {

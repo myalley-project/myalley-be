@@ -1,16 +1,14 @@
 package com.myalley.mate.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.myalley.common.domain.BaseTime;
 import com.myalley.exhibition.domain.Exhibition;
-import com.myalley.mate.dto.MateUpdateRequest;
+import com.myalley.mate.dto.request.MateUpdateRequest;
 import com.myalley.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -18,7 +16,6 @@ import javax.persistence.*;
 @Getter
 @Table(name = "mate")
 @SQLDelete(sql = "UPDATE mate SET is_deleted = true WHERE mate_id = ?")
-@Where(clause = "is_deleted = false")
 @Entity
 public class Mate extends BaseTime {
     @Id
@@ -53,15 +50,12 @@ public class Mate extends BaseTime {
     @Column(name = "is_deleted")
     private boolean isDeleted = Boolean.FALSE;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exhibitionId")
-    @JsonBackReference
     private Exhibition exhibition;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId")
-    @JsonBackReference
     private Member member;
 
     @Builder

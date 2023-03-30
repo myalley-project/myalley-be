@@ -88,7 +88,7 @@ public class ExhibitionService {
 
     //특정 전시글 상세페이지 조회 - 로그인 한 회원
     public ExhibitionDetailResponse findByExhibitionIdAndMemberId(Long exhibitionId, Long memberId) {
-        Member member = memberService.verifyMember(memberId);
+        Member member = memberService.validateMember(memberId);
         Exhibition exhibition = validateExistExhibition(exhibitionId);
 
         return ExhibitionDetailResponse.of(exhibition, validateBookmarkedExhibition(exhibition, member));
@@ -117,7 +117,7 @@ public class ExhibitionService {
         else {
             throw new CustomException(ExhibitionExceptionType.EXHIBITION_SORT_CRITERIA_ERROR);
         }
-        return exhibitionRepository.searchPage(status, type, titleKeyword, pageRequest);
+        return exhibitionRepository.findPagedExhibitions(status, type, titleKeyword, pageRequest);
     }
 
     //전시글 존재여부 확인

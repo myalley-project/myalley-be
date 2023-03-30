@@ -1,4 +1,4 @@
-package com.myalley.mate.dto;
+package com.myalley.mate.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

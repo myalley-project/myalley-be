@@ -1,15 +1,12 @@
 package com.myalley.member.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
 import com.myalley.exception.MemberExceptionType;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -36,7 +33,7 @@ public class ProfileS3Service {
     @Value("${profile-path}")
     private String imageDir; // 저장할 폴더 이름
 
-    public String uploadImage(MultipartFile multipartFile) throws IOException {
+    public String uploadFile(MultipartFile multipartFile) throws IOException {
         verifyFileType(multipartFile.getContentType());
         log.info(multipartFile.getOriginalFilename());
         String fileName = createFileName(multipartFile.getOriginalFilename());
@@ -59,7 +56,7 @@ public class ProfileS3Service {
 
     }
 
-    public void deleteImage(String url){
+    public void removeFile(String url){
         try {
             String key=url.substring(url.indexOf("profile"));
             amazonS3Client.deleteObject(new DeleteObjectRequest(S3Bucket, key));

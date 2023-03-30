@@ -1,21 +1,17 @@
 package com.myalley.mate.service;
 
 import com.myalley.exception.CustomException;
-import com.myalley.exception.ExhibitionExceptionType;
 import com.myalley.exception.MateExceptionType;
-;import com.myalley.exception.MemberExceptionType;
-import com.myalley.exhibition.domain.Exhibition;
-import com.myalley.exhibition.repository.ExhibitionRepository;
 import com.myalley.exhibition.service.ExhibitionService;
 import com.myalley.mate.domain.Mate;
-import com.myalley.mate.dto.MateDetailResponse;
-import com.myalley.mate.dto.MateRequest;
-import com.myalley.mate.dto.MateSimpleResponse;
-import com.myalley.mate.dto.MateUpdateRequest;
+import com.myalley.mate.dto.response.MateDetailResponse;
+import com.myalley.mate.dto.request.MateRequest;
+import com.myalley.mate.dto.response.MateMyResponse;
+import com.myalley.mate.dto.response.MateSimpleResponse;
+import com.myalley.mate.dto.request.MateUpdateRequest;
 import com.myalley.mate.repository.MateBookmarkRepository;
 import com.myalley.mate.repository.MateRepository;
 import com.myalley.member.domain.Member;
-import com.myalley.member.repository.MemberRepository;
 import com.myalley.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,12 +28,8 @@ public class MateService {
     private final ExhibitionService exhibitionService;
     private final MemberService memberService;
     private final MateBookmarkRepository bookmarkRepository;
-    private final MemberRepository memberRepository;
 
-    private final ExhibitionRepository exhibitionRepository;
-
-    //메이트글 등록
-    public MateSimpleResponse save(MateRequest request, Long memberId) {
+    public void createMate(MateRequest request, Long memberId) {
         Mate newMate = Mate.builder()
                 .title(request.getTitle())
                 .status(request.getStatus())
@@ -49,113 +41,91 @@ public class MateService {
                 .viewCount(0)
                 .bookmarkCount(0)
                 .exhibition(exhibitionService.validateExistExhibition(request.getExhibitionId()))
-                .member(memberService.verifyMember(memberId))
+                .member(memberService.validateMember(memberId))
                 .build();
-        return MateSimpleResponse.of(mateRepository.save(newMate));
+
+        mateRepository.save(newMate);
     }
 
-    //메이트글 수정
     @Transactional
-    public MateSimpleResponse update(Long id, MateUpdateRequest request, Long memberId) {
-        Mate findMate = mateRepository.findById(id)
-                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+    public void updateMate(Long mateId, MateUpdateRequest request, Long memberId) {
+        Mate findMate = validateExistMate(mateId);
 
         if (!memberId.equals(findMate.getMember().getMemberId())) {
                 throw new CustomException(MateExceptionType.UNAUTHORIZED_ACCESS);
         }
 
-        findMate.updateInfo(id, request);
+        findMate.updateInfo(mateId, request);
         findMate.updateExhibition(exhibitionService.validateExistExhibition(request.getExhibitionId()));
-        return MateSimpleResponse.of(findMate);
     }
 
-    //메이트글 조회수 증가
     @Transactional
-    public void updateViewCount(Long id) {
-        mateRepository.updateViewCount(id);
+    public void updateViewCount(Long mateId) {
+        mateRepository.updateViewCount(mateId);
     }
 
-    //메이트글 상세조회 - 비회원
-    public MateDetailResponse findDetail(Long id) {
-        return mateRepository.findById(id)
-                .map(MateDetailResponse::of)
-                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
-    }
+    public MateDetailResponse findByMateIdAndMemberId(Long mateId, Long memberId) {
+        validateMateDeletedOrNot(mateId);
+        if (memberId == 0) {
+            return mateRepository.findById(mateId)
+                    .map(MateDetailResponse::of)
+                    .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+        }
 
-    //메이트글 상세조회 - 로그인 한 회원의 요청
-    public MateDetailResponse findDetail(Long id, Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MemberExceptionType.NOT_FOUND_MEMBER));
-
-        Mate mate = mateRepository.findById(id)
-                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
-
+        Member member = memberService.validateMember(memberId);
+        Mate mate = validateExistMate(mateId);
         boolean bookmarked = bookmarkRepository.existsByMateAndMember(mate, member);
 
         return MateDetailResponse.of(mate, bookmarked);
     }
 
-    //메이트글 삭제
     @Transactional
-    public void delete(Long id, Long memberId) {
-        Mate mate = mateRepository.findById(id)
-                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+    public void removeByMateIdAndMemberId(Long mateId, Long memberId) {
+        Mate mate = validateExistMate(mateId);
 
         if (!memberId.equals(mate.getMember().getMemberId())) {
             throw new CustomException(MateExceptionType.UNAUTHORIZED_ACCESS);
         }
-
-        bookmarkRepository.deleteByMate(mate); //북마크 쪽에서 먼저 북마크 삭제해줌
-        mateRepository.deleteById(id);
+        mateRepository.deleteById(mateId);
     }
 
-    //메이트글 목록 전체 조회
-    public Page<Mate> findListsAll(int page) {
+    public Page<MateMyResponse> findMyMates(Long memberId, int page) {
         PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("id").descending());
-        return mateRepository.findAll(pageRequest);
+        memberService.validateMember(memberId);
+        return mateRepository.findMatesByMember(memberId, pageRequest);
     }
 
-    //메이트글 목록조회 (모집여부로 판단)
-     public Page<Mate> findListsByStatus(String status, int page) {
-        PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("id").descending());
-        return mateRepository.findAllByStatus(status, pageRequest);
-    }
-
-    //본인이 작성한 메이트글 조회
-    public Page<Mate> findMyMates(Long memberId, int page) {
+    public Page<MateSimpleResponse> findMatesByExhibitionId(Long exhibitionId, int page) {
         PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("createdAt").descending());
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MemberExceptionType.NOT_FOUND_MEMBER));
-        return mateRepository.findByMember(member, pageRequest);
+        exhibitionService.validateExistExhibition(exhibitionId);
+
+        return mateRepository.findMatesByExhibitionId(exhibitionId, pageRequest);
     }
 
-
-    //전시글 상세페이지에서 해당 전시회 id에 해당하는 메이트글 목록조회
-    public Page<Mate> findExhibitionMates(Long exhibitionId, int page) {
-        PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("createdAt").descending());
-        Exhibition exhibition = exhibitionRepository.findById(exhibitionId)
-                .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
-
-        return mateRepository.findByExhibition(exhibition, pageRequest);
-    }
-
-    //메이트 목록 조회 검색바 (title)
-    public Page<Mate> findTitle(String keyword, int page) {
-        PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("id").descending());
-        return mateRepository.findByTitleContaining(keyword, pageRequest);
+    public Page<MateSimpleResponse> findMatesByStatusAndTitle(String status, String title, int page) {
+        PageRequest pageRequest = PageRequest.of(page - 1, 4, Sort.by("id").descending());
+        return mateRepository.findMatesByStatusAndTitle(status, title, pageRequest);
     }
 
     @Transactional
-    public void bookmarkCountUp(Long id) {
-        Mate mate = mateRepository.findById(id)
-                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+    public void bookmarkCountUp(Long mateId) {
+        Mate mate = validateExistMate(mateId);
         mate.bookmarkCountUp();
     }
 
     @Transactional
-    public void bookmarkCountDown(Long id) {
-        Mate mate = mateRepository.findById(id)
-                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+    public void bookmarkCountDown(Long mateId) {
+        Mate mate = validateExistMate(mateId);
         mate.bookmarkCountDown();
+    }
+
+    public Mate validateExistMate(Long mateId) {
+        return mateRepository.findById(mateId)
+                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+    }
+
+    public Mate validateMateDeletedOrNot(Long mateId) {
+        return mateRepository.findByIdAndIsDeleted(mateId)
+                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
     }
 }

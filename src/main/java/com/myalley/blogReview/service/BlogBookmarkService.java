@@ -2,13 +2,13 @@ package com.myalley.blogReview.service;
 
 import com.myalley.blogReview.domain.BlogBookmark;
 import com.myalley.blogReview.domain.BlogReview;
+import com.myalley.blogReview.dto.response.BlogListResponseDto;
 import com.myalley.blogReview.repository.BlogBookmarkRepository;
 import com.myalley.exception.BlogReviewExceptionType;
 import com.myalley.exception.CustomException;
 import com.myalley.member.domain.Member;
 import com.myalley.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class BlogBookmarkService {
     private final BlogBookmarkRepository blogBookmarkRepository;
     private final MemberService memberService;
 
-    public Boolean findBookmark(BlogReview blogReview, Member member) {
+    public Boolean switchBlogBookmark(BlogReview blogReview, Member member) {
         if(blogReview.getMember().getMemberId() == member.getMemberId())
             throw new CustomException(BlogReviewExceptionType.BOOKMARK_FORBIDDEN);
         BlogBookmark bookmark = blogBookmarkRepository.selectBookmark(member.getMemberId(), blogReview.getId())
@@ -32,9 +32,9 @@ public class BlogBookmarkService {
         return !bookmark.getIsDeleted();
     }
 
-    public boolean retrieveBlogBookmark(Long blogId, Long memberId) {
+    public boolean findBlogBookmarkByBlogIdAndMemberId(Long blogId, Long memberId) {
         if(memberId != 0) {
-            Member member = memberService.verifyMember(memberId);
+            Member member = memberService.validateMember(memberId);
             Optional<BlogBookmark> blogBookmark = blogBookmarkRepository.selectBookmark(member.getMemberId(), blogId);
             if (blogBookmark.isPresent())
                 return !blogBookmark.get().getIsDeleted();
@@ -42,17 +42,18 @@ public class BlogBookmarkService {
         return false;
     }
 
-    @Transactional
-    public void removeBlogAllBookmark(BlogReview blogReview){
-        blogBookmarkRepository.deleteAllByBlog(blogReview);
-    }
-
-    public Page<BlogBookmark> retrieveMyBlogBookmarks(Member member, Integer pageNo){
+    public BlogListResponseDto findMyBookmarkedBlogReviews(Member member, Integer pageNo){
         PageRequest pageRequest;
         if(pageNo == null)
             pageRequest = PageRequest.of(0, 6, Sort.by("id").descending());
         else
             pageRequest = PageRequest.of(pageNo-1, 6, Sort.by("id").descending());
-        return blogBookmarkRepository.findAllByMember(member, pageRequest);
+        return BlogListResponseDto.bookmarkFrom(blogBookmarkRepository.findAllByMember(member, pageRequest));
+    }
+
+    @Transactional
+    public void removeBlogBookmarksByBlogReview(BlogReview blogReview){
+        blogBookmarkRepository.deleteAllByBlog(blogReview);
+
     }
 }

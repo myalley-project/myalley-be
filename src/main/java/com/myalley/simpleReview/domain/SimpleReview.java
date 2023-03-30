@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myalley.common.domain.BaseTime;
 import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.member.domain.Member;
+import com.myalley.simpleReview.dto.request.PutSimpleDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,11 +30,11 @@ public class SimpleReview extends BaseTime {
     private String congestion;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
     private Member member;
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="exhibition_id")
     private Exhibition exhibition;
 
@@ -49,20 +50,13 @@ public class SimpleReview extends BaseTime {
         this.exhibition = exhibition;
     }
 
-    public void setMember(Member member){
-        this.member = member;
-    }
-    public void setExhibition(Exhibition exhibition){
-        this.exhibition = exhibition;
-    }
-
-    public void updateSimpleReview(SimpleReview post){
-        if(post.getTime() != null)
-            this.time = post.getTime();
-        if(post.getCongestion() != null)
-            this.congestion = post.getCongestion();
-        this.rate = post.getRate();
-        this.viewDate = post.getViewDate();
-        this.content = post.getContent();
+    public void updateSimpleReview(PutSimpleDto simpleDto){
+        if(simpleDto.getTime() != null)
+            this.time = simpleDto.getTime();
+        if(simpleDto.getCongestion() != null)
+            this.congestion = simpleDto.getCongestion();
+        this.rate = simpleDto.getRate();
+        this.viewDate = simpleDto.getViewDate();
+        this.content = simpleDto.getContent();
     }
 }
