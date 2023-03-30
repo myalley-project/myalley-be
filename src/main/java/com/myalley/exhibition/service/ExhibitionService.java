@@ -5,6 +5,7 @@ import com.myalley.exception.ExhibitionExceptionType;
 import com.myalley.exhibition.domain.Exhibition;
 import com.myalley.exhibition.dto.request.ExhibitionRequest;
 import com.myalley.exhibition.dto.request.ExhibitionUpdateRequest;
+import com.myalley.exhibition.dto.response.ExhibitionBasicResponse;
 import com.myalley.exhibition.dto.response.ExhibitionDetailResponse;
 import com.myalley.exhibition.repository.ExhibitionBookmarkRepository;
 import com.myalley.exhibition.repository.ExhibitionRepository;
@@ -79,17 +80,17 @@ public class ExhibitionService {
         exhibitionRepository.deleteById(exhibitionId);
     }
 
-    //특정 전시글 상세페이지 조회 - 비회원
-    public ExhibitionDetailResponse findByExhibitionId(Long exhibitionId) {
-        return exhibitionRepository.findById(exhibitionId)
-                .map(ExhibitionDetailResponse::of)
-                .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
-    }
-
     //특정 전시글 상세페이지 조회 - 로그인 한 회원
     public ExhibitionDetailResponse findByExhibitionIdAndMemberId(Long exhibitionId, Long memberId) {
+        validateExhibitionDeletedOrNot(exhibitionId);
+        if (memberId == 0) {
+            return exhibitionRepository.findById(exhibitionId)
+                    .map(ExhibitionDetailResponse::of)
+                    .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
+        }
+
         Member member = memberService.validateMember(memberId);
-        Exhibition exhibition = validateExistExhibition(exhibitionId);
+        Exhibition exhibition = validateExhibitionDeletedOrNot(exhibitionId);
 
         return ExhibitionDetailResponse.of(exhibition, validateBookmarkedExhibition(exhibition, member));
     }
@@ -105,7 +106,7 @@ public class ExhibitionService {
     }
 
     //전시글 목록 조회
-    public Page<Exhibition> findExhibitionsByConditions(String status, String type, String sort, String titleKeyword, int page) {
+    public Page<ExhibitionBasicResponse> findExhibitionsByConditions(String status, String type, String sort, String titleKeyword, int page) {
         PageRequest pageRequest;
 
         if (sort.equals("조회수순")) {
@@ -123,6 +124,11 @@ public class ExhibitionService {
     //전시글 존재여부 확인
     public Exhibition validateExistExhibition(Long exhibitionId) {
         return exhibitionRepository.findById(exhibitionId)
+                .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
+    }
+
+    public Exhibition validateExhibitionDeletedOrNot(Long exhibitionId) {
+        return exhibitionRepository.findByIdAndIsDeleted(exhibitionId)
                 .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
     }
 

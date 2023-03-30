@@ -1,6 +1,7 @@
 package com.myalley.exhibition.controller;
 
-import com.myalley.exhibition.domain.Exhibition;
+import com.myalley.exception.CustomException;
+import com.myalley.exception.MateExceptionType;
 import com.myalley.exhibition.dto.request.ExhibitionRequest;
 import com.myalley.exhibition.dto.request.ExhibitionUpdateRequest;
 import com.myalley.exhibition.dto.response.ExhibitionBasicResponse;
@@ -50,11 +51,11 @@ public class ExhibitionController {
     @GetMapping("/exhibitions/{exhibitionId}")
     public ResponseEntity findByExhibitionId(@PathVariable Long exhibitionId, @RequestHeader("memberId") Long memberId) {
         log.info("전시회 정보 상세페이지 조회");
-        exhibitionService.updateViewCount(exhibitionId);
 
-        if (memberId == 0) {
-            return ResponseEntity.ok(exhibitionService.findByExhibitionId(exhibitionId));
+        if (memberId == null) {
+            throw new CustomException(MateExceptionType.MEMBER_ID_IS_MANDATORY);
         }
+        exhibitionService.updateViewCount(exhibitionId);
         return ResponseEntity.ok(exhibitionService.findByExhibitionIdAndMemberId(exhibitionId, memberId));
     }
 
@@ -65,7 +66,7 @@ public class ExhibitionController {
                                                   @RequestParam(value = "sort", required = false) String sort,
                                                   @RequestParam(value = "title", required = false) String title) {
 
-        Page<Exhibition> pagedExhibitions = exhibitionService.findExhibitionsByConditions(status, type, sort, title, page);
+        Page<ExhibitionBasicResponse> pagedExhibitions = exhibitionService.findExhibitionsByConditions(status, type, sort, title, page);
         List<ExhibitionBasicResponse> exhibitions = pagedExhibitions
                 .stream()
                 .map(ExhibitionBasicResponse::of)

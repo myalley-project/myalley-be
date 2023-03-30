@@ -1,6 +1,5 @@
 package com.myalley.exhibition.controller;
 
-import com.myalley.exhibition.domain.ExhibitionBookmark;
 import com.myalley.exhibition.dto.response.ExhibitionBasicResponse;
 import com.myalley.exhibition.dto.response.ExhibitionPageResponse;
 import com.myalley.exhibition.service.ExhibitionBookmarkService;
@@ -30,9 +29,8 @@ public class ExhibitionBookmarkController {
         log.info("전시글 북마크 추가/삭제");
 
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long memberId = member.getMemberId();
 
-        return ResponseEntity.ok(exhibitionBookmarkService.createBookmark(memberId, exhibitionId));
+        return ResponseEntity.ok(exhibitionBookmarkService.switchExhibitionBookmark(member, exhibitionId));
     }
 
     @GetMapping("/api/exhibitions/bookmarks/me")
@@ -42,7 +40,7 @@ public class ExhibitionBookmarkController {
 
         log.info("본인의 전시글 북마크 목록 조회");
 
-        Page<ExhibitionBookmark> exhibitionBookmarks = exhibitionBookmarkService.findBookmarksByMemberId(memberId, page);
+        Page<ExhibitionBasicResponse> exhibitionBookmarks = exhibitionBookmarkService.findBookmarksByMemberId(memberId, page);
         List<ExhibitionBasicResponse> exhibitions = exhibitionBookmarks
                 .stream()
                 .map(ExhibitionBasicResponse::of)
@@ -52,6 +50,4 @@ public class ExhibitionBookmarkController {
                 new ExhibitionPageResponse<>(exhibitions, exhibitionBookmarks),
                 HttpStatus.OK);
     }
-
-
 }
