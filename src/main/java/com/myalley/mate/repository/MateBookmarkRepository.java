@@ -10,5 +10,4 @@ import java.util.Optional;
 public interface MateBookmarkRepository extends JpaRepository<MateBookmark, Long>, MateBookmarkRepositoryCustom {
     Optional<MateBookmark> findByMateAndMember(Mate mate, Member member);
     boolean existsByMateAndMember(Mate mate, Member member);
-    void deleteAllByMate(Mate mate);
 }

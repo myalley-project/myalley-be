@@ -86,14 +86,12 @@ public class MateService {
         if (!memberId.equals(mate.getMember().getMemberId())) {
             throw new CustomException(MateExceptionType.UNAUTHORIZED_ACCESS);
         }
-
-        bookmarkRepository.deleteAllByMate(mate); //북마크 쪽에서 먼저 북마크 삭제해줌
         mateRepository.deleteById(mateId);
     }
 
     public Page<MateMyResponse> findMyMates(Long memberId, int page) {
         PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("id").descending());
-        Member member = memberService.validateMember(memberId);
+        memberService.validateMember(memberId);
         return mateRepository.findMatesByMember(memberId, pageRequest);
     }
 
