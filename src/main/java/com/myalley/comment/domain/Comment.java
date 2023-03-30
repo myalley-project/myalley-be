@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ import java.util.Objects;
 @Getter
 @Table(name = "comment")
 @SQLDelete(sql = "UPDATE comment SET isDeleted = true WHERE comment_id = ?")
-//@Where(clause = "isDeleted = false")
 @Entity
 public class Comment extends BaseTime {
 
