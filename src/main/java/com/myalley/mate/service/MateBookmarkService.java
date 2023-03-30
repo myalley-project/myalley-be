@@ -5,6 +5,7 @@ import com.myalley.exception.MateExceptionType;
 import com.myalley.mate.domain.Mate;
 import com.myalley.mate.domain.MateBookmark;
 import com.myalley.mate.dto.response.BookmarkSimpleResponse;
+import com.myalley.mate.dto.response.MyMateBookmarkResponse;
 import com.myalley.mate.repository.MateBookmarkRepository;
 import com.myalley.member.domain.Member;
 import com.myalley.member.service.MemberService;
@@ -15,9 +16,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
-@Transactional
 @Service
 @RequiredArgsConstructor
 public class MateBookmarkService {
@@ -25,48 +23,40 @@ public class MateBookmarkService {
     private final MateService mateService;
     private final MemberService memberService;
 
-    public BookmarkSimpleResponse createBookmark(Long memberId, Long mateId) {
-        Member member = memberService.validateMember(memberId);
-        Mate mate = mateService.validateExistMate(mateId);
-        Optional<MateBookmark> bookmark = bookmarkRepository.findByMateAndMember(mate, member);
+    @Transactional
+    public BookmarkSimpleResponse switchMateBookmark(Member member, Long mateId) {
+        Mate mate = mateService.validateMateDeletedOrNot(mateId);
+        MateBookmark bookmark = findMateBookmark(mate, member);
+        validateAuthor(mate, member);
 
-        //본인이 작성한 글에 북마크 추가하려는 경우
-        if (mate.getMember().equals(member)) {
-            throw new CustomException(MateExceptionType.CANNOT_BOOKMARK_MY_POST);
-        }
-
-        if (bookmark.isPresent()) {
-            removeBookmark(bookmark.get().getId());
+        if (bookmark.isBookmarked()) {
+            bookmarkRepository.deleteById(bookmark.getId());
             mateService.bookmarkCountDown(mateId);
-
             return new BookmarkSimpleResponse("메이트 모집글이 북마크 목록에서 삭제되었습니다.", false);
         }
 
-        MateBookmark mateBookmark = MateBookmark.builder()
-                .member(member)
-                .mate(mate)
-                .build();
-
-        bookmarkRepository.save(mateBookmark);
+        bookmark.switchBookmarkStatus();
         mateService.bookmarkCountUp(mateId);
-
+        bookmarkRepository.save(bookmark);
         return new BookmarkSimpleResponse("메이트 모집글이 북마크 목록에 추가되었습니다.", true);
     }
 
-    private void removeBookmark(Long bookmarkId) {
-        validateExistBookmark(bookmarkId);
-        bookmarkRepository.deleteById(bookmarkId);
+    public void validateAuthor(Mate mate, Member member) {
+        if (mate.getMember().equals(member)) {
+            throw new CustomException(MateExceptionType.CANNOT_BOOKMARK_MY_POST);
+        }
     }
 
-    //북마크 추가한 메이트글 목록 페이징 조회하기
-    public Page<MateBookmark> findBookmarkedMatesByMemberId(Long memberId, int page) {
-        PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("id").descending());
-        Member member = memberService.validateMember(memberId);
-        return bookmarkRepository.findAllByMember(member, pageRequest);
+    public Page<MyMateBookmarkResponse> findBookmarkedMatesByMemberId(Long memberId, int page) {
+        PageRequest pageRequest = PageRequest.of(page -1, 4, Sort.by("mate_id").descending());
+        return bookmarkRepository.findMateBookmarkByMember(memberId, pageRequest);
     }
 
-    public void validateExistBookmark(Long bookmarkId) {
-        bookmarkRepository.findById(bookmarkId)
-                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+    public MateBookmark findMateBookmark(Mate mate, Member member) {
+        return bookmarkRepository.findByMateAndMember(mate, member)
+                .orElseGet(() -> MateBookmark.builder()
+                        .member(member)
+                        .mate(mate)
+                        .build());
     }
 }

@@ -2,8 +2,7 @@ package com.myalley.mate.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.myalley.exhibition.dto.response.ExhibitionMateListResponse;
-import com.myalley.mate.domain.Mate;
-import com.myalley.mate.domain.MateBookmark;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,21 +27,30 @@ public class MateSimpleResponse {
     private String memberNickname;
     private ExhibitionMateListResponse exhibition;
 
-    public static MateSimpleResponse of(Mate mate) {
-        return new MateSimpleResponse(mate.getId(), mate.getTitle(), mate.getAvailableDate(), mate.getStatus(),
+    public static MateSimpleResponse of(MateSimpleResponse mate) {
+        return new MateSimpleResponse(mate.mateId, mate.getTitle(), mate.getAvailableDate(), mate.getStatus(),
                 mate.getMateGender(), mate.getMateAge(), mate.getCreatedAt(), mate.getViewCount(),
-                mate.getMember().getMemberId(), mate.getMember().getNickname(),
-                new ExhibitionMateListResponse(mate.getExhibition().getId(), mate.getExhibition().getTitle(),
-                        mate.getExhibition().getSpace(), mate.getExhibition().getPosterUrl(), mate.getExhibition().getStatus()));
+                mate.getMemberId(), mate.getMemberNickname(),
+                new ExhibitionMateListResponse(mate.getExhibition().getExhibitionId(), mate.getExhibition().getExhibitionTitle(),
+                        mate.getExhibition().getExhibitionSpace(), mate.getExhibition().getPosterUrl(), mate.getExhibition().getExhibitionStatus()));
     }
 
-    public static MateSimpleResponse of(MateBookmark mateBookmark) {
-        return new MateSimpleResponse(mateBookmark.getMate().getId(), mateBookmark.getMate().getTitle(), mateBookmark.getMate().getAvailableDate(),
-                mateBookmark.getMate().getStatus(), mateBookmark.getMate().getMateGender(), mateBookmark.getMate().getMateAge(),
-                mateBookmark.getMate().getCreatedAt(), mateBookmark.getMate().getViewCount(), mateBookmark.getMate().getMember().getMemberId(),
-                mateBookmark.getMate().getMember().getNickname(),
-                new ExhibitionMateListResponse(mateBookmark.getMate().getExhibition().getId(),mateBookmark.getMate().getExhibition().getTitle(),
-                        mateBookmark.getMate().getExhibition().getSpace(), mateBookmark.getMate().getExhibition().getPosterUrl(),
-                        mateBookmark.getMate().getExhibition().getStatus()));
+    @QueryProjection
+    public MateSimpleResponse(Long mateId, String title, String status, String mateGender, String mateAge,
+                              String availableDate, Integer viewCount, LocalDateTime createdAt, Long exhibitionId,
+                              String exhibitionTitle, String posterUrl, String space, String exhibitionStatus,
+                              Long memberId, String memberNickname) {
+        this.mateId = mateId;
+        this.title = title;
+        this.status = status;
+        this.mateGender = mateGender;
+        this.mateAge = mateAge;
+        this.availableDate = availableDate;
+        this.viewCount = viewCount;
+        this.createdAt = createdAt;
+        this.exhibition = new ExhibitionMateListResponse(exhibitionId, exhibitionTitle, space, posterUrl, exhibitionStatus);
+        this.memberId = memberId;
+        this.memberNickname = memberNickname;
     }
+    
 }

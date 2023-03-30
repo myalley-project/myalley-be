@@ -2,12 +2,10 @@ package com.myalley.mate.controller;
 
 import com.myalley.exception.CustomException;
 import com.myalley.exception.MateExceptionType;
-import com.myalley.mate.domain.Mate;
 import com.myalley.mate.dto.request.MateRequest;
 import com.myalley.mate.dto.request.MateUpdateRequest;
-import com.myalley.mate.dto.response.MateExhibitionResponse;
 import com.myalley.mate.dto.response.MateMyResponse;
-import com.myalley.mate.dto.response.MatePageResponse;
+import com.myalley.mate.dto.response.MatePageResponses;
 import com.myalley.mate.dto.response.MateSimpleResponse;
 import com.myalley.mate.service.MateService;
 import com.myalley.member.domain.Member;
@@ -39,7 +37,8 @@ public class MateController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
 
-        return ResponseEntity.ok(mateService.createMate(request, memberId));
+        mateService.createMate(request, memberId);
+        return new ResponseEntity<>("메이트글 등록이 완료되었습니다.", HttpStatus.OK);
     }
 
     @PutMapping("/api/mates/{mateId}")
@@ -50,7 +49,8 @@ public class MateController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
 
-        return ResponseEntity.ok(mateService.updateMate(mateId, request, memberId));
+        mateService.updateMate(mateId, request, memberId);
+        return new ResponseEntity<>("메이트글 수정이 완료되었습니다.", HttpStatus.OK);
     }
 
     //메이트글 상세페이지 조회 (회원/비회원)
@@ -61,12 +61,7 @@ public class MateController {
         if (memberId == null) {
             throw new CustomException(MateExceptionType.MEMBER_ID_IS_MANDATORY);
         }
-
         mateService.updateViewCount(mateId);
-
-        if (memberId == 0) {
-            return ResponseEntity.ok(mateService.findByMateId(mateId));
-        }
         return ResponseEntity.ok(mateService.findByMateIdAndMemberId(mateId, memberId));
     }
 
@@ -88,14 +83,14 @@ public class MateController {
 
         log.info("메이트 모집글 목록 조회");
 
-        Page<Mate> mates = mateService.findMatesByStatusAndTitle(status, title, page);
+        Page<MateSimpleResponse> mates = mateService.findMatesByStatusAndTitle(status, title, page);
         List<MateSimpleResponse> response = mates
                 .stream()
                 .map(MateSimpleResponse::of)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(
-                new MatePageResponse<>(response, mates),
+                new MatePageResponses<>(response, mates),
                 HttpStatus.OK);
 
     }
@@ -107,14 +102,14 @@ public class MateController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
 
-        Page<Mate> mate = mateService.findMyMates(memberId, page);
+        Page<MateMyResponse> mate = mateService.findMyMates(memberId, page);
         List<MateMyResponse> responses = mate
                 .stream()
                 .map(MateMyResponse::of)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(
-                new MatePageResponse<>(responses, mate), HttpStatus.OK);
+                new MatePageResponses<>(responses, mate), HttpStatus.OK);
     }
 
     @GetMapping("/exhibitions/mates/{exhibitionId}")
@@ -122,13 +117,13 @@ public class MateController {
                                                @PathVariable Long exhibitionId) {
         log.info("전시회 상세페이지 메이트 모집글 목록 조회");
 
-        Page<Mate> mates = mateService.findMatesByExhibitionId(exhibitionId, page);
-        List<MateExhibitionResponse> response = mates
+        Page<MateSimpleResponse> mates = mateService.findMatesByExhibitionId(exhibitionId, page);
+        List<MateSimpleResponse> response = mates
                 .stream()
-                .map(MateExhibitionResponse::of)
+                .map(MateSimpleResponse::of)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(
-                new MatePageResponse<>(response, mates), HttpStatus.OK);
+                new MatePageResponses<>(response, mates), HttpStatus.OK);
     }
 }
