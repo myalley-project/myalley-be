@@ -5,14 +5,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
 @Getter
 @Table(name = "mate_bookmark")
 @SQLDelete(sql = "UPDATE mate_bookmark SET is_bookmarked = false WHERE mate_book_id = ?")
-@Where(clause = "is_bookmarked = true")
 @Entity
 @NoArgsConstructor
 public class MateBookmark {
@@ -30,7 +28,7 @@ public class MateBookmark {
     private Member member;
 
     @Column(name = "is_bookmarked")
-    private boolean isBookmarked = Boolean.TRUE;
+    private boolean isBookmarked;
 
     @Builder
     public MateBookmark(Mate mate, Member member) {
@@ -38,4 +36,7 @@ public class MateBookmark {
         this.member = member;
     }
 
+    public void switchBookmarkStatus() {
+        this.isBookmarked = Boolean.TRUE;
+        }
 }

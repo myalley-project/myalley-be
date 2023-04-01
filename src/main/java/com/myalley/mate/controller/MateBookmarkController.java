@@ -1,8 +1,7 @@
 package com.myalley.mate.controller;
 
-import com.myalley.mate.domain.MateBookmark;
-import com.myalley.mate.dto.response.MatePageResponse;
-import com.myalley.mate.dto.response.MateSimpleResponse;
+import com.myalley.mate.dto.response.MyMateBookmarkResponse;
+import com.myalley.mate.dto.response.MatePageResponses;
 import com.myalley.mate.service.MateBookmarkService;
 import com.myalley.member.domain.Member;
 import lombok.RequiredArgsConstructor;
@@ -24,17 +23,14 @@ import java.util.stream.Collectors;
 public class MateBookmarkController {
     private final MateBookmarkService bookmarkService;
 
-    //북마크 추가 및 삭제
     @PutMapping("/api/mates/bookmarks/{id}")
-    public ResponseEntity switchBookmark(@PathVariable Long id) {
+    public ResponseEntity switchMateBookmark(@PathVariable Long id) {
         log.info("메이트글 북마크 추가/삭제");
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long memberId = member.getMemberId();
 
-        return ResponseEntity.ok(bookmarkService.createBookmark(memberId, id));
+        return ResponseEntity.ok(bookmarkService.switchMateBookmark(member, id));
     }
 
-    //회원 본인의 북마크한 게시글 조회
     @GetMapping("/api/mates/bookmarks/me")
     public ResponseEntity findMyBookmarkedMates(@Positive @RequestParam("page") int page) {
 
@@ -42,13 +38,13 @@ public class MateBookmarkController {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long memberId = member.getMemberId();
 
-        Page<MateBookmark> mateBookmarks = bookmarkService.findBookmarkedMatesByMemberId(memberId, page);
-        List<MateSimpleResponse> responses = mateBookmarks
+        Page<MyMateBookmarkResponse> mateBookmarks = bookmarkService.findBookmarkedMatesByMemberId(memberId, page);
+        List<MyMateBookmarkResponse> responses = mateBookmarks
                 .stream()
-                .map(MateSimpleResponse::of)
+                .map(MyMateBookmarkResponse::of)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(
-                new MatePageResponse<>(responses, mateBookmarks), HttpStatus.OK);
+                new MatePageResponses<>(responses, mateBookmarks), HttpStatus.OK);
     }
 }

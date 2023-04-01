@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -15,7 +14,6 @@ import javax.persistence.*;
 @Getter
 @Table(name = "exhibition")
 @SQLDelete(sql = "UPDATE exhibition SET is_deleted = true WHERE exhibition_id = ?")
-@Where(clause = "is_deleted = false")
 @Entity
 public class Exhibition extends BaseTime {
 

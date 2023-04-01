@@ -1,15 +1,17 @@
 package com.myalley.exhibition.repository;
 
-import com.myalley.exhibition.domain.Exhibition;
+import com.myalley.exhibition.dto.response.ExhibitionBasicResponse;
+import com.myalley.exhibition.dto.response.QExhibitionBasicResponse;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
@@ -21,34 +23,40 @@ public class ExhibitionRepositoryImpl implements ExhibitionRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<Exhibition> findPagedExhibitions(String status, String type, String title, Pageable pageable) {
-        List<Exhibition> exhibitions = getExhibitionResponses(status, type, title, pageable);
-        Long count = getCount(status, type, title);
+    public Page<ExhibitionBasicResponse> findPagedExhibitions(String status, String type, String title, Pageable pageable) {
+        List<ExhibitionBasicResponse> exhibitions = getExhibitionResponses(status, type, title, pageable);
 
-        return new PageImpl<>(exhibitions, pageable, count);
-    }
-
-    private Long getCount(String status, String type, String title) {
-        Long count = queryFactory
+        JPAQuery<Long> countQuery = queryFactory
                 .select(exhibition.count())
                 .from(exhibition)
                 .where(
                         eqStatus(status),
                         eqType(type),
-                        eqTitle(title)
-                )
-                .fetchOne();
+                        eqTitle(title),
+                        exhibition.isDeleted.eq(false)
+                );
 
-        return count;
+        return PageableExecutionUtils.getPage(exhibitions, pageable, countQuery::fetchOne);
     }
 
-    private List<Exhibition> getExhibitionResponses(String status, String type, String title, Pageable pageable) {
-        List<Exhibition> exhibitions = queryFactory
-                .selectFrom(exhibition)
+    private List<ExhibitionBasicResponse> getExhibitionResponses(String status, String type, String title, Pageable pageable) {
+        List<ExhibitionBasicResponse> exhibitions = queryFactory
+                .select(new QExhibitionBasicResponse(
+                        exhibition.id,
+                        exhibition.title,
+                        exhibition.space,
+                        exhibition.posterUrl,
+                        exhibition.duration,
+                        exhibition.type,
+                        exhibition.status,
+                        exhibition.viewCount
+                ))
+                .from(exhibition)
                 .where(
                         eqStatus(status),
                         eqType(type),
-                        eqTitle(title)
+                        eqTitle(title),
+                        exhibition.isDeleted.eq(false)
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
