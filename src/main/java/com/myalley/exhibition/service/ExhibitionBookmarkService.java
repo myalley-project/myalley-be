@@ -24,7 +24,7 @@ public class ExhibitionBookmarkService {
     @Transactional
     public BookmarkResponseDto switchExhibitionBookmark(Member member, Long exhibitionId) {
 
-        Exhibition exhibition = exhibitionService.validateExhibitionDeletedOrNot(exhibitionId);
+        Exhibition exhibition = exhibitionService.validateExistExhibition(exhibitionId);
         ExhibitionBookmark bookmark = findExhibitionBookmark(exhibition, member);
 
         if (bookmark.isBookmarked()) {

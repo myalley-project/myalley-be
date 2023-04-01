@@ -82,7 +82,7 @@ public class ExhibitionService {
 
     //특정 전시글 상세페이지 조회 - 로그인 한 회원
     public ExhibitionDetailResponse findByExhibitionIdAndMemberId(Long exhibitionId, Long memberId) {
-        validateExhibitionDeletedOrNot(exhibitionId);
+//        validateExhibitionDeletedOrNot(exhibitionId);
         if (memberId == 0) {
             return exhibitionRepository.findById(exhibitionId)
                     .map(ExhibitionDetailResponse::of)
@@ -90,7 +90,7 @@ public class ExhibitionService {
         }
 
         Member member = memberService.validateMember(memberId);
-        Exhibition exhibition = validateExhibitionDeletedOrNot(exhibitionId);
+        Exhibition exhibition = validateExistExhibition(exhibitionId);
 
         return ExhibitionDetailResponse.of(exhibition, validateBookmarkedExhibition(exhibition, member));
     }
@@ -127,10 +127,10 @@ public class ExhibitionService {
                 .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
     }
 
-    public Exhibition validateExhibitionDeletedOrNot(Long exhibitionId) {
-        return exhibitionRepository.findByIdAndIsDeleted(exhibitionId)
-                .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
-    }
+//    public Exhibition validateExhibitionDeletedOrNot(Long exhibitionId) {
+//        return exhibitionRepository.findByIdAndIsDeleted(exhibitionId)
+//                .orElseThrow(() -> new CustomException(ExhibitionExceptionType.EXHIBITION_NOT_FOUND));
+//    }
 
     @Transactional
     public void bookmarkCountUp(Long exhibitionId) {
