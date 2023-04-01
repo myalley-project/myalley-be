@@ -12,7 +12,7 @@ public interface ExhibitionRepository extends JpaRepository<Exhibition,Long>, Ex
     @Query("update Exhibition e set e.viewCount = e.viewCount + 1 where e.id = :id")
     Integer updateViewCount(Long id);
 
-    @Query(value="select * from Exhibition e where e.exhibition_id = :id and e.is_deleted=0", nativeQuery = true)
-    Optional<Exhibition> findByIdAndIsDeleted(Long id);
+//    @Query(value="select * from Exhibition e where e.exhibition_id = :id and e.is_deleted=0", nativeQuery = true)
+//    Optional<Exhibition> findByIdAndIsDeleted(Long id);
 
 }
