@@ -65,7 +65,7 @@ public class MateService {
     }
 
     public MateDetailResponse findByMateIdAndMemberId(Long mateId, Long memberId) {
-        validateMateDeletedOrNot(mateId);
+//        validateMateDeletedOrNot(mateId);
         if (memberId == 0) {
             return mateRepository.findById(mateId)
                     .map(MateDetailResponse::of)
@@ -124,8 +124,8 @@ public class MateService {
                 .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
     }
 
-    public Mate validateMateDeletedOrNot(Long mateId) {
-        return mateRepository.findByIdAndIsDeleted(mateId)
-                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
-    }
+//    public Mate validateMateDeletedOrNot(Long mateId) {
+//        return mateRepository.findByIdAndIsDeleted(mateId)
+//                .orElseThrow(() -> new CustomException(MateExceptionType.MATE_NOT_FOUND));
+//    }
 }

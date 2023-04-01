@@ -21,11 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class MateBookmarkService {
     private final MateBookmarkRepository bookmarkRepository;
     private final MateService mateService;
-    private final MemberService memberService;
+//    private final MemberService memberService;
 
     @Transactional
     public BookmarkSimpleResponse switchMateBookmark(Member member, Long mateId) {
-        Mate mate = mateService.validateMateDeletedOrNot(mateId);
+        Mate mate = mateService.validateExistMate(mateId);
         MateBookmark bookmark = findMateBookmark(mate, member);
         validateAuthor(mate, member);
 
