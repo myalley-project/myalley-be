@@ -7,7 +7,7 @@
 
 - **프로젝트 명 :** My Alley (마이 앨리)
 - **프로젝트 기간 :** 2022.11.28 ~ 2023.01.31
-- **수정 & 리팩토링 작업 기간 :** 2023.02.06 ~ 2023.03.26
+- **수정 & 리팩토링 작업 기간 :** 2023.02.06 ~ 2023.03.31
 - **Wiki 바로가기 :** https://github.com/myalley-project/myalley-be/wiki
 - **배포 링크 :** https://myalley.netlify.app 
 
@@ -65,7 +65,7 @@
 
 ### [User Flow](https://github.com/myalley-project/myalley-be/wiki/USER-FLOW)
 
-### [ERD](https://github.com/myalley-project/myalley-be/wiki/ERD)
+### [DB Schema](https://github.com/myalley-project/myalley-be/wiki/DB-Schema)
 
 ### [API 문서](https://www.notion.so/API-77fb0b5a78d64873a8feece00fbe0d70?pvs=4)
 
