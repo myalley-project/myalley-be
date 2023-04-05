@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RemovedBlogReviewService {
     private final BlogReviewRepository reviewRepository;
+    private final BlogImageService imageService;
 
     public BlogListResponseDto findRemovedBlogReviews(Member member,Integer pageNo){
         PageRequest pageRequest;
@@ -34,6 +35,7 @@ public class RemovedBlogReviewService {
         if(target.getMember().getMemberId() != member.getMemberId()){
             throw new CustomException(BlogReviewExceptionType.BLOG_FORBIDDEN);
         }
+        imageService.removeBlogImagesByBlogReview(target);
         reviewRepository.removePermanently(target.getId());
     }
 }

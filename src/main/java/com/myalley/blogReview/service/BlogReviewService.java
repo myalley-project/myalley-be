@@ -121,7 +121,6 @@ public class BlogReviewService {
     @Transactional
     public void removeBlogReview(Long blogId, Member member){
         BlogReview pre = verifyRequester(blogId,member.getMemberId());
-        blogImageService.removeBlogImagesByBlogReview(pre);
         bookmarkService.removeBlogBookmarksByBlogReview(pre);
         likesService.removeBlogLikesByBlogReview(pre);
         blogReviewRepository.deleteById(pre.getId());
