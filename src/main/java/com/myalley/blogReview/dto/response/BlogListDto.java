@@ -2,16 +2,13 @@ package com.myalley.blogReview.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.myalley.blogReview.domain.BlogReview;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.util.CollectionUtils;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.time.LocalDate;
 
-@Data
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
 public class BlogListDto {
     private Long id;
