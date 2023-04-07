@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/api/blogs/trash",produces = "application/json; charset=utf8")
 @RequiredArgsConstructor
@@ -31,5 +33,14 @@ public class RemovedBlogReviewController {
 
         removedService.removeBlogReviewPermanently(blogId, member);
         return new ResponseEntity<>("블로그 글이 영구 삭제되었습니다.", HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    public ResponseEntity removeBlogReviewsPermanently(@RequestHeader(value="idList") List<Long> blogId){
+        log.info("Request-Type : Delete_Permanently, Entity : BlogReview_List");
+        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        removedService.removeBlogReviewsPermanently(blogId, member);
+        return new ResponseEntity<>("여러개의 블로그 글이 영구 삭제되었습니다.", HttpStatus.OK);
     }
 }
