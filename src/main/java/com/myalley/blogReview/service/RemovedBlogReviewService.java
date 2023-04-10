@@ -32,17 +32,6 @@ public class RemovedBlogReviewService {
         return BlogListResponseDto.blogOf(myBlogReviewList,"self");
     }
 
-    public void removeBlogReviewPermanently(Long blogId, Member member) {
-        BlogReview target = reviewRepository.selectRemovedById(blogId).orElseThrow(() -> {
-            throw new CustomException(BlogReviewExceptionType.BLOG_NOT_FOUND);
-        });
-        if(target.getMember().getMemberId() != member.getMemberId()){
-            throw new CustomException(BlogReviewExceptionType.BLOG_FORBIDDEN);
-        }
-        imageService.removeBlogImagesByBlogReview(target);
-        reviewRepository.removePermanently(target.getId());
-    }
-
     public void removeBlogReviewsPermanently(List<Long> blogId, Member member) {
         List<BlogReview> targetList = reviewRepository.selectRemovedByIdList(member.getMemberId(), blogId);
         if(CollectionUtils.isEmpty(targetList) || targetList.size() != blogId.size())

@@ -25,6 +25,7 @@ public interface BlogReviewRepository extends JpaRepository<BlogReview, Long> {
     Optional<BlogReview> selectRemovedById(Long blogId);
     @Query(value="select * from blog_review br where br.member_id=?1 and br.blog_id in ?2 and br.is_deleted=1",nativeQuery = true)
     List<BlogReview> selectRemovedByIdList(Long memberId, List<Long> blogId);
+    //삭제 예정 - 여러개 요청으로 받을 거라서
     @Modifying(clearAutomatically = true)
     @Transactional
     @Query(value="delete from blog_review br where br.blog_id = ?1",nativeQuery = true)

@@ -26,15 +26,7 @@ public class RemovedBlogReviewController {
         return new ResponseEntity<>(removedService.findRemovedBlogReviews(member, pageNo),HttpStatus.OK);
     }
 
-    @DeleteMapping("/{blog-id}")
-    public ResponseEntity removeBlogReviewPermanently(@PathVariable("blog-id") Long blogId){
-        log.info("Request-Type : Delete_Permanently, Entity : BlogReview");
-        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        removedService.removeBlogReviewPermanently(blogId, member);
-        return new ResponseEntity<>("블로그 글이 영구 삭제되었습니다.", HttpStatus.OK);
-    }
-
+    //1 - 6개까지의 블로그 삭제 가능!
     @DeleteMapping
     public ResponseEntity removeBlogReviewsPermanently(@RequestHeader(value="idList") List<Long> blogId){
         log.info("Request-Type : Delete_Permanently, Entity : BlogReview_List");
