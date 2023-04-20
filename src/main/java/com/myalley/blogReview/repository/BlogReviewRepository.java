@@ -18,6 +18,8 @@ public interface BlogReviewRepository extends JpaRepository<BlogReview, Long> {
     Page<BlogReview> findAllByTitleContaining(String word, Pageable pageable);
     Page<BlogReview> findAllByMember(Member member, Pageable pageable); //내 글 조회
     Page<BlogReview> findAllByExhibition(Exhibition exhibition, Pageable pageable); //전시에 맞는 글 조회
+    @Query(value="select * from blog_review br where br.exhibition_id=?1 and br.is_deleted=0",nativeQuery = true)
+    List<BlogReview> findAllByExhibition(Long exhibitionID);
 
     @Query(value="select * from blog_review br where br.member_id=?1 and br.is_deleted=1",nativeQuery = true, countProjection = "blog_id")
     Page<BlogReview> selectRemovedAll(Member member, Pageable pageable);

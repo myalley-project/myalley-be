@@ -46,8 +46,15 @@ public class BlogReviewController {
         log.info("Request-Type : Delete, Entity : BlogReview, Blog-ID : {}", blogId);
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        blogReviewService.removeBlogReview(blogId,member);
+        blogReviewService.removeBlogReviewByMember(blogId,member);
         return new ResponseEntity<>("블로그 글이 삭제되었습니다.",HttpStatus.OK);
+    }
+
+    @DeleteMapping("/api/blogs/exhibitions/{exhibition-id}")
+    public ResponseEntity removeBlogReviewByExhibitionId(@PathVariable("exhibition-id") Long exhibitionId){
+        log.info("Request-Type : Delete, Entity : BlogReview, Exhibition-ID : {}", exhibitionId);
+        blogReviewService.removeBlogReviewByExhibitionId(exhibitionId);
+        return new ResponseEntity<>("전시회의 블로그 글이 삭제되었습니다.",HttpStatus.OK);
     }
 
     @GetMapping("/blogs/{blog-id}")

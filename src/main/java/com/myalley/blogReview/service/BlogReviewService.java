@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -119,13 +120,25 @@ public class BlogReviewService {
     }
 
     @Transactional
-    public void removeBlogReview(Long blogId, Member member){
-        BlogReview pre = verifyRequester(blogId,member.getMemberId());
+    public void removeBlogReview(BlogReview pre){
         bookmarkService.removeBlogBookmarksByBlogReview(pre);
         likesService.removeBlogLikesByBlogReview(pre);
         blogReviewRepository.deleteById(pre.getId());
     }
 
+    public void removeBlogReviewByMember(Long blogId, Member member){
+        BlogReview pre = verifyRequester(blogId,member.getMemberId());
+        removeBlogReview(pre);
+    }
+
+    public void removeBlogReviewByExhibitionId(Long exhibitionId){
+        List<BlogReview> lists = blogReviewRepository.findAllByExhibition(exhibitionId);
+        if(!CollectionUtils.isEmpty(lists)) {
+            for(BlogReview br : lists){
+                removeBlogReview(br);
+            }
+        }
+    }
 
     //1. 존재하는 글인지 확인
     public BlogReview validateBlogReview(Long blogId){
