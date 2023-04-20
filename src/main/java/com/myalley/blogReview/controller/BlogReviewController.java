@@ -50,13 +50,6 @@ public class BlogReviewController {
         return new ResponseEntity<>("블로그 글이 삭제되었습니다.",HttpStatus.OK);
     }
 
-    @DeleteMapping("/api/blogs/exhibitions/{exhibition-id}")
-    public ResponseEntity removeBlogReviewByExhibitionId(@PathVariable("exhibition-id") Long exhibitionId){
-        log.info("Request-Type : Delete, Entity : BlogReview, Exhibition-ID : {}", exhibitionId);
-        blogReviewService.removeBlogReviewByExhibitionId(exhibitionId);
-        return new ResponseEntity<>("전시회의 블로그 글이 삭제되었습니다.",HttpStatus.OK);
-    }
-
     @GetMapping("/blogs/{blog-id}")
     public ResponseEntity findBlogReviewByBlogId(@PathVariable("blog-id") Long blogId,
                                               @RequestHeader(value = "memberId", required = false) Long memberId){

@@ -132,7 +132,7 @@ public class BlogReviewService {
     }
 
     public void removeBlogReviewByExhibitionId(Long exhibitionId){
-        List<BlogReview> lists = blogReviewRepository.findAllByExhibition(exhibitionId);
+        List<BlogReview> lists = blogReviewRepository.findAllByExhibitionId(exhibitionId);
         if(!CollectionUtils.isEmpty(lists)) {
             for(BlogReview br : lists){
                 removeBlogReview(br);
