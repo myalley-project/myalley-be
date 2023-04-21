@@ -15,6 +15,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -45,9 +49,17 @@ public class SimpleReviewService {
     }
 
     @Transactional
-    public void removeSimpleReview(Long simpleId, Member member){
+    public void removeSimpleReviewByMember(Long simpleId, Member member){
         SimpleReview target = verifySimpleReview(simpleId, member);
         simpleRepository.delete(target);
+    }
+
+    @Transactional
+    public void removeSimpleReviewByExhibitionId(Long exhibitionId){
+        List<SimpleReview> lists= simpleRepository.findAllByExhibitionId(exhibitionId);
+        if(!CollectionUtils.isEmpty(lists)){
+            simpleRepository.removeSimpleReviewByIdList(lists.stream().map(SimpleReview::getId).collect(Collectors.toList()));
+        }
     }
 
     public SimpleListResponseDto findPagedSimpleReviewsByExhibitionId(Long exhibitionId, Integer pageNo, String orderType){
