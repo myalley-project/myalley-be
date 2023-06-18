@@ -40,11 +40,11 @@ public class SimpleReviewController {
     }
 
     @DeleteMapping("/api/simple-reviews/{simple-id}")
-    public ResponseEntity removeSimpleReview(@PathVariable("simple-id") Long simpleId){
+    public ResponseEntity removeSimpleReviewByMember(@PathVariable("simple-id") Long simpleId){
         log.info("Request-Type : Delete, Entity : SimpleReview, Simple-ID : {}", simpleId);
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        simpleService.removeSimpleReview(simpleId,member);
+        simpleService.removeSimpleReviewByMember(simpleId,member);
         return new ResponseEntity<>("한 줄 리뷰가 삭제되었습니다",HttpStatus.OK);
     }
 
