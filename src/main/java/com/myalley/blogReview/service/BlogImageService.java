@@ -56,19 +56,22 @@ public class BlogImageService {
         blogImageRepository.delete(foundImage);
     }
 
-    public void removeBlogImagesByBlogReview(BlogReview blogReview) {
-        List<BlogImage> blogImageList = blogImageRepository.findAllByBlog(blogReview);
-        if (!CollectionUtils.isEmpty(blogImageList)) {
-            for (BlogImage blogImage : blogImageList) {
-                blogImageRepository.delete(blogImage);
-                s3Service.deleteBlogImage(blogImage.getFileName());
+    public void removeBlogImagesByBlogReviewList(List<BlogReview> targetList) {
+        for(BlogReview blogReview : targetList) {
+            List<BlogImage> blogImageList = blogImageRepository.findAllByBlog(blogReview);
+            if (!CollectionUtils.isEmpty(blogImageList)) {
+                for (BlogImage blogImage : blogImageList) {
+                    blogImageRepository.delete(blogImage);
+                    s3Service.deleteBlogImage(blogImage.getFileName());
+                }
+                blogImageList.clear();
             }
         }
     }
 
     private BlogImage validateBlogImage(BlogReview blogReview, Long imageId){
         BlogImage image = blogImageRepository.findByIdAndBlog(imageId,blogReview).orElseThrow(() -> {
-                throw new CustomException(BlogReviewExceptionType.IMAGE_NOT_FOUND);
+            throw new CustomException(BlogReviewExceptionType.IMAGE_NOT_FOUND);
         });
         return image;
     }

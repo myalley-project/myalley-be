@@ -1,7 +1,7 @@
 package com.myalley.simpleReview.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.myalley.blogReview.dto.response.SimpleMemberDto;
+import com.myalley.member.dto.MemberBlogDto;
 import com.myalley.simpleReview.domain.SimpleReview;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,13 +20,13 @@ public class SimpleListDto {
     private String content;
     private String time;
     private String congestion;
-    private SimpleMemberDto memberInfo;
+    private MemberBlogDto memberInfo;
     private SimpleExhibitionDto exhibitionInfo;
 
     public static SimpleListDto memberFrom(SimpleReview simpleReview){
         return new SimpleListDto(simpleReview.getId(), simpleReview.getViewDate(), simpleReview.getRate(),
                 simpleReview.getContent(), simpleReview.getTime(), simpleReview.getCongestion(),
-                SimpleMemberDto.from(simpleReview.getMember()), null);
+                MemberBlogDto.from(simpleReview.getMember()), null);
     }
     public static SimpleListDto exhibitionFrom(SimpleReview simpleReview){
         return new SimpleListDto(simpleReview.getId(), simpleReview.getViewDate(), simpleReview.getRate(),

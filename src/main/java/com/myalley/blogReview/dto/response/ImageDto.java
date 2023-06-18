@@ -2,11 +2,9 @@ package com.myalley.blogReview.dto.response;
 
 import com.myalley.blogReview.domain.BlogImage;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
 public class ImageDto {
     private Long id;

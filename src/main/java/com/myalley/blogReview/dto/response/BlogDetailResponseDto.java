@@ -2,17 +2,17 @@ package com.myalley.blogReview.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.myalley.blogReview.domain.BlogReview;
+import com.myalley.exhibition.dto.response.ExhibitionBlogDto;
+import com.myalley.member.dto.MemberBlogDto;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
 public class BlogDetailResponseDto {
     private Long id;
@@ -33,16 +33,14 @@ public class BlogDetailResponseDto {
     private boolean bookmarkStatus;
     private List<ImageDto> imageInfo;
 
-    //멤버에서 가져올 예정
-    private SimpleMemberDto memberInfo;
-    //전시회에서 가져올 예정
-    private SimpleExhibitionDto exhibitionInfo;
+    private MemberBlogDto memberInfo;
+    private ExhibitionBlogDto exhibitionInfo;
 
     public static BlogDetailResponseDto of(BlogReview blog, boolean likeStatus, boolean bookmarkStatus){
         return new BlogDetailResponseDto(blog.getId(),blog.getViewDate(),blog.getCreatedAt(),
                 blog.getTitle(),blog.getContent(),blog.getTime(), blog.getLikeCount(), blog.getViewCount(),
                 blog.getBookmarkCount(), blog.getTransportation(), blog.getRevisit(), blog.getCongestion(),
                 likeStatus,bookmarkStatus,blog.getImages().stream().map(ImageDto::from).collect(Collectors.toList()),
-                SimpleMemberDto.from(blog.getMember()), SimpleExhibitionDto.from(blog.getExhibition()));
+                MemberBlogDto.from(blog.getMember()), ExhibitionBlogDto.from(blog.getExhibition()));
     }
 }

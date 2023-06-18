@@ -11,11 +11,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class RemovedBlogReviewService {
     private final BlogReviewRepository reviewRepository;
+    private final BlogImageService imageService;
 
     public BlogListResponseDto findRemovedBlogReviews(Member member,Integer pageNo){
         PageRequest pageRequest;
@@ -27,13 +32,11 @@ public class RemovedBlogReviewService {
         return BlogListResponseDto.blogOf(myBlogReviewList,"self");
     }
 
-    public void removeBlogReviewPermanently(Long blogId, Member member) {
-        BlogReview target = reviewRepository.selectRemovedById(blogId).orElseThrow(() -> {
+    public void removeBlogReviewsPermanently(List<Long> blogId, Member member) {
+        List<BlogReview> targetList = reviewRepository.selectRemovedByIdList(member.getMemberId(), blogId);
+        if(CollectionUtils.isEmpty(targetList) || targetList.size() != blogId.size())
             throw new CustomException(BlogReviewExceptionType.BLOG_NOT_FOUND);
-        });
-        if(target.getMember().getMemberId() != member.getMemberId()){
-            throw new CustomException(BlogReviewExceptionType.BLOG_FORBIDDEN);
-        }
-        reviewRepository.removePermanently(target.getId());
+        imageService.removeBlogImagesByBlogReviewList(targetList);
+        reviewRepository.removeListPermanently(targetList.stream().map(BlogReview::getId).collect(Collectors.toList()));
     }
 }
